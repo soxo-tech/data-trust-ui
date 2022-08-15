@@ -3,7 +3,7 @@ import React, { useEffect, useContext, useState } from 'react';
 import './App.scss';
 
 
-import { RootApplicationAPI } from '@soxo/bootstrap-core';
+import { RootApplicationAPI } from 'sx-bootstrap-core';
 
 
 // import * as CustomComponents from './modules/'
