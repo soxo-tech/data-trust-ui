@@ -10,6 +10,8 @@ import { RootApplicationAPI } from '@soxo/bootstrap-core';
 
 // import * as CustomModels from './models/'
 
+// import 'antd/dist/antd.css'; 
+
 
 
 let appSettings = {
