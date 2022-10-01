@@ -1,5 +1,13 @@
-import CheckUpDataList from "./fujifilm/components/checkup-data-list/checkup-data-list";
+import UploadList from "./fujifilm/components/uploads/upload-list";
+
+import UploadDetails from "./fujifilm/components/uploads/upload-detail";
+
+import ConsentHistory from "./fujifilm/components/consent-history/consent-history";
 
 export{
-          CheckUpDataList
+          UploadList,
+
+          UploadDetails,
+
+          ConsentHistory
 }
