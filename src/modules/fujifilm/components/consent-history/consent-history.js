@@ -1,29 +1,22 @@
 /***
- *
+ *Component for Consent History
  *
  * @description
  * @author Sameena
  */
 
-/**
- * Check Up data Listing Component
- */
+
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Modal, Upload, message } from 'antd';
+import { Table, Button, Typography, } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card } from '@soxo/bootstrap-core';
+import { Location, Card } from '@soxo/bootstrap-core';
 
-import { UploadOutlined } from '@ant-design/icons';
-
-import * as XLSX from 'xlsx/xlsx.mjs';
-
-import moment from 'moment';
+import ConsentDetails from '../consent-details/consent-details';
 
 import './consent-history.scss'
 
-import { EditOutlined, CloseOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
@@ -33,16 +26,15 @@ export default function ConsentHistory() {
                     time: '',
                     lifetime: '',
                     items: '',
-                  
+
           }])
 
           const [page, setPage] = useState(1);
 
           const [limit, setLimit] = useState(20);
 
-          const [visible, setVisible] = useState(false);
-
-          const [files, setFiles] = useState([]);
+          //ffmenu is maintaine to determine which user is using(nura or fujifilm)
+          const [ffmenu, setFFmenu] = useState(false)
 
           const columns = [
                     {
@@ -72,24 +64,62 @@ export default function ConsentHistory() {
                               key: 'items',
                               dataIndex: 'items'
                     },
-                 
+
+
+          ]
+
+          //Extra columns for fujifilm
+          if (ffmenu) {
+                    columns.push(
+                              {
+                                        title: 'Registration Date',
+                                        key: 'regDate',
+                                        dataIndex: 'regDate'
+                              },
+                              {
+                                        title: 'Last Download',
+                                        key: 'lastDownlaod',
+                                        dataIndex: 'lastDownload'
+                              },
+                              {
+                                        title: 'Discarded date',
+                                        key: 'discarded',
+                                        dataIndex: 'discarded'
+                              },
+                    )
+          }
+
+          columns.push(
                     {
                               title: 'Action',
                               key: 'action',
                               render: (ele) => {
-                                        function toUpdate() {
+                                        function toDownloadHistory() {
 
                                                   Location.navigate({
-                                                            url: `/checkup-list/details`,
+                                                            url: `/checkup-list/downloads-history`,
+                                                  });
+
+                                        }
+
+                                        function toDerivedAnalysis() {
+
+                                                  Location.navigate({
+                                                            url: `/checkup-list/derived-analysis`,
                                                   });
 
                                         }
 
                                         return (
-                                                  <div>
-                                                            <Button onClick={toUpdate}>Download History</Button>
 
-                                                            <Button onClick={toUpdate}>Analysis Result</Button>
+                                                  <div>
+                                                            {ffmenu ?
+                                                                      <Button onClick={onDiscard}>Discard</Button> :
+                                                                      <>
+                                                                                <Button onClick={toDownloadHistory}>Download History</Button>
+
+                                                                                <Button onClick={toDerivedAnalysis}>Analysis Result</Button>
+                                                                      </>}
 
 
                                                   </div>
@@ -97,38 +127,55 @@ export default function ConsentHistory() {
                               },
                     },
 
-          ]
+          )
+
+          
+          /**
+           * function to discard a consent
+           */
+
+          function onDiscard() {
+
+          }
 
 
 
           return (
+                    <div>
+                              <Title level={3}>Consent History</Title>
 
-                    <div className='consent-history'>
-
-                              <Card className={'history'}>
-                                        <Title level={5}>Nura ID</Title>
-
-                                        <div className='history-table'>
-                                                  <p>REGISTRATION NUMBER</p>
-                                                  <p> 23/06/2022</p>
-                                        </div>
-
-                                        <Table
-                                        scroll={{ x: true }}
-                                        //  rowKey={(record) => record.da_id}
-                                        dataSource={consentHistory}
-                                        columns={columns}
-                              // pagination={{
-                              //     current: page,
-                              //     onChange(current) {
-                              //         setPage(current);
-                              //     },
-                              // }}
-                              />
-                              </Card>
-                              <Card className={'details'}></Card>
+                              <div className='consent-history'>
 
 
+
+                                        <Card className={'history'}>
+                                                  <Title level={5}>Nura ID</Title>
+
+                                                  <div className='history-table'>
+                                                            <p>REGISTRATION NUMBER</p>
+                                                            <p> 23/06/2022</p>
+                                                  </div>
+
+                                                  <Table
+                                                            scroll={{ x: true }}
+                                                            //  rowKey={(record) => record.da_id}
+                                                            dataSource={consentHistory}
+                                                            columns={columns}
+                                                  // pagination={{
+                                                  //     current: page,
+                                                  //     onChange(current) {
+                                                  //         setPage(current);
+                                                  //     },
+                                                  // }}
+                                                  />
+                                        </Card>
+                                        {ffmenu ? null :
+                                                  <Card className={'details'}>
+                                                            <ConsentDetails />
+                                                  </Card>}
+
+
+                              </div>
                     </div>
 
 
