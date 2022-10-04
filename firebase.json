@@ -1,5 +1,6 @@
 {
   "hosting":     {
+    "target": "datatrust",
     "public": "build",
     "ignore": [
       "firebase.json",
@@ -59,5 +60,5 @@
         ]
       }
     ]
-  }
+  },
 }

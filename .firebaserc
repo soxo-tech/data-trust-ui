@@ -1,5 +1,13 @@
 {
   "projects": {
-    "default": "ui-core"
+    "default": "soxo-c6ef8"
+  },
+  "targets": {
+    "plucky-avatar-230914": {
+      "hosting": {
+        "datatrust": [
+          "datatrust"
+        ]}
+    }
   }
 }
