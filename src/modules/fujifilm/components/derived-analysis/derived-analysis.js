@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Dropdown, Menu } from 'antd';
 
-import { Location, Card } from '@soxo/bootstrap-core';
+import { Location, Card } from 'sx-bootstrap-core';
 
 import './derived-analysis.scss';
 

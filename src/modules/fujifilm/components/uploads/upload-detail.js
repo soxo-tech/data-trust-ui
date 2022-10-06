@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Input, Dropdown, Menu } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card } from '@soxo/bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, Card } from 'sx-bootstrap-core';
 
 import { MoreOutlined } from '@ant-design/icons';
 
