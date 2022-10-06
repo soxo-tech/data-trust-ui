@@ -11,13 +11,15 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Input, Dropdown, Menu } from 'antd';
+import { Table, Button, Typography, Input, Dropdown, Menu, Modal } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card } from '@soxo/bootstrap-core';
+import { Location, Card } from '@soxo/bootstrap-core';
 
 import { MoreOutlined } from '@ant-design/icons';
 
 import './upload-detail.scss'
+
+import { UploadDetails } from '../../../../models';
 
 
 const { Title, Text } = Typography;
@@ -26,7 +28,7 @@ const { Search } = Input;
 
 
 
-export default function UploadDetails() {
+export default function UploadDetailComponent({ analysisResult, ffmenu, caption, ...props }) {
         const [details, setDetails] = useState([
                 {
                         id: '',
@@ -44,10 +46,11 @@ export default function UploadDetails() {
 
         var [query, setQuery] = useState('');
 
-        //ffmenu is maintaine to determine which user is using(nura or fujifilm)
-        const [ffmenu, setFFmenu] = useState(false)
+        const [visible, setVisible] = useState(false);
 
-        const columns = [
+        const { id } = props.match.params; //Get pagination number
+
+        var columns = [
                 {
                         title: '#',
                         dataIndex: 'index',
@@ -118,16 +121,113 @@ export default function UploadDetails() {
                                                 {ffmenu ?
                                                         <Dropdown overlay={menu} placement="bottomLeft">
                                                                 {/* <Button size="small"> */}
-                                                                        <MoreOutlined />
+                                                                <MoreOutlined />
                                                                 {/* </Button> */}
                                                         </Dropdown> : <Button onClick={toConsentHistory}> Consent History</Button>}
 
-                                             
+
                                         </div>
                                 )
                         },
                 },
         )
+
+        if (analysisResult) {
+                columns = [
+                        {
+                                title: '#',
+                                dataIndex: 'index',
+                                render: (value, item, index) => {
+                                        return (page - 1) * limit + index + 1;
+                                },
+                        },
+                        {
+                                title: 'Nura ID',
+                                key: 'id',
+                                dataIndex: 'id'
+                        },
+
+                        {
+                                title: 'Data ID',
+                                key: 'data_id',
+                                dataIndex: 'data_id'
+                        },
+                        {
+                                title: 'Registration Date',
+                                key: 'title',
+                                dataIndex: 'title'
+                        },
+                        {
+                                title: 'Consent ID',
+                                key: 'No of records',
+                                dataIndex: 'Number'
+                        },
+                        {
+                                title: 'Consent Status',
+                                key: 'status',
+                                dataIndex: 'status'
+                        },
+                        {
+                                title: 'Last Download',
+                                key: 'last_download',
+                                dataIndex: 'last_download'
+                        },
+
+                        {
+                                title: 'Action',
+                                key: 'action',
+                                render: (ele) => {
+
+
+
+                                        function toConsentHistory() {
+
+                                                Location.navigate({
+                                                        url: `/checkup-list/update-consent`,
+                                                });
+
+                                        }
+                                        return (
+                                                <div>
+
+                                                        <Button onClick={download}>Download</Button>
+                                                        {ffmenu ?
+                                                                <Dropdown overlay={menu} placement="bottomLeft">
+                                                                        {/* <Button size="small"> */}
+                                                                        <MoreOutlined />
+                                                                        {/* </Button> */}
+                                                                </Dropdown> : <Button onClick={toConsentHistory}> Consent History</Button>}
+
+
+                                                </div>
+                                        )
+                                },
+                        },
+
+                ]
+        }
+
+        useEffect(() => {
+                getData();
+
+        }, [])
+
+        function getData() {
+
+
+                const queries = [{
+                        field: 'upload_id',
+                        value: id
+                }]
+
+                var config = {
+                        queries
+                }
+                UploadDetails.get(config).then(result => {
+                        // setDetails(result.result)
+                        console.log(result)
+                })
+        }
 
 
         /**
@@ -146,30 +246,38 @@ export default function UploadDetails() {
                         <Menu.Item key="download_history" >
                                 Download History
                         </Menu.Item>
+                        {analysisResult ? null : <>
 
-                        <Menu.Item key="consent_history" >
-                                Consent History
-                        </Menu.Item>
+                                <Menu.Item key="consent_history" >
+                                        Consent History
+                                </Menu.Item>
 
-                        <Menu.Item key="result_analysis" >
-                                Result Analysis
-                        </Menu.Item>
+                                <Menu.Item key="result_analysis" >
+                                        Result Analysis
+                                </Menu.Item>
+                        </>}
                 </Menu>
         );
 
         function handleClick(params) {
-                if(params.key==='download_history')
-                Location.navigate({
-                        url: `/checkup-list/downloads-history`,
-                });
-                else if(params.key==='consent_history')
-                Location.navigate({
-                        url: `/checkup-list/update-consent`,
-                });
-                else if(params.key==='result_analysis')
-                Location.navigate({
-                        url: `/checkup-list/derived_analysis`,
-                });
+                if (params.key === 'download_history') {
+                        if (analysisResult) {
+                                setVisible(true)
+                        }
+                        else {
+                                Location.navigate({
+                                        url: `/checkup-list/downloads-history`,
+                                });
+                        }
+                }
+                else if (params.key === 'consent_history')
+                        Location.navigate({
+                                url: `/checkup-list/update-consent`,
+                        });
+                else if (params.key === 'result_analysis')
+                        Location.navigate({
+                                url: `/checkup-list/derived-analysis`,
+                        });
         }
 
         /**
@@ -182,7 +290,7 @@ export default function UploadDetails() {
 
         return (
                 <div>
-                        <Title level={3}>PSUEDONYMIZED DATA</Title>
+                        <Title level={3}>{caption}</Title>
                         <Card>
                                 <Title level={4}>
                                         May 2022 Examinees
@@ -209,8 +317,73 @@ export default function UploadDetails() {
                                 // }}
                                 />
                         </Card>
+
+                        <Modal
+                                destroyOnClose={true}
+                                footer={null}
+                                title="Download History"
+                                visible={visible}
+                                okText="Okay"
+                                onOk={() => {
+                                        setVisible(false);
+                                }}
+                                onCancel={() => {
+                                        setVisible(false);
+                                }}
+                        >
+                                <DownloadHistory />
+
+                        </Modal>
                 </div>
 
+
+        )
+}
+
+function DownloadHistory() {
+
+        const [page, setPage] = useState(1);
+
+        const [limit, setLimit] = useState(20);
+
+        const [downloads, setDownloads] = useState([{
+                last_download: ''
+        },
+        ])
+
+        const columns = [
+                {
+                        title: '#',
+                        dataIndex: 'index',
+                        render: (value, item, index) => {
+                                return (page - 1) * limit + index + 1;
+                        },
+                },
+                {
+                        title: 'Last Download',
+                        key: 'last_download',
+                        dataIndex: 'last_download'
+                },
+        ]
+        return (
+                <div>
+                        <p>Nura ID</p>
+                        <p>KHHDHDHH</p>
+                        <p>Data   ID</p>
+                        <p>255555</p>
+                        <Table
+                                scroll={{ x: true }}
+                                //  rowKey={(record) => record.da_id}
+                                dataSource={downloads}
+                                columns={columns}
+                        // pagination={{
+                        //     current: page,
+                        //     onChange(current) {
+                        //         setPage(current);
+                        //     },
+                        // }}
+                        />
+                </div>
 
         )
 }

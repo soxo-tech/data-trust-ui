@@ -16,6 +16,7 @@ import { Location, Card } from '@soxo/bootstrap-core';
 import ConsentDetails from '../consent-details/consent-details';
 
 import './consent-history.scss'
+import { UploadDetails } from '../../../../models';
 
 
 const { Title, Text } = Typography;
@@ -129,13 +130,39 @@ export default function ConsentHistory() {
 
           )
 
-          
+
           /**
            * function to discard a consent
            */
 
           function onDiscard() {
 
+          }
+
+          useEffect(() => {
+                    getData();
+
+          }, [])
+
+          function getData() {
+
+
+                    const queries = [{
+                              field: 'psuedonymous_nura_id',
+                              value: 16
+                    },
+                    {
+                              field: 'hash',
+                              value: 'consent'
+                    },
+                    ]
+
+                    var config = {
+                              queries
+                    }
+                    UploadDetails.get(config).then(result => {
+                              setConsentHistory(result.result)
+                    })
           }
 
 

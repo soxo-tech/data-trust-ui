@@ -11,19 +11,20 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Modal, Upload, message } from 'antd';
+import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent } from '@soxo/bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, FileUpload } from '@soxo/bootstrap-core';
 
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
 
 import * as XLSX from 'xlsx/xlsx.mjs';
 
 import './upload-list.scss';
+import { Uploads } from '../../../../models';
 
 const { Title, Text } = Typography;
 
-export default function UploadList() {
+export default function UploadList({ ffmenu, analysisResult, mode }) {
      const [checkUpData, setCheckUpData] = useState([{
           id: '',
           title: '',
@@ -31,8 +32,8 @@ export default function UploadList() {
           date: '',
           time: '',
           by: '',
-          status:'',
-          lastDownload:''
+          status: '',
+          lastDownload: ''
      }])
 
      const [page, setPage] = useState(1);
@@ -41,10 +42,9 @@ export default function UploadList() {
 
      const [visible, setVisible] = useState(false);
 
-     const [files, setFiles] = useState([]);
+     const [uploadVisible, setUploadVisible] = useState(false);
 
-     //ffmenu is maintaine to determine which user is using(nura or fujifilm)
-     const [ffmenu, setFFmenu] = useState(false)
+     const [files, setFiles] = useState([]);
 
      const columns = [
           {
@@ -113,20 +113,91 @@ export default function UploadList() {
                function toUpdate() {
 
                     Location.navigate({
-                         url: `/checkup-list/details`,
+                         url: `/checkup-list/details/${ele.id}`,
                     });
 
                }
 
                return (
-                    <div style={{display:'flex'}}>
-                         <Button onClick={toUpdate}>Details</Button>
-                         <Button onClick={Download}>Download</Button>
-                         {ffmenu ? null : <Button onClick={modalVisible}>Update Consent</Button>}
-                    </div>
+                    analysisResult ?
+                         <div style={{ display: 'flex' }}>
+                              <Button onClick={toUpdate}>Delete</Button>
+                              <Button onClick={Download}>Download</Button>
+                              <Dropdown overlay={menu} placement="bottomLeft">
+
+                                   <MoreOutlined />
+
+                              </Dropdown>
+                         </div> :
+                         <div style={{ display: 'flex' }}>
+                              <Button onClick={toUpdate}>Details</Button>
+                              <Button onClick={Download}>Download</Button>
+                              {ffmenu ? null : <Button onClick={modalVisible}>Update Consent</Button>}
+                         </div>
+
                )
           },
      },)
+
+     useEffect(() => {
+          getData();
+          getAnalysisResult();
+     }, [])
+
+     function getData() {
+
+
+          const queries = [{
+               field: 'mode',
+               value: mode
+          }]
+
+          var config = {
+               queries
+          }
+          Uploads.get(config).then(result => {
+               setCheckUpData(result.result)
+          })
+     }
+
+     function getAnalysisResult(id=16){
+         
+          Uploads.getRecord({id}).then((res)=>{
+               console.log(res)
+          })
+     }
+
+     /**
+      * Open menu with additional options
+      */
+     const menu = (
+          <Menu onClick={handleClick}>
+               <Menu.Item key="analysis_details" >
+                    Analysis Details
+               </Menu.Item>
+
+
+          </Menu>
+     );
+
+     function handleClick(params) {
+          if (params.key === 'analysis_details')
+               Location.navigate({
+                    url: `/analysis-result-details`,
+               });
+     }
+     var analysisColumns = []
+
+     if (analysisResult) {
+          columns.forEach((ele) => {
+
+               if (ele.dataIndex !== 'status') {
+                    analysisColumns.push(ele)
+               }
+          })
+     }
+
+     console.log(analysisColumns)
 
      /**
       * Set Modal visible for update consent
@@ -253,31 +324,66 @@ export default function UploadList() {
 
      }
 
+     function uploadModal() {
+          setUploadVisible(true)
+     }
+
      return (
           <div>
 
-               <Title level={3}>CHECK UP DATA</Title>
+               {analysisResult ? <Title level={3}>ANALYSIS RESULTS DATA</Title> : <Title level={3}>CHECK UP DATA</Title>}
 
-               <div className='upload-list'>
+               {!analysisResult && ffmenu ? null :
 
-                    <Upload previewFile={null} accept={SheetJSFT} {...uploadProps}>
-                         <Button size={'small'} icon={<UploadOutlined />}>
+                    <div className='upload-list'>
+
+
+                         <Button onClick={uploadModal}>
                               Upload
                          </Button>
-                    </Upload>
-               </div>
-               <Table
-                    scroll={{ x: true }}
-                    //  rowKey={(record) => record.da_id}
-                    dataSource={checkUpData}
-                    columns={columns}
-               // pagination={{
-               //     current: page,
-               //     onChange(current) {
-               //         setPage(current);
-               //     },
-               // }}
-               />
+
+                    </div>}
+               {analysisResult ?
+                    <Table
+                         scroll={{ x: true }}
+                         //  rowKey={(record) => record.da_id}
+                         dataSource={checkUpData}
+                         columns={analysisColumns}
+                    // pagination={{
+                    //     current: page,
+                    //     onChange(current) {
+                    //         setPage(current);
+                    //     },
+                    // }}
+                    /> :
+                    <Table
+                         scroll={{ x: true }}
+                         //  rowKey={(record) => record.da_id}
+                         dataSource={checkUpData}
+                         columns={columns}
+                    // pagination={{
+                    //     current: page,
+                    //     onChange(current) {
+                    //         setPage(current);
+                    //     },
+                    // }}
+                    />}
+
+               <Modal
+                    destroyOnClose={true}
+                    footer={null}
+                    title="Upload Consent"
+                    visible={uploadVisible}
+                    okText="Okay"
+                    onOk={() => {
+                         setUploadVisible(false);
+                    }}
+                    onCancel={() => {
+                         setUploadVisible(false);
+                    }}
+               >
+                    <UploadConsent analysisResult={analysisResult} />
+               </Modal>
 
                <Modal
                     destroyOnClose={true}
@@ -300,6 +406,54 @@ export default function UploadList() {
      )
 }
 
+
+function UploadConsent({ analysisResult }) {
+     return (
+          <div>
+               <Title level={5}>Title</Title>
+               <Input></Input>
+               {analysisResult ?
+                    <div>
+                         <Title level={5}>Analysis Result</Title>
+
+                         <FileUpload>
+                              <Button size={'small'} icon={<UploadOutlined />}>
+                                   Upload
+                              </Button>
+                         </FileUpload>
+                    </div> :
+                    <>
+
+                         <div>
+
+                              <Title level={5}>Consent Data</Title>
+
+                              <FileUpload>
+                                   <Button size={'small'} icon={<UploadOutlined />}>
+                                        Upload
+                                   </Button>
+                              </FileUpload>
+
+                         </div>
+
+                         <div>
+                              <Title level={5}>Psuedonymized Data</Title>
+
+                              <FileUpload>
+                                   <Button size={'small'} icon={<UploadOutlined />}>
+                                        Upload
+                                   </Button>
+                              </FileUpload>
+                         </div>
+                    </>
+               }
+
+          </div>
+
+
+     )
+}
+
 /**
  * Component for uploading consent
  * @param {*} SheetJSFT 
@@ -308,7 +462,7 @@ export default function UploadList() {
  * @returns 
  */
 
-function UpdateConsent(SheetJSFT, uploadProps, files) {
+function UpdateConsent() {
 
      function approveUpload() {
 
@@ -322,11 +476,11 @@ function UpdateConsent(SheetJSFT, uploadProps, files) {
      return (
           <div>
                <div>
-                    <Upload previewFile={null} accept={SheetJSFT} {...uploadProps}>
+                    <FileUpload>
                          <Button size={'small'} icon={<UploadOutlined />}>
                               Choose File
                          </Button>
-                    </Upload>
+                    </FileUpload>
                </div>
 
                <div className='upload-consent'>
