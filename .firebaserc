@@ -3,11 +3,15 @@
     "default": "soxo-c6ef8"
   },
   "targets": {
-    "plucky-avatar-230914": {
+    "soxo-c6ef8": {
       "hosting": {
+        "soxo-c6ef8": [
+          "datatrust"
+        ],
         "datatrust": [
           "datatrust"
-        ]}
+        ]
+      }
     }
   }
 }

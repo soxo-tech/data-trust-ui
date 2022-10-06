@@ -9,13 +9,17 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
     "sass": "^1.51.0",
+    "env-cmd": "^10.1.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-live": "set PORT=8080 && env-cmd -f .env.live react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "host":"firebase deploy --only hosting:datatrust",
+    "deploy-live": "env-cmd -f .env.live npm run build && cd build && cp index.html 200.html && cd .. && npm run host",
     "deploy-develop": "npm run build && cd build && cp index.html 200.html && cd .. && firebase deploy --only hosting",
     "quick-deploy": "git status && git add . && git commit -m 'Saving changes and deploying' &&  npm version patch  && git push && npm run deploy-develop"
   },
