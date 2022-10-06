@@ -11,7 +11,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, } from 'antd';
 
-import { Location, Card } from '@soxo/bootstrap-core';
+import { Location, Card } from 'sx-bootstrap-core';
 
 import ConsentDetails from '../consent-details/consent-details';
 

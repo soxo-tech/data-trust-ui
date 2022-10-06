@@ -1,6 +1,6 @@
 {
   "name": "data-trust-ui",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -12,13 +12,17 @@
     "sass": "^1.51.0",
     "sx-bootstrap-core": "file:../bootstrap-core",
     "web-vitals": "^2.1.4",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "env-cmd": "^10.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-live": "set PORT=8080 && env-cmd -f .env.live react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "host": "firebase deploy --only hosting:datatrust",
+    "deploy-live": "env-cmd -f .env.live npm run build && cd build && cp index.html 200.html && cd .. && npm run host",
     "deploy-develop": "npm run build && cd build && cp index.html 200.html && cd .. && firebase deploy --only hosting",
     "quick-deploy": "git status && git add . && git commit -m 'Saving changes and deploying' &&  npm version patch  && git push && npm run deploy-develop"
   },

@@ -1,5 +1,17 @@
 {
   "projects": {
-    "default": "ui-core"
+    "default": "soxo-c6ef8"
+  },
+  "targets": {
+    "soxo-c6ef8": {
+      "hosting": {
+        "soxo-c6ef8": [
+          "datatrust"
+        ],
+        "datatrust": [
+          "datatrust"
+        ]
+      }
+    }
   }
 }
