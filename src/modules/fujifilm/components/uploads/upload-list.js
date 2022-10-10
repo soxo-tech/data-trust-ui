@@ -93,7 +93,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                     console.log(record)
                     return (
                          <span>
-                              {/* {record && record.created_by ? record.created_by_details['name'] : null} */}
+                              {record && record.created_by ? record.created_by_details['name'] : null}
                          </span>
                     );
                },
@@ -132,11 +132,27 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                }
 
+               function toDownload(){
+                    var formBody={
+                         mode:mode,
+                         type:'download',
+                         upload_details_id:ele.id,
+                         uuid:ele.uuid,
+                         hash:ele.hash,
+                         pseudonymous_nura_id:ele.pseudonymous_nura_id,
+                         order_date:ele.order_date,
+                         file_path:ele.file_path,
+                         upload_id:ele.upload_id
+
+                    }
+                    UserLogs.add(formBody)
+               }
+
                return (
                     analysisResult ?
                          <div style={{ display: 'flex' }}>
                               <Button onClick={toUpdate}>Delete</Button>
-                              <Button onClick={download}>Download</Button>
+                              <Button onClick={toDownload}>Download</Button>
                               <Dropdown overlay={menu} placement="bottomLeft">
 
                                    <MoreOutlined />
@@ -145,7 +161,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          </div> :
                          <div style={{ display: 'flex' }}>
                               <Button onClick={toUpdate}>Details</Button>
-                              <Button onClick={download}>Download</Button>
+                              <Button onClick={toDownload}>Download</Button>
                               {ffmenu ? null : <Button onClick={modalVisible}>Update Consent</Button>}
                          </div>
 
@@ -364,19 +380,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
           }
      }
-     /**
-      * Function to download
-      */
 
-     function download() {
-          var formBody = {
-               values: {
-                    id: '17',
-                    type: 'download'
-               }
-          }
-          UserLogs.add(formBody)
-     }
 
      function uploadModal() {
           setUploadVisible(true)
