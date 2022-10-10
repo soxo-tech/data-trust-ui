@@ -33,15 +33,6 @@ class Upload extends BaseAPI {
 
 
 
-          /**
-           * get Analysis Records
-           * @param {*} param0 
-           * @returns 
-           */
-          // getAnalysisRecord = ({ id }) => {
-          //           return ApiUtils.get({ url: `uploads${id}/includes=upload_details` });
-                   
-          // };
 
 }
 

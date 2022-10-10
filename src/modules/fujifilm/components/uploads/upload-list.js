@@ -11,30 +11,23 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu } from 'antd';
+import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, FileUpload } from '@soxo/bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, FileUpload, Users } from '@soxo/bootstrap-core';
 
 import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
 
 import * as XLSX from 'xlsx/xlsx.mjs';
 
+import moment from 'moment'
+
 import './upload-list.scss';
-import { Uploads } from '../../../../models';
+import { CoreUsers, Uploads, UserLogs } from '../../../../models';
 
 const { Title, Text } = Typography;
 
 export default function UploadList({ ffmenu, analysisResult, mode }) {
-     const [checkUpData, setCheckUpData] = useState([{
-          id: '',
-          title: '',
-          Number: '',
-          date: '',
-          time: '',
-          by: '',
-          status: '',
-          lastDownload: ''
-     }])
+     const [checkUpData, setCheckUpData] = useState([])
 
      const [page, setPage] = useState(1);
 
@@ -45,6 +38,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
      const [uploadVisible, setUploadVisible] = useState(false);
 
      const [files, setFiles] = useState([]);
+
+     const [loading, setLoading] = useState(true);
 
      const columns = [
           {
@@ -67,22 +62,41 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           {
                title: 'Number of Records',
                key: 'No of records',
-               dataIndex: 'Number'
+               dataIndex: 'number_of_records'
           },
           {
                title: 'Upload Date',
                key: 'date',
-               dataIndex: 'date'
+               render: (record) => {
+                    return (
+                         <span>
+                              {record && record.created_at ? moment(record.created_at).format('DD/MM/YYYY') : null}
+                         </span>
+                    );
+               },
           },
           {
                title: 'Upload Time',
                key: 'time',
-               dataIndex: 'time'
+               render: (record) => {
+                    return (
+                         <span>
+                              {record && record.created_at ? moment(record.created_at).format(' hh:mm A') : null}
+                         </span>
+                    );
+               },
           },
           {
                title: 'Uploaded By',
                key: 'by',
-               dataIndex: 'by'
+               render: (record) => {
+                    console.log(record)
+                    return (
+                         <span>
+                              {/* {record && record.created_by ? record.created_by_details['name'] : null} */}
+                         </span>
+                    );
+               },
           },
 
 
@@ -122,7 +136,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                     analysisResult ?
                          <div style={{ display: 'flex' }}>
                               <Button onClick={toUpdate}>Delete</Button>
-                              <Button onClick={Download}>Download</Button>
+                              <Button onClick={download}>Download</Button>
                               <Dropdown overlay={menu} placement="bottomLeft">
 
                                    <MoreOutlined />
@@ -131,7 +145,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          </div> :
                          <div style={{ display: 'flex' }}>
                               <Button onClick={toUpdate}>Details</Button>
-                              <Button onClick={Download}>Download</Button>
+                              <Button onClick={download}>Download</Button>
                               {ffmenu ? null : <Button onClick={modalVisible}>Update Consent</Button>}
                          </div>
 
@@ -139,12 +153,16 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           },
      },)
 
-     useEffect(() => {
+     useEffect( () => {
           getData();
           getAnalysisResult();
      }, [])
 
-     function getData() {
+
+     /**
+      * Get Upload Data from Uploads table, then load user from core_users for each upload records
+      */
+     async function getData() {
 
 
           const queries = [{
@@ -153,19 +171,45 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           }]
 
           var config = {
-               queries
+               queries,
           }
-          Uploads.get(config).then(result => {
-               setCheckUpData(result.result)
+          var result = await Uploads.get(config)
+
+          Promise.all(result.result.map(async (ele, key) => {
+               var id = ele.created_by
+               var user = await CoreUsers.getRecord({ id })
+               return {
+                    ...ele,
+                    created_by_details: user.result
+               }
+          })).then((arr) => {
+               console.log(arr)
+               setCheckUpData(arr)
+               setLoading(false)
           })
+
      }
 
-     function getAnalysisResult(id=16){
-         
-          Uploads.getRecord({id}).then((res)=>{
+     /**
+      * get upload records along with upload details with  the same id
+      * @param {*} id 
+      */
+     function getAnalysisResult(id = 16) {
+          var config = {
+               queries: [{
+                    field: 'id',
+                    value: id
+               }
+
+               ],
+               includes: 'upload_details'
+          }
+
+          Uploads.get(config).then((res) => {
                console.log(res)
           })
      }
+
 
      /**
       * Open menu with additional options
@@ -180,6 +224,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           </Menu>
      );
 
+
+
      function handleClick(params) {
           if (params.key === 'analysis_details')
                Location.navigate({
@@ -188,6 +234,10 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
      }
      var analysisColumns = []
 
+
+     /**
+      * columns for analysis result menu
+      */
      if (analysisResult) {
           columns.forEach((ele) => {
 
@@ -196,8 +246,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                }
           })
      }
-
-     console.log(analysisColumns)
 
      /**
       * Set Modal visible for update consent
@@ -320,8 +368,14 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
       * Function to download
       */
 
-     function Download() {
-
+     function download() {
+          var formBody = {
+               values: {
+                    id: '17',
+                    type: 'download'
+               }
+          }
+          UserLogs.add(formBody)
      }
 
      function uploadModal() {
@@ -333,6 +387,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                {analysisResult ? <Title level={3}>ANALYSIS RESULTS DATA</Title> : <Title level={3}>CHECK UP DATA</Title>}
 
+
                {!analysisResult && ffmenu ? null :
 
                     <div className='upload-list'>
@@ -343,31 +398,32 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          </Button>
 
                     </div>}
-               {analysisResult ?
-                    <Table
-                         scroll={{ x: true }}
-                         //  rowKey={(record) => record.da_id}
-                         dataSource={checkUpData}
-                         columns={analysisColumns}
-                    // pagination={{
-                    //     current: page,
-                    //     onChange(current) {
-                    //         setPage(current);
-                    //     },
-                    // }}
-                    /> :
-                    <Table
-                         scroll={{ x: true }}
-                         //  rowKey={(record) => record.da_id}
-                         dataSource={checkUpData}
-                         columns={columns}
-                    // pagination={{
-                    //     current: page,
-                    //     onChange(current) {
-                    //         setPage(current);
-                    //     },
-                    // }}
-                    />}
+               {loading ? <Skeleton /> :
+                    (analysisResult ?
+                         <Table
+                              scroll={{ x: true }}
+                              //  rowKey={(record) => record.da_id}
+                              dataSource={checkUpData}
+                              columns={analysisColumns}
+                         // pagination={{
+                         //     current: page,
+                         //     onChange(current) {
+                         //         setPage(current);
+                         //     },
+                         // }}
+                         /> :
+                         <Table
+                              scroll={{ x: true }}
+                              //  rowKey={(record) => record.da_id}
+                              dataSource={checkUpData}
+                              columns={columns}
+                         // pagination={{
+                         //     current: page,
+                         //     onChange(current) {
+                         //         setPage(current);
+                         //     },
+                         // }}
+                         />)};
 
                <Modal
                     destroyOnClose={true}
@@ -408,6 +464,12 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
 
 function UploadConsent({ analysisResult }) {
+
+     const [checkupFile, setCheckUpFile] = useState([])
+
+     function submit() {
+          Uploads.addFile(checkupFile)
+     }
      return (
           <div>
                <Title level={5}>Title</Title>
@@ -416,7 +478,7 @@ function UploadConsent({ analysisResult }) {
                     <div>
                          <Title level={5}>Analysis Result</Title>
 
-                         <FileUpload>
+                         <FileUpload >
                               <Button size={'small'} icon={<UploadOutlined />}>
                                    Upload
                               </Button>
@@ -428,11 +490,12 @@ function UploadConsent({ analysisResult }) {
 
                               <Title level={5}>Consent Data</Title>
 
-                              <FileUpload>
+                              <FileUpload setCheckUpFile={setCheckUpFile} mode='data'>
                                    <Button size={'small'} icon={<UploadOutlined />}>
                                         Upload
                                    </Button>
                               </FileUpload>
+
 
                          </div>
 
@@ -445,7 +508,10 @@ function UploadConsent({ analysisResult }) {
                                    </Button>
                               </FileUpload>
                          </div>
+                         <Button onClick={submit}>submit</Button>
+
                     </>
+
                }
 
           </div>

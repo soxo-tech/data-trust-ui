@@ -161,7 +161,7 @@ export default function ConsentHistory() {
                               queries
                     }
                     UploadDetails.get(config).then(result => {
-                              setConsentHistory(result.result)
+                              // setConsentHistory(result.result)
                     })
           }
 
