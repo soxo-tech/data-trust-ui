@@ -132,17 +132,17 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                }
 
-               function toDownload(){
-                    var formBody={
-                         mode:mode,
-                         type:'download',
-                         upload_details_id:ele.id,
-                         uuid:ele.uuid,
-                         hash:ele.hash,
-                         pseudonymous_nura_id:ele.pseudonymous_nura_id,
-                         order_date:ele.order_date,
-                         file_path:ele.file_path,
-                         upload_id:ele.upload_id
+               function toDownload() {
+                    var formBody = {
+                         mode: mode,
+                         type: 'download',
+                         upload_details_id: ele.id,
+                         uuid: ele.uuid,
+                         hash: ele.hash,
+                         pseudonymous_nura_id: ele.pseudonymous_nura_id,
+                         order_date: ele.order_date,
+                         file_path: ele.file_path,
+                         upload_id: ele.upload_id
 
                     }
                     UserLogs.add(formBody)
@@ -153,7 +153,9 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          <div style={{ display: 'flex' }}>
                               <Button onClick={toUpdate}>Delete</Button>
                               <Button onClick={toDownload}>Download</Button>
-                              <Dropdown overlay={menu} placement="bottomLeft">
+                              <Dropdown overlay={() => {
+                                   return menu(ele)
+                              }} placement="bottomLeft">
 
                                    <MoreOutlined />
 
@@ -169,7 +171,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           },
      },)
 
-     useEffect( () => {
+     useEffect(() => {
           getData();
           getAnalysisResult();
      }, [])
@@ -230,22 +232,28 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
      /**
       * Open menu with additional options
       */
-     const menu = (
-          <Menu onClick={handleClick}>
-               <Menu.Item key="analysis_details" >
-                    Analysis Details
-               </Menu.Item>
+     const menu = (record) => {
+          return (
+               <Menu onClick={(event) => {
+
+                    handleClick(event, record);
+
+               }}>
+                    <Menu.Item key="analysis_details" >
+                         Analysis Details
+                    </Menu.Item>
 
 
-          </Menu>
-     );
+               </Menu>
+          )
+     }
 
 
 
-     function handleClick(params) {
+     function handleClick(params,record) {
           if (params.key === 'analysis_details')
                Location.navigate({
-                    url: `/analysis-result-details`,
+                    url: `/analysis-result-details/${record.id}`,
                });
      }
      var analysisColumns = []
