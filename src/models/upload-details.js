@@ -34,6 +34,12 @@ class UploadDetail extends BaseAPI {
 
     }
 
+    getConsent(nuraId) {
+
+        return ApiUtils.get({url:`upload_details/get-consent/${nuraId}`})
+
+    }
+
 }
 
 

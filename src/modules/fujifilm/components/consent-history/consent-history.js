@@ -8,34 +8,36 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, } from 'antd';
+import { Table, Button, Typography, Skeleton, } from 'antd';
 
 import { Location, Card } from 'sx-bootstrap-core';
 
 import ConsentDetails from '../consent-details/consent-details';
 
-import './consent-history.scss'
+import './consent-history.scss';
+
+import moment from 'moment';
 
 import { UploadDetails } from '../../../../models';
 
 const { Title, Text } = Typography;
 
-export default function ConsentHistory() {
+export default function ConsentHistory({ ...props }) {
 
-    const [consentHistory, setConsentHistory] = useState([{
-        id: '',
-        time: '',
-        lifetime: '',
-        items: '',
-
-    }])
+    const [consentHistory, setConsentHistory] = useState([])
 
     const [page, setPage] = useState(1);
 
     const [limit, setLimit] = useState(20);
 
+
+    const { id } = props.match.params;
+
     //ffmenu is maintaine to determine which user is using(nura or fujifilm)
     const [ffmenu, setFFmenu] = useState(false)
+
+    const [loading, setLoading] = useState(true)
+
 
     const columns = [
         {
@@ -48,22 +50,40 @@ export default function ConsentHistory() {
         {
             title: 'Consent ID',
             key: 'id',
-            dataIndex: 'id'
+            render: (record) => {
+
+                return record.upload_details[0].id
+
+            }
         },
         {
             title: 'Consent Time',
             key: 'time',
-            dataIndex: 'time'
+            render: (record) => {
+
+                return moment(record.upload_details[0].created_at).format('DD/MM/YYYY')
+
+            }
         },
         {
             title: 'Lifetime',
             key: 'lifetime',
-            dataIndex: 'lifetime'
+            render: (record) => {
+
+                const attributes = JSON.parse(record.upload_details[0].attributes)
+
+                return attributes.lifetime_type;
+            }
         },
         {
             title: 'Items',
             key: 'items',
-            dataIndex: 'items'
+            render: (record) => {
+
+                const attributes = JSON.parse(record.upload_details[0].attributes)
+
+                return attributes.items;
+            }
         },
 
 
@@ -75,7 +95,11 @@ export default function ConsentHistory() {
             {
                 title: 'Registration Date',
                 key: 'regDate',
-                dataIndex: 'regDate'
+                render: (record) => {
+
+                    return moment(record.upload_details[0].order_date).format('DD/MM/YYYY')
+
+                }
             },
             {
                 title: 'Last Download',
@@ -95,11 +119,11 @@ export default function ConsentHistory() {
             title: 'Action',
             key: 'action',
             render: (ele) => {
-                
+
                 function toDownloadHistory() {
 
                     Location.navigate({
-                        url: `/checkup-list/downloads-history`,
+                        url: `/checkup-list/downloads-history/${id}`,
                     });
 
                 }
@@ -107,7 +131,7 @@ export default function ConsentHistory() {
                 function toDerivedAnalysis() {
 
                     Location.navigate({
-                        url: `/checkup-list/derived-analysis`,
+                        url: `/checkup-list/derived-analysis/${id}`,
                     });
 
                 }
@@ -148,63 +172,52 @@ export default function ConsentHistory() {
     function getData() {
 
 
-        const queries = [{
-            field: 'psuedonymous_nura_id',
-            value: 16
-        },
-        {
-            field: 'hash',
-            value: 'consent'
-        },
-        ]
-
-        var config = {
-            queries
-        }
-        UploadDetails.get(config).then(result => {
-            // setConsentHistory(result.result)
+        UploadDetails.getConsent(id).then(result => {
+            setConsentHistory(result.uploadsWithConsent)
+            setLoading(false)
         })
     }
 
-
-
     return (
-        <div>
-            <Title level={3}>Consent History</Title>
+        loading ? <Skeleton /> :
+            <>
+                <div>
+                    <Title level={3}>Consent History</Title>
 
-            <div className='consent-history'>
+                    <div className='consent-history'>
 
 
 
-                <Card className={'history'}>
-                    <Title level={5}>Nura ID</Title>
+                        <Card className={'history'}>
+                            <Title level={5}>Nura ID : {id}</Title>
 
-                    <div className='history-table'>
-                        <p>REGISTRATION NUMBER</p>
-                        <p> 23/06/2022</p>
+                            <div className='history-table'>
+                                <p>REGISTRATION NUMBER</p>
+                                <p> {consentHistory && consentHistory[0]&&consentHistory[0].upload_details ?consentHistory[0].upload_details[0].order_date:null}</p>
+                            </div>
+
+                            <Table
+                                scroll={{ x: true }}
+                                //  rowKey={(record) => record.da_id}
+                                dataSource={consentHistory}
+                                columns={columns}
+                            // pagination={{
+                            //     current: page,
+                            //     onChange(current) {
+                            //         setPage(current);
+                            //     },
+                            // }}
+                            />
+                        </Card>
+                        {ffmenu ? null :
+                            <Card className={'details'}>
+                                <ConsentDetails />
+                            </Card>}
+
+
                     </div>
-
-                    <Table
-                        scroll={{ x: true }}
-                        //  rowKey={(record) => record.da_id}
-                        dataSource={consentHistory}
-                        columns={columns}
-                    // pagination={{
-                    //     current: page,
-                    //     onChange(current) {
-                    //         setPage(current);
-                    //     },
-                    // }}
-                    />
-                </Card>
-                {ffmenu ? null :
-                    <Card className={'details'}>
-                        <ConsentDetails />
-                    </Card>}
-
-
-            </div>
-        </div>
+                </div>
+            </>
 
 
     )
