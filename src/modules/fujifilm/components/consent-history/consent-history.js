@@ -209,10 +209,10 @@ export default function ConsentHistory({ ...props }) {
                             // }}
                             />
                         </Card>
-                        {ffmenu ? null :
+                        {/* {ffmenu ? null :
                             <Card className={'details'}>
                                 <ConsentDetails />
-                            </Card>}
+                            </Card>} */}
 
 
                     </div>

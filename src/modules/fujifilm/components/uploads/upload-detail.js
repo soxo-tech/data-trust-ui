@@ -147,7 +147,9 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                         ffmenu
                                                                 ?
 
-                                                                <Dropdown overlay={menu} placement="bottomLeft">
+                                                                <Dropdown overlay={() => {
+                                                                        return menu(record)
+                                                                }} placement="bottomLeft">
                                                                         {/* <Button size="small"> */}
                                                                         <MoreOutlined />
                                                                         {/* </Button> */}
@@ -208,7 +210,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         {
                                 title: 'Action',
                                 key: 'action',
-                                render: (ele) => {
+                                render: (record) => {
 
 
 
@@ -223,13 +225,21 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                 <div>
 
                                                         <Button onClick={download}>Download</Button>
-                                                        {ffmenu ?
-                                                                <Dropdown overlay={menu} placement="bottomLeft">
-                                                                        {/* <Button size="small"> */}
-                                                                        <MoreOutlined />
-                                                                        {/* </Button> */}
-                                                                </Dropdown> : <Button onClick={toConsentHistory}> Consent History</Button>}
 
+                                                        {
+                                                                ffmenu
+                                                                        ?
+                                                                        <Dropdown overlay={menu} placement="bottomLeft">
+                                                                                {/* <Button size="small"> */}
+                                                                                <MoreOutlined />
+                                                                                {/* </Button> */}
+                                                                        </Dropdown>
+                                                                        :
+
+                                                                        <Button onClick={toConsentHistory}>
+                                                                                Consent History
+                                                                        </Button>
+                                                        }
 
                                                 </div>
                                         )
@@ -273,42 +283,58 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         /**
          * Menu for additional options
          */
-        const menu = (
-                <Menu onClick={handleClick}>
+        const menu = (record) => {
+
+                return (<Menu onClick={(event) => {
+
+                        handleClick(event, record);
+
+                }}>
                         <Menu.Item key="download_history" >
                                 Download History
                         </Menu.Item>
-                        {analysisResult ? null : <>
 
-                                <Menu.Item key="consent_history" >
-                                        Consent History
-                                </Menu.Item>
+                        {/* For Analysis Result Menu */}
+                        {
+                                analysisResult ? null : <>
 
-                                <Menu.Item key="result_analysis" >
-                                        Result Analysis
-                                </Menu.Item>
-                        </>}
-                </Menu>
-        );
+                                        <Menu.Item key="consent_history" >
+                                                Consent History
+                                        </Menu.Item>
 
-        function handleClick(params) {
+                                        <Menu.Item key="result_analysis" >
+                                                Result Analysis
+                                        </Menu.Item>
+                                </>
+                        }
+                        {/* For Analysis Result Menu */}
+
+                </Menu>)
+
+        };
+
+        /**
+         * 
+         * @param {*} params 
+         */
+        function handleClick(params, record) {
                 if (params.key === 'download_history') {
                         if (analysisResult) {
                                 setVisible(true)
                         }
                         else {
                                 Location.navigate({
-                                        url: `/checkup-list/downloads-history`,
+                                        url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}`,
                                 });
                         }
                 }
                 else if (params.key === 'consent_history')
                         Location.navigate({
-                                url: `/checkup-list/update-consent`,
+                                url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}`,
                         });
                 else if (params.key === 'result_analysis')
                         Location.navigate({
-                                url: `/checkup-list/derived-analysis`,
+                                url: `/checkup-list/derived-analysis/${record.psuedonymous_nura_id}`,
                         });
         }
 
