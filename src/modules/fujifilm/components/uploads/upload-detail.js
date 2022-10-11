@@ -44,7 +44,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
         const [visible, setVisible] = useState(false);
 
-        const { id } = props.match.params; 
+        const { id } = props.match.params;
 
         var columns = [
                 {
@@ -62,7 +62,10 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 {
                         title: 'Registration Date',
                         key: 'title',
-                        dataIndex: 'order_date'
+                        render: (record) => {
+                                return moment(record.order_date).format('DD/MM/YYYY')
+
+                        }
                 },
                 {
                         title: 'Consent ID',
@@ -79,7 +82,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         // dataIndex: 'date',
                         render: (record) => {
 
-                                return record.created_at
+                                return moment(record.created_at).format('DD/MM/YYYY hh:mm A')
 
                         }
                 },
@@ -102,11 +105,11 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 // dataIndex: 'time',
                 render: (record) => {
 
-                        if(record.attributes){
+                        if (record.attributes) {
 
-                        const attributes = JSON.parse(record.attributes)
+                                const attributes = JSON.parse(record.attributes)
 
-                        return attributes.lifetime_type;
+                                return attributes.lifetime_type;
                         }
                 }
         },
@@ -117,10 +120,10 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         render: (record) => {
 
 
-                                if(record.attributes){
-                                const attributes = JSON.parse(record.attributes)
+                                if (record.attributes) {
+                                        const attributes = JSON.parse(record.attributes)
 
-                                return attributes.items;
+                                        return attributes.items;
                                 }
                         }
                 },
@@ -138,25 +141,26 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                                 return (
                                         <div>
+                                                <div style={{ display: 'flex' }}>
+                                                        <Button onClick={download}>Download</Button>
 
-                                                <Button onClick={download}>Download</Button>
+                                                        {
+                                                                ffmenu
+                                                                        ?
 
-                                                {
-                                                        ffmenu
-                                                                ?
-
-                                                                <Dropdown overlay={() => {
-                                                                        return menu(record)
-                                                                }} placement="bottomLeft">
-                                                                        {/* <Button size="small"> */}
-                                                                        <MoreOutlined />
-                                                                        {/* </Button> */}
-                                                                </Dropdown>
-                                                                :
-                                                                <Button onClick={toConsentHistory}>
-                                                                        Consent History
-                                                                </Button>
-                                                }
+                                                                        <Dropdown overlay={() => {
+                                                                                return menu(record)
+                                                                        }} placement="bottomLeft">
+                                                                                {/* <Button size="small"> */}
+                                                                                <MoreOutlined />
+                                                                                {/* </Button> */}
+                                                                        </Dropdown>
+                                                                        :
+                                                                        <Button onClick={toConsentHistory}>
+                                                                                Consent History
+                                                                        </Button>
+                                                        }
+                                                </div>
 
                                         </div>
                                 )
@@ -187,7 +191,10 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         {
                                 title: 'Registration Date',
                                 key: 'title',
-                                dataIndex: 'order_date'
+                                render: (record) => {
+                                        return moment(record.order_date).format('DD/MM/YYYY')
+        
+                                }
                         },
                         {
                                 title: 'Consent ID',
@@ -342,10 +349,10 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                         }]
                 }
-               await UserLogs.get(config).then((result)=>{
+                await UserLogs.get(config).then((result) => {
                         setDownloadHistory({
                                 ...record,
-                                download:result.result
+                                download: result.result
                         })
                 })
 
@@ -358,7 +365,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         async function handleClick(params, record) {
                 if (params.key === 'download_history') {
                         if (analysisResult) {
-                               
+
                                 await getDownloadHistory(record)
                                 setVisible(true)
                         }
@@ -437,7 +444,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                                 setVisible(false);
                                                         }}
                                                 >
-                                                        <DownloadHistory data={downloadHistory}/>
+                                                        <DownloadHistory data={downloadHistory} />
 
                                                 </Modal>
 
@@ -449,7 +456,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         )
 }
 
-function DownloadHistory({data}) {
+function DownloadHistory({ data }) {
 
         const [page, setPage] = useState(1);
 

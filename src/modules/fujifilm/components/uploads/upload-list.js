@@ -90,7 +90,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                title: 'Uploaded By',
                key: 'by',
                render: (record) => {
-                    console.log(record)
+     
                     return (
                          <span>
                               {record && record.created_by ? record.created_by_details['name'] : null}

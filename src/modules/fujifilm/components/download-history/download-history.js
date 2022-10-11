@@ -11,22 +11,17 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Modal, Upload, message } from 'antd';
+import { Table, Button, Typography, Modal, Upload, message, Skeleton } from 'antd';
 
 import { Location, ReferenceSelect, InputComponent, Card } from 'sx-bootstrap-core';
 
 import ConsentDetails from '../consent-details/consent-details';
+import { UserLogs, CoreUsers } from '../../../../models';
 
 const { Title, Text } = Typography;
 
-export default function DownloadHistory() {
-          const [downloadHistory, setDownloadHistory] = useState([{
-                    user: '',
-                    last: '',
-                    discarded: '',
-
-
-          }])
+export default function DownloadHistory({ ...props }) {
+          const [downloadHistory, setDownloadHistory] = useState([])
 
           const [page, setPage] = useState(1);
 
@@ -34,6 +29,12 @@ export default function DownloadHistory() {
 
           //ffmenu is maintaine to determine which user is using(nura or fujifilm)
           const [ffmenu, setFFmenu] = useState(false)
+
+          const [loading, setLoading] = useState(true)
+
+          const { id } = props.match.params;
+
+
 
           var columns = []
 
@@ -93,7 +94,11 @@ export default function DownloadHistory() {
                               {
                                         title: 'Downloaded User',
                                         key: 'user',
-                                        dataIndex: 'user'
+                                        render: (record) => {
+
+                                                  return record.created_by_details['name']
+
+                                        }
                               },
                               {
                                         title: 'Last Download',
@@ -109,55 +114,92 @@ export default function DownloadHistory() {
                     ]
           }
 
+          useEffect(() => {
+                    getData();
+
+          }, [])
+
+          /**
+     * Function to load the data for screen
+     */
+          async function getData() {
+                    var config = {
+                              queries: [{
+                                        field: 'type',
+                                        value: 'download'
+                              },
+                              {
+                                        field: 'upload_details_id',
+                                        value: id
+
+                              }]
+                    }
+                    var result = await UserLogs.get(config)
+                    Promise.all(result.result.map(async (ele, key) => {
+                              var id = ele.created_by
+                              var user = await CoreUsers.getRecord({ id })
+                              return {
+                                        ...ele,
+                                        created_by_details: user.result
+                              }
+                    })).then((arr) => {
+                              console.log(arr)
+                              setDownloadHistory(arr)
+                              setLoading(false)
+                    })
+
+          }
+
 
 
           return (
 
                     <div className='consent-history'>
+                              {loading ? <Skeleton /> : <>
 
-                              <Card className={'history'}>
+                                        <Card className={'history'}>
 
 
-                                        <div className='history-table'>
-                                                  <div>
-                                                            <Title level={5}>Nura ID</Title>
-                                                            <p>REGISTRATION NUMBER</p>
+                                                  <div className='history-table'>
+                                                            <div>
+                                                                      <Title level={5}>Nura ID</Title>
+                                                                      <p>{downloadHistory[0]&&downloadHistory[0].pseudonymous_nura_id?downloadHistory[0].pseudonymous_nura_id:null}</p>
+                                                            </div>
+                                                            <div>
+                                                                      <Title level={5}>Registration Date</Title>
+                                                                      <p>{downloadHistory[0]&&downloadHistory[0].order_date?downloadHistory[0].order_date:null}</p>
+                                                            </div>
+                                                            <div>
+                                                                      <Title level={5}>Consent ID</Title>
+                                                                      <p>{downloadHistory[0]&&downloadHistory[0].upload_details_id?downloadHistory[0].upload_details_id:null}</p>
+                                                            </div>
+                                                            <div>
+                                                                      <Title level={5}>Consent Status</Title>
+                                                                      <p>Updated</p>
+                                                            </div>
+
+
                                                   </div>
-                                                  <div>
-                                                            <Title level={5}>Registration Date</Title>
-                                                            <p>23/03/2022</p>
-                                                  </div>
-                                                  <div>
-                                                            <Title level={5}>Consent ID</Title>
-                                                            <p>2500</p>
-                                                  </div>
-                                                  <div>
-                                                            <Title level={5}>Consent Status</Title>
-                                                            <p>Updated</p>
-                                                  </div>
 
+                                                  <Table
+                                                            scroll={{ x: true }}
+                                                            //  rowKey={(record) => record.da_id}
+                                                            dataSource={downloadHistory}
+                                                            columns={columns}
+                                                  // pagination={{
+                                                  //     current: page,
+                                                  //     onChange(current) {
+                                                  //         setPage(current);
+                                                  //     },
+                                                  // }}
+                                                  />
+                                        </Card>
+                                        {ffmenu ? null :
+                                                  <Card className={'details'}>
+                                                            <ConsentDetails />
+                                                  </Card>}
 
-                                        </div>
-
-                                        <Table
-                                                  scroll={{ x: true }}
-                                                  //  rowKey={(record) => record.da_id}
-                                                  dataSource={downloadHistory}
-                                                  columns={columns}
-                                        // pagination={{
-                                        //     current: page,
-                                        //     onChange(current) {
-                                        //         setPage(current);
-                                        //     },
-                                        // }}
-                                        />
-                              </Card>
-                              {ffmenu ? null :
-                                        <Card className={'details'}>
-                                                  <ConsentDetails />
-                                        </Card>}
-
-
+                              </>}
                     </div>
 
 
