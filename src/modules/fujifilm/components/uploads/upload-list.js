@@ -435,7 +435,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          //         setPage(current);
                          //     },
                          // }}
-                         />)};
+                         />)}
 
                <Modal
                     destroyOnClose={true}

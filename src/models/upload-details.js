@@ -40,6 +40,12 @@ class UploadDetail extends BaseAPI {
 
     }
 
+    loadDetails(nuraId) {
+
+        return ApiUtils.get({url:`upload_details/load-details/${nuraId}`})
+
+    }
+
 }
 
 
