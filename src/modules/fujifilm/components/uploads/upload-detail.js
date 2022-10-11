@@ -134,7 +134,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 function toConsentHistory() {
 
                                         Location.navigate({
-                                                url: `/checkup-list/update-consent/${record.id}`,
+                                                url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}`,
                                         });
                                 }
 
