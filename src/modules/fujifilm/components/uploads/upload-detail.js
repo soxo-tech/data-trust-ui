@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Input, Dropdown, Menu, Modal } from 'antd';
+import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton } from 'antd';
 
 import { Location, ReferenceSelect, InputComponent, Card } from 'sx-bootstrap-core';
 
@@ -26,9 +26,12 @@ const { Title, Text } = Typography;
 
 const { Search } = Input;
 
-
-
 export default function UploadDetailComponent({ analysisResult, ffmenu, caption, ...props }) {
+
+        const [uploads, setUploads] = useState({});
+
+        const [loading, setLoading] = useState(false);
+
         const [details, setDetails] = useState([
                 {
                         id: '',
@@ -61,22 +64,32 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 {
                         title: 'Nura ID',
                         key: 'id',
-                        dataIndex: 'id'
+                        dataIndex: 'psuedonymous_nura_id'
                 },
                 {
                         title: 'Registration Date',
                         key: 'title',
-                        dataIndex: 'title'
+                        dataIndex: 'order_date'
                 },
                 {
                         title: 'Consent ID',
                         key: 'No of records',
-                        dataIndex: 'Number'
+                        // dataIndex: 'Number',
+                        render: (record) => {
+
+                                return record.consent.id
+
+                        }
                 },
                 {
                         title: 'Consent Time',
                         key: 'date',
-                        dataIndex: 'date'
+                        // dataIndex: 'date',
+                        render: (record) => {
+
+                                return record.consent.created_at
+
+                        }
                 },
 
         ]
@@ -90,41 +103,60 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 })
         }
 
+        // 
         columns.push({
                 title: 'Lifetime',
                 key: 'time',
-                dataIndex: 'time'
+                // dataIndex: 'time',
+                render: (record) => {
+
+                        const attributes = JSON.parse(record.consent.attributes)
+
+                        return attributes.lifetime_type;
+                }
         },
                 {
                         title: 'Items',
                         key: 'by',
-                        dataIndex: 'by'
+                        // dataIndex: 'by',
+                        render: (record) => {
+
+                                const attributes = JSON.parse(record.consent.attributes)
+
+                                return attributes.items;
+                        }
                 },
                 {
                         title: 'Action',
                         key: 'action',
-                        render: (ele) => {
-
-
+                        render: (record) => {
 
                                 function toConsentHistory() {
 
                                         Location.navigate({
-                                                url: `/checkup-list/update-consent`,
+                                                url: `/checkup-list/update-consent/${record.id}`,
                                         });
-
                                 }
+
                                 return (
                                         <div>
 
                                                 <Button onClick={download}>Download</Button>
-                                                {ffmenu ?
-                                                        <Dropdown overlay={menu} placement="bottomLeft">
-                                                                {/* <Button size="small"> */}
-                                                                <MoreOutlined />
-                                                                {/* </Button> */}
-                                                        </Dropdown> : <Button onClick={toConsentHistory}> Consent History</Button>}
 
+                                                {
+                                                        ffmenu
+                                                                ?
+
+                                                                <Dropdown overlay={menu} placement="bottomLeft">
+                                                                        {/* <Button size="small"> */}
+                                                                        <MoreOutlined />
+                                                                        {/* </Button> */}
+                                                                </Dropdown>
+                                                                :
+                                                                <Button onClick={toConsentHistory}>
+                                                                        Consent History
+                                                                </Button>
+                                                }
 
                                         </div>
                                 )
@@ -212,23 +244,23 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
         }, [])
 
+        /**
+         * Function to load the data for screen
+         */
         function getData() {
 
+                setLoading(true);
 
-                const queries = [{
-                        field: 'upload_id',
-                        value: id
-                }]
-
-                var config = {
-                        queries
-                }
-                UploadDetails.get(config).then(result => {
+                UploadDetails.getDetails(id).then(result => {
                         // setDetails(result.result)
                         console.log(result)
+
+                        setUploads(result);
+
+                        setLoading(false);
+
                 })
         }
-
 
         /**
          * function for download
@@ -290,50 +322,61 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
         return (
                 <div>
-                        <Title level={3}>{caption}</Title>
-                        <Card>
-                                <Title level={4}>
-                                        May 2022 Examinees
-                                </Title>
-                                <div className='detail-header'>
-                                        <p>ID :100910</p>
-                                        <Search
-                                                placeholder="Enter Search Value"
-                                                allowClear
-                                                style={{ width: '25%', marginTop: '10px', marginBottom: '20px' }}
-                                                onChange={onSearch}
-                                        />
-                                </div>
-                                <Table
-                                        scroll={{ x: true }}
-                                        //  rowKey={(record) => record.da_id}
-                                        dataSource={details}
-                                        columns={columns}
-                                // pagination={{
-                                //     current: page,
-                                //     onChange(current) {
-                                //         setPage(current);
-                                //     },
-                                // }}
-                                />
-                        </Card>
 
-                        <Modal
-                                destroyOnClose={true}
-                                footer={null}
-                                title="Download History"
-                                visible={visible}
-                                okText="Okay"
-                                onOk={() => {
-                                        setVisible(false);
-                                }}
-                                onCancel={() => {
-                                        setVisible(false);
-                                }}
-                        >
-                                <DownloadHistory />
+                        {
+                                loading
+                                        ?
+                                        <Skeleton />
+                                        :
+                                        <>
 
-                        </Modal>
+                                                <Title level={3}>{caption}</Title>
+                                                <Card>
+                                                        <Title level={4}>
+                                                                {uploads.title}
+                                                        </Title>
+                                                        <div className='detail-header'>
+                                                                <p>ID :{uploads.id}</p>
+                                                                <Search
+                                                                        placeholder="Enter Search Value"
+                                                                        allowClear
+                                                                        style={{ width: '25%', marginTop: '10px', marginBottom: '20px' }}
+                                                                        onChange={onSearch}
+                                                                />
+                                                        </div>
+                                                        <Table
+                                                                scroll={{ x: true }}
+                                                                //  rowKey={(record) => record.da_id}
+                                                                dataSource={uploads.upload_details}
+                                                                columns={columns}
+                                                        // pagination={{
+                                                        //     current: page,
+                                                        //     onChange(current) {
+                                                        //         setPage(current);
+                                                        //     },
+                                                        // }}
+                                                        />
+                                                </Card>
+
+                                                <Modal
+                                                        destroyOnClose={true}
+                                                        footer={null}
+                                                        title="Download History"
+                                                        visible={visible}
+                                                        okText="Okay"
+                                                        onOk={() => {
+                                                                setVisible(false);
+                                                        }}
+                                                        onCancel={() => {
+                                                                setVisible(false);
+                                                        }}
+                                                >
+                                                        <DownloadHistory />
+
+                                                </Modal>
+
+                                        </>}
+
                 </div>
 
 

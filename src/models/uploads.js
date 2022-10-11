@@ -7,31 +7,29 @@
  */
 
 
-import { BaseAPI } from "@soxo/bootstrap-core";
+import { BaseAPI } from "sx-bootstrap-core";
 
-import {ApiUtils} from "@soxo/bootstrap-core";
+import { ApiUtils } from "sx-bootstrap-core";
 
 
 class Upload extends BaseAPI {
 
 
-          get id() {
-                    return 'id';
-          }
+    get id() {
+        return 'id';
+    }
 
-          get getEndpoint() {
-                    return 'uploads';
-          }
+    get getEndpoint() {
+        return 'uploads';
+    }
 
-          get path() {
-                    return `uploads`;
-          }
+    get path() {
+        return `uploads`;
+    }
 
-          get modelName() {
-                    return `Uploads`;
-          }
-
-
+    get modelName() {
+        return `Uploads`;
+    }
 
 
 }
