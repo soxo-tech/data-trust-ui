@@ -9,7 +9,7 @@
 
 import { BaseAPI } from "sx-bootstrap-core";
 
-import { ApiUtils } from "sx-bootstrap-core";
+import { UploadUtils } from "sx-bootstrap-core";
 
 
 class Upload extends BaseAPI {
@@ -30,6 +30,11 @@ class Upload extends BaseAPI {
     get modelName() {
         return `Uploads`;
     }
+
+    uploadFileContent = (file) => {
+        console.log(file)
+        return UploadUtils('uploads/upload-file',file)
+    };
 
 
 }

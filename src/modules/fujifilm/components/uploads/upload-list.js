@@ -39,6 +39,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      const [files, setFiles] = useState([]);
 
+     const [checkupFile, setCheckUpFile] = useState([])
+
      const [loading, setLoading] = useState(true);
 
      const columns = [
@@ -90,7 +92,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                title: 'Uploaded By',
                key: 'by',
                render: (record) => {
-     
+
                     return (
                          <span>
                               {record && record.created_by ? record.created_by_details['name'] : null}
@@ -250,7 +252,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
 
 
-     function handleClick(params,record) {
+     function handleClick(params, record) {
           if (params.key === 'analysis_details')
                Location.navigate({
                     url: `/analysis-result-details/${record.id}`,
@@ -314,10 +316,12 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           },
           onChange(info) {
 
+               setCheckUpFile(info)
+
                console.log('File Added');
 
                if (info.file.status !== 'uploading') {
-                    console.log(info.file, info.fileList);
+                    console.log(info);
 
                     // setBtnloading(true);
 
@@ -330,6 +334,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                }
           },
           beforeUpload: (file) => {
+               console.log(files)
 
                // setBtnloading(true);
 
@@ -365,13 +370,15 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                     const bstr = e.target.result;
 
-                    const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array' });
+                    // console.log('bstr',bstr)
 
-                    const wsname = wb.SheetNames[0];
+                    // const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array' });
 
-                    const ws = wb.Sheets[wsname];
+                    // const wsname = wb.SheetNames[0];
 
-                    const data = XLSX.utils.sheet_to_json(ws, { header: 0 });
+                    // const ws = wb.Sheets[wsname];
+
+                    // const data = XLSX.utils.sheet_to_json(ws, { header: 0 });
 
                     console.log('Data Retreived');
 
@@ -450,7 +457,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setUploadVisible(false);
                     }}
                >
-                    <UploadConsent analysisResult={analysisResult} />
+                    <UploadConsent analysisResult={analysisResult} uploadProps={uploadProps} file={files} checkupFile={checkupFile} />
                </Modal>
 
                <Modal
@@ -475,12 +482,28 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 }
 
 
-function UploadConsent({ analysisResult }) {
-
-     const [checkupFile, setCheckUpFile] = useState([])
+function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
+     const [consentFile, setConsentFile] = useState({})
+     const [psuedonymizedFile, setPsuedonymizedFile]=useState({})
 
      function submit() {
-          Uploads.addFile(checkupFile)
+         let file={
+          consentFile:consentFile,
+          // psuedonymizedFile:psuedonymizedFile
+         }
+          Uploads.uploadFileContent(file)
+     }
+
+     function handleConsentFile(e) {
+          console.log(e.target.files)
+          let files = e.target.files[0]
+          setConsentFile(files)
+     }
+
+     function handlePsuedonymizedFile(e) {
+          console.log(e.target.files)
+          let files = e.target.files[0]
+          setPsuedonymizedFile(files)
      }
      return (
           <div>
@@ -501,12 +524,16 @@ function UploadConsent({ analysisResult }) {
                          <div>
 
                               <Title level={5}>Consent Data</Title>
+                              
+                              <form>
 
-                              <FileUpload setCheckUpFile={setCheckUpFile} mode='data'>
-                                   <Button size={'small'} icon={<UploadOutlined />}>
-                                        Upload
-                                   </Button>
-                              </FileUpload>
+                                   <label>
+                                        Select File
+                                   </label>
+                                   <br />
+                                   <input type='file' name='file' onChange={(e) => handleConsentFile(e)} />
+                                   <br/>
+                              </form>
 
 
                          </div>
@@ -514,13 +541,15 @@ function UploadConsent({ analysisResult }) {
                          <div>
                               <Title level={5}>Psuedonymized Data</Title>
 
-                              <FileUpload>
-                                   <Button size={'small'} icon={<UploadOutlined />}>
-                                        Upload
-                                   </Button>
-                              </FileUpload>
+                              <label>
+                                   Select File
+                              </label>
+                              <br />
+                              <input type='file' name='file' onChange={(e) => handlePsuedonymizedFile(e)} />
+                              <br/>
                          </div>
-                         <Button onClick={submit}>submit</Button>
+                         <br/>
+                         <Button onClick={submit} >submit</Button>
 
                     </>
 
@@ -534,11 +563,11 @@ function UploadConsent({ analysisResult }) {
 
 /**
  * Component for uploading consent
- * @param {*} SheetJSFT 
- * @param {*} uploadProps 
- * @param {*} files 
- * @returns 
- */
+ * @param {*} SheetJSFT
+                         * @param {*} uploadProps
+                         * @param {*} files
+                         * @returns
+                         */
 
 function UpdateConsent() {
 
