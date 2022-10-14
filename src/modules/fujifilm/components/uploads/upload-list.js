@@ -481,16 +481,20 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
      )
 }
 
-
+/**
+ * Function to upload consent and checkup files
+ * @param {*} param0 
+ * @returns 
+ */
 function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
      const [consentFile, setConsentFile] = useState({})
-     const [psuedonymizedFile, setPsuedonymizedFile]=useState({})
+     const [psuedonymizedFile, setPsuedonymizedFile] = useState({})
 
      function submit() {
-         let file={
-          consentFile:consentFile,
-          // psuedonymizedFile:psuedonymizedFile
-         }
+          let file = {
+               consentFile: consentFile,
+               psuedonymizedFile:psuedonymizedFile
+          }
           Uploads.uploadFileContent(file)
      }
 
@@ -524,31 +528,32 @@ function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
                          <div>
 
                               <Title level={5}>Consent Data</Title>
-                              
-                              <form>
+
+                              <form id='myform'>
 
                                    <label>
                                         Select File
                                    </label>
                                    <br />
-                                   <input type='file' name='file' onChange={(e) => handleConsentFile(e)} />
-                                   <br/>
+                                   <input type='file' name='consentFile' onChange={(e) => handleConsentFile(e)} />
+                                   <br />
+                                   <Title level={5}>Psuedonymized Data</Title>
+
+                                   <label>
+                                        Select File
+                                   </label>
+                                   <br />
+                                   <input type='file' name='psuedonymizedFile' onChange={(e) => handlePsuedonymizedFile(e)} />
+                                   <br />
                               </form>
 
 
                          </div>
 
                          <div>
-                              <Title level={5}>Psuedonymized Data</Title>
 
-                              <label>
-                                   Select File
-                              </label>
-                              <br />
-                              <input type='file' name='file' onChange={(e) => handlePsuedonymizedFile(e)} />
-                              <br/>
                          </div>
-                         <br/>
+                         <br />
                          <Button onClick={submit} >submit</Button>
 
                     </>
