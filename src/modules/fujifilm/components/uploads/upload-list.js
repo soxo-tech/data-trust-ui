@@ -447,7 +447,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                <Modal
                     destroyOnClose={true}
                     footer={null}
-                    title="Upload Consent"
+                    title={analysisResult?"Upload Analysis":"Upload Consent"}
                     visible={uploadVisible}
                     okText="Okay"
                     onOk={() => {
@@ -489,6 +489,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
      const [consentFile, setConsentFile] = useState({})
      const [psuedonymizedFile, setPsuedonymizedFile] = useState({})
+     const [analysisFile, setanalysisFile] = useState({})
 
      function submit() {
           let file = {
@@ -496,6 +497,17 @@ function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
                psuedonymizedFile:psuedonymizedFile
           }
           Uploads.uploadFileContent(file)
+     }
+
+     function submitAnalysis() {
+          let file = {
+               analysisFile: analysisFile,
+          }
+          let body = {
+               // title: title,
+          }
+
+          Uploads.uploadAnalysisFileContent(file,body)
      }
 
      function handleConsentFile(e) {
@@ -509,6 +521,11 @@ function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
           let files = e.target.files[0]
           setPsuedonymizedFile(files)
      }
+     function handleAnalysisFile(e) {
+          console.log(e.target.files)
+          let files = e.target.files[0]
+          setanalysisFile(files)
+     }
      return (
           <div>
                <Title level={5}>Title</Title>
@@ -517,11 +534,19 @@ function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
                     <div>
                          <Title level={5}>Analysis Result</Title>
 
-                         <FileUpload >
-                              <Button size={'small'} icon={<UploadOutlined />}>
-                                   Upload
-                              </Button>
-                         </FileUpload>
+                         <form id='myform'>
+                                   <label>
+                                        Select File
+                                   </label>
+                                   <br />
+                                   <input type='file' name='analysisFile' onChange={(e) => handleAnalysisFile(e)} />
+                                   <br />
+                              </form>
+                          <div>
+
+                         </div>
+                         <br />
+                         <Button onClick={submitAnalysis} >submit</Button>
                     </div> :
                     <>
 
