@@ -457,7 +457,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setUploadVisible(false);
                     }}
                >
-                    <UploadConsent analysisResult={analysisResult} uploadProps={uploadProps} file={files} checkupFile={checkupFile} />
+                    <UploadConsent analysisResult={analysisResult} setVisible={setUploadVisible} />
                </Modal>
 
                <Modal
@@ -486,33 +486,62 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
  * @param {*} param0 
  * @returns 
  */
-function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
+function UploadConsent({ analysisResult, setVisible }) {
+
      const [consentFile, setConsentFile] = useState({})
+
      const [psuedonymizedFile, setPsuedonymizedFile] = useState({})
 
-     function submit() {
+     const [title,setTitle]=useState()
+
+     const [loading,setLoading]=useState(false)
+
+     //Onsumbit of the modal, both files with title is send to backend
+     async function submit() {
+          setLoading(true)
           let file = {
                consentFile: consentFile,
-               psuedonymizedFile:psuedonymizedFile
+               psuedonymizedFile:psuedonymizedFile,
+               title:title
           }
-          Uploads.uploadFileContent(file)
+           Uploads.uploadFileContent(file).then((result)=>{
+               if(result.success){
+               message.success(result.message)
+               setVisible(false)
+               }
+               else{
+                    message.error(result.message)
+               }
+               // setVisible(false)
+               setLoading(false)
+               
+           })
+
      }
 
+
+     //Function when uploading consent file
      function handleConsentFile(e) {
           console.log(e.target.files)
           let files = e.target.files[0]
           setConsentFile(files)
      }
 
+     //Function when uploading psuedonymized file
      function handlePsuedonymizedFile(e) {
           console.log(e.target.files)
           let files = e.target.files[0]
           setPsuedonymizedFile(files)
      }
+
+     //Function for onChange of Title
+     function handleTitle(e) {
+          setTitle(e.target.value)
+     }
      return (
           <div>
                <Title level={5}>Title</Title>
-               <Input></Input>
+               <Input onChange={handleTitle}></Input>
                {analysisResult ?
                     <div>
                          <Title level={5}>Analysis Result</Title>
@@ -554,7 +583,7 @@ function UploadConsent({ analysisResult, uploadProps, files, checkupFile }) {
 
                          </div>
                          <br />
-                         <Button onClick={submit} >submit</Button>
+                         <Button loading={loading}onClick={submit} >submit</Button>
 
                     </>
 
