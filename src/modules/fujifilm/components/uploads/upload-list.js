@@ -492,6 +492,8 @@ function UploadConsent({ analysisResult, setVisible }) {
 
      const [psuedonymizedFile, setPsuedonymizedFile] = useState({})
 
+     const [analysisFile, setAnalysisFile] = useState({})
+
      const [title, setTitle] = useState()
 
      const [loading, setLoading] = useState(false)
@@ -499,12 +501,24 @@ function UploadConsent({ analysisResult, setVisible }) {
      //Onsumbit of the modal, both files with title is send to backend
      async function submit() {
           setLoading(true)
-          let file = {
-               consentFile: consentFile,
-               psuedonymizedFile: psuedonymizedFile,
-               title: title
+          const data = new FormData();
+
+          if (analysisResult) {
+               data.append('analysisFile', analysisFile)
+               data.append('title', title)
           }
-          Uploads.uploadFileContent(file).then((result) => {
+          else {
+
+               data.append("consentFile", consentFile);
+               data.append("psuedonymizedFile", psuedonymizedFile);
+               data.append("title", title);
+          }
+          // let file = {
+          //      consentFile: consentFile,
+          //      psuedonymizedFile: psuedonymizedFile,
+          //      title: title
+          // }
+          Uploads.uploadFileContent(data, analysisResult).then((result) => {
                if (result.success) {
                     message.success(result.message)
                     setVisible(false)
@@ -527,6 +541,12 @@ function UploadConsent({ analysisResult, setVisible }) {
           setConsentFile(files)
      }
 
+     function handleAnalysisFile(e) {
+          console.log(e.target.files)
+          let files = e.target.files[0]
+          setAnalysisFile(files)
+     }
+
      //Function when uploading psuedonymized file
      function handlePsuedonymizedFile(e) {
           console.log(e.target.files)
@@ -546,13 +566,17 @@ function UploadConsent({ analysisResult, setVisible }) {
 
                {analysisResult ?
                     <div>
+                         <br />
                          <Title level={5}>Analysis Result</Title>
 
-                         <FileUpload >
-                              <Button size={'small'} icon={<UploadOutlined />}>
-                                   Upload
-                              </Button>
-                         </FileUpload>
+                         <label>
+                              Select File
+                         </label>
+                         <br />
+
+                         <input type='file' name='consentFile' onChange={(e) => handleAnalysisFile(e)} />
+                         <br />
+                         <br />
                     </div> :
                     <>
 
@@ -590,11 +614,11 @@ function UploadConsent({ analysisResult, setVisible }) {
 
                          </div>
                          <br />
-                         <Button loading={loading} onClick={submit} >Submit</Button>
 
                     </>
 
                }
+               <Button loading={loading} onClick={submit} >Submit</Button>
 
           </div>
 

@@ -31,9 +31,11 @@ class Upload extends BaseAPI {
         return `Uploads`;
     }
 
-    uploadFileContent = (file) => {
-        console.log(file)
-        return UploadUtils('uploads/upload-file',file)
+    uploadFileContent = (file, analysisResult) => {
+        if (analysisResult)
+            return UploadUtils('uploads/upload-analysis-file', file)
+        else
+            return UploadUtils('uploads/upload-file', file)
     };
 
 
