@@ -17,8 +17,6 @@ import { Location, ReferenceSelect, InputComponent, FileUpload, Users } from 'sx
 
 import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
 
-import * as XLSX from 'xlsx/xlsx.mjs';
-
 import moment from 'moment'
 
 import './upload-list.scss';
@@ -281,121 +279,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           setVisible(true)
      }
 
-     const SheetJSFT = [
-          'xlsx',
-          'xlsb',
-          'xlsm',
-          'xls',
-          'xml',
-          'csv',
-          'txt',
-          'ods',
-          'fods',
-          'uos',
-          'sylk',
-          'dif',
-          'dbf',
-          'prn',
-          'qpw',
-          '123',
-          'wb*',
-          'wq*',
-          'html',
-          'htm',
-     ]
-
-     const uploadProps = {
-          onRemove: (file) => {
-               var index = files.indexOf(file);
-
-               var newFileList = files.slice();
-
-               newFileList.splice(index, 1);
-
-               setFiles({ ...newFileList });
-          },
-          onChange(info) {
-
-               setCheckUpFile(info)
-
-               console.log('File Added');
-
-               if (info.file.status !== 'uploading') {
-                    console.log(info);
-
-                    // setBtnloading(true);
-
-                    handleFile(info.file);
-               }
-               if (info.file.status === 'done') {
-                    message.success(`${info.file.name} file uploaded successfully`);
-               } else if (info.file.status === 'error') {
-                    message.error(`${info.file.name} file upload failed.`);
-               }
-          },
-          beforeUpload: (file) => {
-               console.log(files)
-
-               // setBtnloading(true);
-
-               setFiles([...files, file]);
-
-               return false;
-          },
-          files,
-     };
-
-     // Variable to show indicator for loading
-     let hide = null;
-
-
-     /**
-*
-* @param {*} document
-*/
-     function handleFile(document) {
-
-          // Removed
-          if (document.status !== 'removed') {
-               var f = document;
-
-               var reader = new FileReader();
-
-               const rABS = !!reader.readAsBinaryString;
-
-               reader.onload = function (e) {
-
-                    // 
-                    hide = message.loading('Comparing data , Please wait');
-
-                    const bstr = e.target.result;
-
-                    // console.log('bstr',bstr)
-
-                    // const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array' });
-
-                    // const wsname = wb.SheetNames[0];
-
-                    // const ws = wb.Sheets[wsname];
-
-                    // const data = XLSX.utils.sheet_to_json(ws, { header: 0 });
-
-                    console.log('Data Retreived');
-
-                    //         retrieveData(data);
-
-               };
-
-               if (rABS) reader.readAsBinaryString(f);
-               else reader.readAsArrayBuffer(f);
-          } else {
-               setFiles([]);
-
-               // setBtnloading(false);
-
-          }
-     }
-
 
      function uploadModal() {
           setUploadVisible(true)
@@ -457,7 +340,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setUploadVisible(false);
                     }}
                >
-                    <UploadConsent analysisResult={analysisResult} setVisible={setUploadVisible} />
+                    <UploadConsent analysisResult={analysisResult} setVisible={setUploadVisible}  getData={getData}/>
                </Modal>
 
                <Modal
@@ -473,7 +356,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setVisible(false);
                     }}
                >
-                    <UpdateConsent SheetJSFT={SheetJSFT} uploadProps={uploadProps} files={files} />
+                    <UpdateConsent files={files} />
                </Modal>
           </div>
 
@@ -486,7 +369,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
  * @param {*} param0 
  * @returns 
  */
-function UploadConsent({ analysisResult, setVisible }) {
+function UploadConsent({ analysisResult, setVisible,getData}) {
 
      const [consentFile, setConsentFile] = useState({})
 
@@ -527,6 +410,7 @@ function UploadConsent({ analysisResult, setVisible }) {
                     message.error(result.message)
                }
                // setVisible(false)
+               getData()
                setLoading(false)
 
           })
