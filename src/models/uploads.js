@@ -7,9 +7,9 @@
  */
 
 
-import { BaseAPI } from "soxx-bootstrap-core";
+import { BaseAPI } from "soxo-bootstrap-core";
 
-import { UploadUtils } from "soxx-bootstrap-core";
+import { UploadUtils } from "soxo-bootstrap-core";
 
 
 class Upload extends BaseAPI {

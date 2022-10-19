@@ -6,7 +6,7 @@
  *
  */
 
- import {BaseAPI} from "soxx-bootstrap-core";
+ import {BaseAPI} from "soxo-bootstrap-core";
  
  
  class CoreUser extends BaseAPI{
