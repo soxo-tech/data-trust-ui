@@ -6,7 +6,7 @@ import *  as CustomComponents from './modules';
 
 
 
-import { RootApplicationAPI } from 'sx-bootstrap-core';
+import { RootApplicationAPI } from 'soxx-bootstrap-core';
 
 
 // import * as CustomComponents from './modules/'

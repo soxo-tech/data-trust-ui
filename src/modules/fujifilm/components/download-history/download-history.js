@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Modal, Upload, message, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card } from 'sx-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, Card } from 'soxx-bootstrap-core';
 
 import ConsentDetails from '../consent-details/consent-details';
 import { UserLogs, CoreUsers } from '../../../../models';

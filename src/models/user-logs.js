@@ -6,7 +6,7 @@
  *
  */
 
-import { BaseAPI } from "sx-bootstrap-core";
+import { BaseAPI } from "soxx-bootstrap-core";
 
 
 class UserLog extends BaseAPI {
