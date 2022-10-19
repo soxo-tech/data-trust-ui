@@ -1,0 +1,20 @@
+.consent-history{
+          display: flex;
+          width:100%;
+      
+
+          .history{
+
+                    width:100%;
+                    height: auto;
+                    .history-table{
+                              display:flex;
+                              justify-content: space-between;
+                    }
+          }
+          .details{
+                    width:25%;
+                    height: auto;
+          }
+
+}

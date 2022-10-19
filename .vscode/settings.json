@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/b830ad39-f859-4cd1-b95d-e464d433c702/AppServices/subscriptions/b830ad39-f859-4cd1-b95d-e464d433c702/resourceGroups/nura-fuji-resource-group/providers/Microsoft.Web/sites/NURA-UI-APPLICATION",
+    "appService.deploySubpath": "."
+}

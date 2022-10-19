@@ -2,6 +2,9 @@ import React, { useEffect, useContext, useState } from 'react';
 
 import './App.scss';
 
+import *  as CustomComponents from './modules';
+
+
 
 import { RootApplicationAPI } from 'sx-bootstrap-core';
 
@@ -49,7 +52,7 @@ function App(props) {
 
   return (
 
-    <RootApplicationAPI CustomModels={{}} CustomComponents={{}} appSettings={appSettings} />
+    <RootApplicationAPI CustomModels={{}} CustomComponents={CustomComponents} appSettings={appSettings} />
   );
 }
 
