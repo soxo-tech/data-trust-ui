@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, FileUpload, Users } from 'sx-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, FileUpload, Users } from 'soxo-bootstrap-core';
 
 import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
 

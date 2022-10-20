@@ -7,7 +7,7 @@
  */
 
 
-import { BaseAPI } from "sx-bootstrap-core";
+import { BaseAPI } from "soxo-bootstrap-core";
 
 import { UploadUtils, ApiUtils } from "sx-bootstrap-core";
 
