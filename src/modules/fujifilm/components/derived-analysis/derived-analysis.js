@@ -21,7 +21,7 @@ import ConsentDetails from '../consent-details/consent-details';
 
 import { MoreOutlined } from '@ant-design/icons';
 
-import { UploadDetails, CoreUsers } from '../../../../models';
+import { UploadDetails, CoreUsers,Uploads } from '../../../../models';
 
 import moment from 'moment'
 
@@ -143,7 +143,7 @@ export default function DerivedAnalysis({ ...props }) {
                                 return (
                                         <div>
                                                 <div style={{ display: 'flex' }}>
-                                                        <Button onClick={download}>Download</Button>
+                                                        <Button onClick={(e)=>download(e,ele)}>Download</Button>
 
 
                                                         {ffmenu ?
@@ -167,7 +167,14 @@ export default function DerivedAnalysis({ ...props }) {
         /**
          * Function for download
          */
-        function download() {
+        function download(e,record) {
+
+                Uploads.downloadFiles(record.id).then((res) => {
+
+                        Uploads.download(res.data)
+                       
+                        console.log(res)
+                   })
 
         }
 

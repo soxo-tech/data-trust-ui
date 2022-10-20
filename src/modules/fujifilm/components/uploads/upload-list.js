@@ -41,6 +41,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      const [loading, setLoading] = useState(true);
 
+     const [btnLoading, setBtnLoading] = useState(false);
+
      const columns = [
           {
                title: '#',
@@ -120,6 +122,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                },)
      }
 
+
      columns.push({
           title: 'Action',
           key: 'action',
@@ -132,27 +135,13 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                }
 
-               function toDownload() {
-                    var formBody = {
-                         mode: mode,
-                         type: 'download',
-                         upload_details_id: ele.id,
-                         uuid: ele.uuid,
-                         hash: ele.hash,
-                         pseudonymous_nura_id: ele.pseudonymous_nura_id,
-                         order_date: ele.order_date,
-                         file_path: ele.file_path,
-                         upload_id: ele.upload_id
 
-                    }
-                    UserLogs.add(formBody)
-               }
 
                return (
                     analysisResult ?
                          <div style={{ display: 'flex' }}>
-                              <Button onClick={toUpdate}>Delete</Button>
-                              <Button onClick={toDownload}>Download</Button>
+                              <Button onClick={(e)=>deleteRecord(e,ele)}>Delete</Button>
+                              <Button onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
                               <Dropdown overlay={() => {
                                    return menu(ele)
                               }} placement="bottomLeft">
@@ -163,7 +152,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          </div> :
                          <div style={{ display: 'flex' }}>
                               <Button onClick={toUpdate}>Details</Button>
-                              <Button onClick={toDownload}>Download</Button>
+                              <Button  onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
                               {ffmenu ? null : <Button onClick={modalVisible}>Update Consent</Button>}
                          </div>
 
@@ -176,7 +165,20 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           getAnalysisResult();
      }, [])
 
+     async function deleteRecord(e,record){
+          Uploads.delete({id:record.id})
+     }
 
+     async function downloadFiles(e, id) {
+          setBtnLoading(true)
+          const bulk=true
+          Uploads.downloadFiles(id,analysisResult,bulk).then((res) => {
+
+               Uploads.download(res.data)
+               setBtnLoading(false)
+               console.log(res)
+          })
+     }
      /**
       * Get Upload Data from Uploads table, then load user from core_users for each upload records
       */
@@ -340,7 +342,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setUploadVisible(false);
                     }}
                >
-                    <UploadConsent analysisResult={analysisResult} setVisible={setUploadVisible}  getData={getData}/>
+                    <UploadConsent analysisResult={analysisResult} setVisible={setUploadVisible} getData={getData} />
                </Modal>
 
                <Modal
@@ -369,7 +371,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
  * @param {*} param0 
  * @returns 
  */
-function UploadConsent({ analysisResult, setVisible,getData}) {
+function UploadConsent({ analysisResult, setVisible, getData }) {
 
      const [consentFile, setConsentFile] = useState({})
 
@@ -410,7 +412,7 @@ function UploadConsent({ analysisResult, setVisible,getData}) {
                     message.error(result.message)
                }
                // setVisible(false)
-               getData()
+               // getData()
                setLoading(false)
 
           })

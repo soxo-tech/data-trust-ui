@@ -21,7 +21,7 @@ import moment from 'moment'
 
 import './upload-detail.scss'
 
-import { UploadDetails, UserLogs } from '../../../../models';
+import { UploadDetails, UserLogs ,Uploads,CoreUsers} from '../../../../models';
 
 
 const { Title, Text } = Typography;
@@ -142,7 +142,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 return (
                                         <div>
                                                 <div style={{ display: 'flex' }}>
-                                                        <Button onClick={download}>Download</Button>
+                                                        <Button onClick={(e)=>download(e,record)}>Download</Button>
 
                                                         {
                                                                 ffmenu
@@ -192,7 +192,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 title: 'Registration Date',
                                 key: 'title',
                                 render: (record) => {
-                                        return moment(record.order_date).format('DD/MM/YYYY')
+                                        return record.order_date?moment(record.order_date).format('DD/MM/YYYY'):null
         
                                 }
                         },
@@ -220,36 +220,11 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 title: 'Action',
                                 key: 'action',
                                 render: (record) => {
-
-
-
-                                        // function toConsentHistory() {
-
-                                        //         Location.navigate({
-                                        //                 url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}`,
-                                        //         });
-
-                                        // }
-
-                                        function toDownload() {
-                                                // var formBody={
-                                                // //      mode:mode,
-                                                //      type:'download',
-                                                //      upload_details_id:ele.id,
-                                                //      uuid:ele.uuid,
-                                                //      hash:ele.hash,
-                                                //      pseudonymous_nura_id:ele.pseudonymous_nura_id,
-                                                //      order_date:ele.order_date,
-                                                //      file_path:ele.file_path,
-                                                //      upload_id:ele.upload_id
-
-                                                // }
-                                                // UserLogs.add(formBody)
-                                        }
+                                      
                                         return (
                                                 <div>
 
-                                                        <Button onClick={download}>Download</Button>
+                                                        <Button onClick={(e)=>download(e,record)}>Download</Button>
 
 
                                                         <Dropdown overlay={() => {
@@ -295,8 +270,13 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         /**
          * function for download
          */
-        function download() {
+        function download(e,record) {
+                Uploads.downloadFiles(record.id,analysisResult).then((res) => {
 
+                        Uploads.download(res.data)
+                       
+                        console.log(res)
+                   })
         }
 
 
@@ -371,7 +351,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         }
                         else {
                                 Location.navigate({
-                                        url: `/checkup-list/downloads-history/${record.id}`,
+                                        url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}`,
                                 });
                         }
                 }
@@ -462,7 +442,40 @@ function DownloadHistory({ data }) {
 
         const [limit, setLimit] = useState(20);
 
-        const [downloads, setDownloads] = useState([])
+
+        const [downloadHistory, setDownloadHistory] = useState([])
+
+        async function getData() {
+                var config = {
+                          queries: [{
+                                    field: 'type',
+                                    value: 'download'
+                          },
+                          {
+                                    field: 'pseudonymous_nura_id',
+                                    value:data.psuedonymous_nura_id
+
+                          }]
+                }
+                var result = await UserLogs.get(config)
+                Promise.all(result.result.map(async (ele, key) => {
+                          var id = ele.created_by
+                          var user = await CoreUsers.getRecord({ id })
+                          return {
+                                    ...ele,
+                                    created_by_details: user.result
+                          }
+                })).then((arr) => {
+                          console.log(arr)
+                          setDownloadHistory(arr)
+                        //   setLoading(false)
+                })
+
+      }
+
+      useEffect(()=>{
+        getData()
+      },[])
 
         const columns = [
                 {
@@ -491,7 +504,7 @@ function DownloadHistory({ data }) {
                         <Table
                                 scroll={{ x: true }}
                                 //  rowKey={(record) => record.da_id}
-                                dataSource={data.download}
+                                dataSource={downloadHistory}
                                 columns={columns}
                         // pagination={{
                         //     current: page,
