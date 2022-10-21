@@ -84,6 +84,11 @@ class Upload extends BaseAPI {
 
     };
 
+    /**
+     * Download the buffer array from backend
+     * @param {*} data 
+     * @returns 
+     */
     download = (data) => {
         var bytearray = Object.keys(data);
         var arrayelement = Object.values(data);
