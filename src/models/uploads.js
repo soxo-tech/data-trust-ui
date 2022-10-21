@@ -31,33 +31,56 @@ class Upload extends BaseAPI {
         return `Uploads`;
     }
 
+    /**
+     * Function to upload the zip file. The file is send to backend, a summary is created in uploads,upload details and user logs
+     * The file is uploaded to Azure blob storage
+     * @param {*} file 
+     * @param {*} analysisResult 
+     * @returns 
+     */
     uploadFileContent = (file, analysisResult) => {
         if (analysisResult)
+            //To upload Analysis Result
             return UploadUtils('uploads/upload-analysis-file', file)
         else
+            //To upload Check up and Consent
             return UploadUtils('uploads/upload-file', file)
     };
 
+    /**
+     * Function to Update consent 
+     * @param {*} file 
+     * @param {*} analysisResult 
+     * @returns 
+     */
+     updateConsent = (file) => {
+       
+            //To upload Check up and Consent
+            return UploadUtils('uploads/update-consent', file)
+    };
 
-    downloadFiles = (id, analysisResult,bulk) => {
-        if (bulk)
-            if (analysisResult)
-                return ApiUtils.get({
-                    url: `uploads/download?bulk=true&id=${id}&mode=ANALYSIS`,
-                });
-            else
-                return ApiUtils.get({
-                    url: `uploads/download?bulk=true&id=${id}&mode=CHECKUP`,
-                });
+
+    /**
+     * Function to download check up and analysis files. This function is used for both bulk and individual downloads
+     * @param {*} id 
+     * @param {*} analysisResult 
+     * @param {*} bulk 
+     * @returns 
+     */
+    downloadFiles = (id, analysisResult, bulk) => {
+
+        var mode
+
+        if (analysisResult)
+            mode = 'ANALYSIS'
+
         else
-            if (analysisResult)
-                return ApiUtils.get({
-                    url: `uploads/download?id=${id}&mode=ANALYSIS`,
-                });
-            else
-                return ApiUtils.get({
-                    url: `uploads/download?id=${id}&mode=CHECKUP`,
-                });
+            mode = 'CHECKUP'
+
+        return ApiUtils.get({
+            url: `uploads/download?bulk=${bulk}&id=${id}&mode=${mode}`,
+        });
+
 
     };
 

@@ -31,6 +31,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      const [limit, setLimit] = useState(20);
 
+     const [id, setId] = useState();
+
      const [visible, setVisible] = useState(false);
 
      const [uploadVisible, setUploadVisible] = useState(false);
@@ -140,7 +142,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                return (
                     analysisResult ?
                          <div style={{ display: 'flex' }}>
-                              <Button onClick={(e)=>deleteRecord(e,ele)}>Delete</Button>
+                              <Button onClick={(e) => deleteRecord(e, ele)}>Delete</Button>
                               <Button onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
                               <Dropdown overlay={() => {
                                    return menu(ele)
@@ -152,8 +154,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          </div> :
                          <div style={{ display: 'flex' }}>
                               <Button onClick={toUpdate}>Details</Button>
-                              <Button  onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
-                              {ffmenu ? null : <Button onClick={modalVisible}>Update Consent</Button>}
+                              <Button onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
+                              {ffmenu ? null : <Button onClick={(e) => modalVisible(e, ele)}>Update Consent</Button>}
                          </div>
 
                )
@@ -165,14 +167,14 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           getAnalysisResult();
      }, [])
 
-     async function deleteRecord(e,record){
-          Uploads.delete({id:record.id})
+     async function deleteRecord(e, record) {
+          Uploads.delete({ id: record.id })
      }
 
      async function downloadFiles(e, id) {
           setBtnLoading(true)
-          const bulk=true
-          Uploads.downloadFiles(id,analysisResult,bulk).then((res) => {
+          const bulk = true
+          Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
 
                Uploads.download(res.data)
                setBtnLoading(false)
@@ -277,8 +279,9 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
       * Set Modal visible for update consent
       */
 
-     function modalVisible() {
+     function modalVisible(e, ele) {
           setVisible(true)
+          setId(ele.id)
      }
 
 
@@ -358,7 +361,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setVisible(false);
                     }}
                >
-                    <UpdateConsent files={files} />
+                    <UpdateConsent setVisible={setVisible} id={id} />
                </Modal>
           </div>
 
@@ -520,25 +523,56 @@ function UploadConsent({ analysisResult, setVisible, getData }) {
                          * @returns
                          */
 
-function UpdateConsent() {
+function UpdateConsent({ setVisible, id }) {
 
+     const [consentFile, setConsentFile] = useState({})
+
+     //On approve the files are send tp backend to upload to blob storage
      function approveUpload() {
+          const data = new FormData();
+
+
+          data.append('consentFile', consentFile)
+          data.append('id', id)
+
+
+
+          Uploads.updateConsent(data).then((result) => {
+               if (result.success) {
+                    message.success(result.message)
+                    setVisible(false)
+               }
+               else {
+                    message.error(result.message)
+               }
+               // setVisible(false)
+               // getData()
+
+
+          })
 
      }
 
      function cancelUpload() {
-
+          setVisible(false)
+     }
+     function handleConsentFile(e) {
+          let files = e.target.files[0]
+          setConsentFile(files)
      }
 
 
      return (
           <div>
                <div>
-                    <FileUpload>
-                         <Button size={'small'} icon={<UploadOutlined />}>
-                              Choose File
-                         </Button>
-                    </FileUpload>
+                    <Title level={5}>Consent Data</Title>
+                    <label>
+                         Select File
+                    </label>
+                    <br />
+
+                    <input type='file' name='consentFile' onChange={(e) => handleConsentFile(e)} />
+                    <br />
                </div>
 
                <div className='upload-consent'>

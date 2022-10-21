@@ -271,7 +271,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
          * function for download
          */
         function download(e,record) {
-                Uploads.downloadFiles(record.id,analysisResult).then((res) => {
+                const bulk=false
+                Uploads.downloadFiles(record.id,analysisResult,bulk).then((res) => {
 
                         Uploads.download(res.data)
                        
