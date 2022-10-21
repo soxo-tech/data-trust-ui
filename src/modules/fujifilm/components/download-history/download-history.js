@@ -129,7 +129,7 @@ export default function DownloadHistory({ ...props }) {
                                         value: 'download'
                               },
                               {
-                                        field: 'upload_details_id',
+                                        field: 'psuedonymous_nura_id',
                                         value: id
 
                               }]
