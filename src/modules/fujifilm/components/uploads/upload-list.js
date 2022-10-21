@@ -415,7 +415,7 @@ function UploadConsent({ analysisResult, setVisible, getData }) {
                     message.error(result.message)
                }
                // setVisible(false)
-               // getData()
+               getData()
                setLoading(false)
 
           })
