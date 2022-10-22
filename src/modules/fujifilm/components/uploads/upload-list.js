@@ -201,9 +201,10 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
           var config = {
                queries,
+               baseUrl:baseUrl
           }
 
-          var result = await Uploads.get(config,baseUrl)
+          var result = await Uploads.get(config)
 
           Promise.all(result.result.map(async (ele, key) => {
                var id = ele.created_by

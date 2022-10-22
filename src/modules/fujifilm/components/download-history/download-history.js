@@ -132,12 +132,13 @@ export default function DownloadHistory({ ...props }) {
                                         field: 'psuedonymous_nura_id',
                                         value: id
 
-                              }]
+                              }],
+                              //Get download histtory of checkup from nura db
+                              baseUrl:process.env.REACT_APP_NURA
                     }
 
-                    //Get download histtory of checkup from nura db
-                    var baseUrl=process.env.REACT_APP_NURA
-                    var result = await UserLogs.get(config,baseUrl)
+                 
+                    var result = await UserLogs.get(config)
                     Promise.all(result.result.map(async (ele, key) => {
                               var id = ele.created_by
                               var user = await CoreUsers.getRecord({ id })

@@ -471,7 +471,8 @@ function DownloadHistory({ data }) {
                                 field: 'psuedonymous_nura_id',
                                 value: data.psuedonymous_nura_id
 
-                        }]
+                        }],
+                        baseUrl:process.env.REACT_APP_FF
                 }
                 var result = await UserLogs.get(config)
                 Promise.all(result.result.map(async (ele, key) => {
