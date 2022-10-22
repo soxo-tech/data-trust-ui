@@ -21,7 +21,7 @@ import moment from 'moment'
 
 import './upload-detail.scss'
 
-import { UploadDetails, UserLogs ,Uploads,CoreUsers} from '../../../../models';
+import { UploadDetails, UserLogs, Uploads, CoreUsers } from '../../../../models';
 
 
 const { Title, Text } = Typography;
@@ -30,7 +30,7 @@ const { Search } = Input;
 
 export default function UploadDetailComponent({ analysisResult, ffmenu, caption, ...props }) {
 
-        const [uploads, setUploads] = useState({});
+        const [uploads, setUploads] = useState([]);
 
         const [loading, setLoading] = useState(false);
 
@@ -142,7 +142,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 return (
                                         <div>
                                                 <div style={{ display: 'flex' }}>
-                                                        <Button onClick={(e)=>download(e,record)}>Download</Button>
+                                                        <Button onClick={(e) => download(e, record)}>Download</Button>
 
                                                         {
                                                                 ffmenu
@@ -192,8 +192,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 title: 'Registration Date',
                                 key: 'title',
                                 render: (record) => {
-                                        return record.order_date?moment(record.order_date).format('DD/MM/YYYY'):null
-        
+                                        return record.order_date ? moment(record.order_date).format('DD/MM/YYYY') : null
+
                                 }
                         },
                         {
@@ -220,11 +220,11 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 title: 'Action',
                                 key: 'action',
                                 render: (record) => {
-                                      
-                                        return (
-                                                <div>
 
-                                                        <Button onClick={(e)=>download(e,record)}>Download</Button>
+                                        return (
+                                                <div className='action'>
+
+                                                        <Button onClick={(e) => download(e, record)}>Download</Button>
 
 
                                                         <Dropdown overlay={() => {
@@ -256,7 +256,9 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                 setLoading(true);
 
-                UploadDetails.getDetails(id).then(result => {
+
+
+                UploadDetails.getDetails(id, analysisResult).then(result => {
                         // setDetails(result.result)
                         console.log(result.upload_details)
 
@@ -270,14 +272,14 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         /**
          * function for download
          */
-        function download(e,record) {
-                const bulk=false
-                Uploads.downloadFiles(record.id,analysisResult,bulk).then((res) => {
+        function download(e, record) {
+                const bulk = false
+                Uploads.downloadFiles(record.id, analysisResult, bulk).then((res) => {
 
                         Uploads.download(res.data)
-                       
+
                         console.log(res)
-                   })
+                })
         }
 
 
@@ -374,6 +376,19 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 setQuery(event.target.value);
         }
 
+
+        // let filtered = uploads.upload_details.filter((record) => {
+        //         // query = query.toUpperCase();
+
+        //         if (query) {
+        //                 if ((record.psuedonymous_nura_id).indexOf(query) != -1){}
+        //                         return true;
+
+        //         } else {
+        //                 return true;
+        //         }
+        // })
+
         return (
                 <div>
 
@@ -448,35 +463,35 @@ function DownloadHistory({ data }) {
 
         async function getData() {
                 var config = {
-                          queries: [{
-                                    field: 'type',
-                                    value: 'download'
-                          },
-                          {
-                                    field: 'pseudonymous_nura_id',
-                                    value:data.psuedonymous_nura_id
+                        queries: [{
+                                field: 'type',
+                                value: 'download'
+                        },
+                        {
+                                field: 'psuedonymous_nura_id',
+                                value: data.psuedonymous_nura_id
 
-                          }]
+                        }]
                 }
                 var result = await UserLogs.get(config)
                 Promise.all(result.result.map(async (ele, key) => {
-                          var id = ele.created_by
-                          var user = await CoreUsers.getRecord({ id })
-                          return {
-                                    ...ele,
-                                    created_by_details: user.result
-                          }
+                        var id = ele.created_by
+                        var user = await CoreUsers.getRecord({ id })
+                        return {
+                                ...ele,
+                                created_by_details: user.result
+                        }
                 })).then((arr) => {
-                          console.log(arr)
-                          setDownloadHistory(arr)
+                        console.log(arr)
+                        setDownloadHistory(arr)
                         //   setLoading(false)
                 })
 
-      }
+        }
 
-      useEffect(()=>{
-        getData()
-      },[])
+        useEffect(() => {
+                getData()
+        }, [])
 
         const columns = [
                 {

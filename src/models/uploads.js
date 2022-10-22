@@ -70,14 +70,21 @@ class Upload extends BaseAPI {
     downloadFiles = (id, analysisResult, bulk) => {
 
         var mode
+        let baseUrl = null;
+        
+        //For analysis result download details use FF database
+        if (analysisResult){
+            mode = 'ANALYSIS';
+            baseUrl = process.env.REACT_APP_FF;
+        }
 
-        if (analysisResult)
-            mode = 'ANALYSIS'
+        //for checkup data download details use nura database
+        else{
+            mode = 'CHECKUP';
+            baseUrl = process.env.REACT_APP_NURA;
+        }
 
-        else
-            mode = 'CHECKUP'
-
-        return ApiUtils.get({
+        return ApiUtils.get({baseUrl,
             url: `uploads/download?bulk=${bulk}&id=${id}&mode=${mode}`,
         });
 

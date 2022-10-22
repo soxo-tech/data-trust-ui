@@ -164,7 +164,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      useEffect(() => {
           getData();
-          getAnalysisResult();
+          // getAnalysisResult();
      }, [])
 
      async function deleteRecord(e, record) {
@@ -192,10 +192,18 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                value: mode
           }]
 
+         
+          var baseUrl;
+          if(analysisResult)
+          baseUrl=process.env.REACT_APP_FF
+          else
+          baseUrl=process.env.REACT_APP_NURA
+
           var config = {
                queries,
           }
-          var result = await Uploads.get(config)
+
+          var result = await Uploads.get(config,baseUrl)
 
           Promise.all(result.result.map(async (ele, key) => {
                var id = ele.created_by
