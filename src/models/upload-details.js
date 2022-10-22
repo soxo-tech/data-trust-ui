@@ -6,7 +6,7 @@
  *
  */
 
-import { BaseAPI,ApiUtils } from "soxo-bootstrap-core";
+import { BaseAPI, ApiUtils } from "soxo-bootstrap-core";
 
 
 class UploadDetail extends BaseAPI {
@@ -28,21 +28,29 @@ class UploadDetail extends BaseAPI {
         return `UploadDetails`;
     }
 
-    getDetails(uploadId) {
+    getDetails(uploadId, mode) {
 
-        return ApiUtils.get({url:`upload_details/get-details/${uploadId}`})
+        let baseUrl = null;
+
+        if (mode === 'CHECKUP') {
+
+            // baseUrl = process.env.REACT_SECOND_URL
+
+        }
+
+        return ApiUtils.get({ baseUrl, url: `upload_details/get-details/${uploadId}` })
 
     }
 
     getConsent(nuraId) {
 
-        return ApiUtils.get({url:`upload_details/get-consent/${nuraId}`})
+        return ApiUtils.get({ url: `upload_details/get-consent/${nuraId}` })
 
     }
 
     loadDetails(nuraId) {
 
-        return ApiUtils.get({url:`upload_details/load-details/${nuraId}`})
+        return ApiUtils.get({ url: `upload_details/load-details/${nuraId}` })
 
     }
 
