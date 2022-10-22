@@ -28,29 +28,52 @@ class UploadDetail extends BaseAPI {
         return `UploadDetails`;
     }
 
-    getDetails(uploadId, mode) {
+    /**
+     * Get data from upload_details
+     * @param {*} uploadId 
+     * @param {*} analysisResult 
+     * @returns 
+     */
+    getDetails(uploadId, analysisResult) {
 
         let baseUrl = null;
 
-        if (mode === 'CHECKUP') {
+        //For Analysis Result load data from FF database
+        if (analysisResult)
+                baseUrl = process.env.REACT_APP_FF
+        //Else load data from Nura database 
+        else
+                baseUrl = process.env.REACT_APP_NURA
 
-            // baseUrl = process.env.REACT_SECOND_URL
-
-        }
 
         return ApiUtils.get({ baseUrl, url: `upload_details/get-details/${uploadId}` })
 
     }
 
+    /**
+     * Get consent data
+     * @param {*} nuraId 
+     * @returns 
+     */
     getConsent(nuraId) {
+        //Get Consent data from Nura database
+        var baseUrl=process.env.REACT_APP_NURA
 
-        return ApiUtils.get({ url: `upload_details/get-consent/${nuraId}` })
+        return ApiUtils.get({baseUrl, url: `upload_details/get-consent/${nuraId}` })
 
     }
 
-    loadDetails(nuraId) {
 
-        return ApiUtils.get({ url: `upload_details/load-details/${nuraId}` })
+/**
+ * Get derived analysis data
+ * @param {*} nuraId 
+ * @returns 
+ */
+    loadDetails(nuraId) {
+        //Get Derived Analysis Result from FF database
+        var baseUrl=process.env.REACT_APP_FF
+
+        return ApiUtils.get({baseUrl, url: `upload_details/load-details/${nuraId}` })
 
     }
 
