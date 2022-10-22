@@ -163,7 +163,7 @@ export default function DownloadHistory({ ...props }) {
                                                   <div className='history-table'>
                                                             <div>
                                                                       <Title level={5}>Nura ID</Title>
-                                                                      <p>{downloadHistory[0]&&downloadHistory[0].pseudonymous_nura_id?downloadHistory[0].pseudonymous_nura_id:null}</p>
+                                                                      <p>{downloadHistory[0]&&downloadHistory[0].pseudonymous_nura_id?downloadHistory[0].pseudonymous_nura_id:id}</p>
                                                             </div>
                                                             <div>
                                                                       <Title level={5}>Registration Date</Title>
@@ -194,10 +194,10 @@ export default function DownloadHistory({ ...props }) {
                                                   // }}
                                                   />
                                         </Card>
-                                        {ffmenu ? null :
+                                        {/* {ffmenu ? null :
                                                   <Card className={'details'}>
                                                             <ConsentDetails />
-                                                  </Card>}
+                                                  </Card>} */}
 
                               </>}
                     </div>
