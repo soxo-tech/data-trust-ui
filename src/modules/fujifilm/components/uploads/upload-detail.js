@@ -256,8 +256,6 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                 setLoading(true);
 
-
-
                 UploadDetails.getDetails(id, analysisResult).then(result => {
                         // setDetails(result.result)
                         console.log(result.upload_details)
@@ -472,7 +470,7 @@ function DownloadHistory({ data }) {
                                 value: data.psuedonymous_nura_id
 
                         }],
-                        baseUrl:process.env.REACT_APP_FF
+                        baseUrl: process.env.REACT_APP_FF
                 }
                 var result = await UserLogs.get(config)
                 Promise.all(result.result.map(async (ele, key) => {
