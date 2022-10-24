@@ -105,6 +105,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                         // setUploads(result);
 
                         //   setDerivedAnalysis(result.uploadsWithConsent);
+                        if(result.uploadsWithConsent.length>0)
 
                         Promise.all(result.uploadsWithConsent[0].upload_details.map(async (ele, key) => {
                                 var id = ele.created_by
@@ -117,6 +118,9 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                                 setDerivedAnalysis(arr)
                                 setLoading(false)
                         })
+
+                        else
+                        setLoading(false)
 
                         // setLoading(false);
 
