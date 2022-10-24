@@ -225,6 +225,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                 <div className='action'>
 
                                                         <Button onClick={(e) => download(e, record)}>Download</Button>
+                                                         {/* <Button onClick={(e) => deleteRecord(e, record)}>Delete</Button> */}
 
 
                                                         <Dropdown overlay={() => {
@@ -280,6 +281,13 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                         console.log(res)
                 })
+        }
+
+        /**
+         * Function for deleting a record
+         */
+        function deleteRecord(e,record){
+                UploadDetails.deleteRecord(record.id)
         }
 
 

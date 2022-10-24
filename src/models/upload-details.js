@@ -77,6 +77,10 @@ class UploadDetail extends BaseAPI {
 
     }
 
+    deleteRecord(id){
+        return ApiUtils.get({url: `upload_details/delete-record/${id}` })  
+    }
+
 }
 
 
