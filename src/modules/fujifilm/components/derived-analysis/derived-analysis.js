@@ -28,7 +28,7 @@ import moment from 'moment'
 const { Title, Text } = Typography;
 
 
-export default function DerivedAnalysis({ ...props }) {
+export default function DerivedAnalysis({ ffmenu,...props }) {
 
         const { id } = props.match.params; //Get pagination number
 
@@ -41,7 +41,6 @@ export default function DerivedAnalysis({ ...props }) {
         const [limit, setLimit] = useState(20);
 
         //ffmenu is maintaine to determine which user is using(nura or fujifilm)
-        const [ffmenu, setFFmenu] = useState(true)
 
 
         const columns = [
@@ -107,7 +106,7 @@ export default function DerivedAnalysis({ ...props }) {
 
                         //   setDerivedAnalysis(result.uploadsWithConsent);
 
-                        Promise.all(result.uploadsWithConsent.map(async (ele, key) => {
+                        Promise.all(result.uploadsWithConsent[0].upload_details.map(async (ele, key) => {
                                 var id = ele.created_by
                                 var user = await CoreUsers.getRecord({ id })
                                 return {
@@ -169,7 +168,10 @@ export default function DerivedAnalysis({ ...props }) {
          */
         function download(e, record) {
 
-                Uploads.downloadFiles(record.id).then((res) => {
+                const analysisResult=true
+                const bulk=false
+
+                Uploads.downloadFiles(record.id,analysisResult,bulk).then((res) => {
 
                         Uploads.download(res.data)
 
@@ -199,7 +201,6 @@ export default function DerivedAnalysis({ ...props }) {
                         </Menu>
                 )
         }
-
 
 
         function handleClick(params, record) {

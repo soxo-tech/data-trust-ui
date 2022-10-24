@@ -142,7 +142,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                return (
                     analysisResult ?
                          <div style={{ display: 'flex' }}>
-                              <Button onClick={(e) => deleteRecord(e, ele)}>Delete</Button>
+                              {/* <Button onClick={(e) => deleteRecord(e, ele)}>Delete</Button> */}
                               <Button onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
                               <Dropdown overlay={() => {
                                    return menu(ele)
@@ -167,9 +167,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           // getAnalysisResult();
      }, [])
 
-     async function deleteRecord(e, record) {
-          Uploads.delete({ id: record.id })
-     }
 
      async function downloadFiles(e, id) {
           setBtnLoading(true)
@@ -204,6 +201,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                queries,
                baseUrl: baseUrl
           }
+
+          console.log(config)
 
           var result = await Uploads.get(config)
 
