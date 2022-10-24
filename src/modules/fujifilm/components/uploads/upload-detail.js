@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton ,Popconfirm, message} from 'antd';
+import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message } from 'antd';
 
 import { Location, ReferenceSelect, InputComponent, Card } from 'soxo-bootstrap-core';
 
@@ -72,7 +72,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         key: 'No of records',
                         // dataIndex: 'Number',
                         render: (record) => {
-                                return record.consent.id
+
+                                return record.consent && record.consent.id
 
                         }
                 },
@@ -82,7 +83,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         // dataIndex: 'date',
                         render: (record) => {
 
-                                return moment(record.consent.created_at).format('DD/MM/YYYY hh:mm A')
+                                return record.consent && moment(record.consent.created_at).format('DD/MM/YYYY hh:mm A')
 
                         }
                 },
@@ -201,7 +202,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 key: 'No of records',
                                 render: (record) => {
 
-                                        return record.consent.id
+                                        return record.consent && record.consent.id
 
                                 }
                         },
@@ -291,13 +292,13 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         /**
          * Function for deleting a record
          */
-       async function deleteRecord(e, record) {
-                const result=await UploadDetails.deleteRecord(record.id)
-                if(result.success){
+        async function deleteRecord(e, record) {
+                const result = await UploadDetails.deleteRecord(record.id)
+                if (result.success) {
                         message.success(result.message)
                         getData()
                 }
-                else{
+                else {
                         message.error(result.message)
                 }
         }
