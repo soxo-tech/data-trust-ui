@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton } from 'antd';
+import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton ,Popconfirm, message} from 'antd';
 
 import { Location, ReferenceSelect, InputComponent, Card } from 'soxo-bootstrap-core';
 
@@ -72,7 +72,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         key: 'No of records',
                         // dataIndex: 'Number',
                         render: (record) => {
-                                return record.id
+                                return record.consent.id
 
                         }
                 },
@@ -82,7 +82,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         // dataIndex: 'date',
                         render: (record) => {
 
-                                return moment(record.created_at).format('DD/MM/YYYY hh:mm A')
+                                return moment(record.consent.created_at).format('DD/MM/YYYY hh:mm A')
 
                         }
                 },
@@ -201,7 +201,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 key: 'No of records',
                                 render: (record) => {
 
-                                        return record.id
+                                        return record.consent.id
 
                                 }
                         },
@@ -225,9 +225,16 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                 <div className='action'>
 
                                                         <Button onClick={(e) => download(e, record)}>Download</Button>
-                                                         {/* <Button onClick={(e) => deleteRecord(e, record)}>Delete</Button> */}
+                                                        <Popconfirm
+                                                                title="Are you sure you want to delete the record? "
+                                                                onConfirm={(e) => deleteRecord(e, record)}
+                                                                onCancel={() => { }}
+                                                                okText="Yes"
+                                                                cancelText="No"
+                                                        >
+                                                                <Button >Delete</Button>
 
-
+                                                        </Popconfirm>
                                                         <Dropdown overlay={() => {
                                                                 return menu(record)
                                                         }} placement="bottomLeft">
@@ -286,8 +293,15 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         /**
          * Function for deleting a record
          */
-        function deleteRecord(e,record){
-                UploadDetails.deleteRecord(record.id)
+       async function deleteRecord(e, record) {
+                const result=await UploadDetails.deleteRecord(record.id)
+                if(result.success){
+                        message.success(result.message)
+                        getData()
+                }
+                else{
+                        message.error(result.message)
+                }
         }
 
 
@@ -480,7 +494,7 @@ function DownloadHistory({ data }) {
                                 value: data.psuedonymous_nura_id
 
                         }],
-                        baseUrl:process.env.REACT_APP_FF
+                        baseUrl: process.env.REACT_APP_FF
                 }
                 var result = await UserLogs.get(config)
                 Promise.all(result.result.map(async (ele, key) => {
