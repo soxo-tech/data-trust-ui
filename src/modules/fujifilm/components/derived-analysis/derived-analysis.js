@@ -54,10 +54,14 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                 {
                         title: 'Data ID',
                         key: 'id',
-                        dataIndex: 'id'
+                        render: (record) => {
+
+                                return record.upload_details[0].id
+
+                        }
                 },
                 {
-                        title: 'Content Source ID',
+                        title: 'Content ID',
                         key: 'source',
                         dataIndex: 'source'
                 },
@@ -71,7 +75,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                         key: 'date',
                         render: (record) => {
 
-                                return moment(record.created_at).format('DD/MM/YYYY')
+                                return moment(record.upload_details[0].created_at).format('DD/MM/YYYY')
 
                         }
                 },
@@ -105,14 +109,14 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                         // setUploads(result);
 
                         //   setDerivedAnalysis(result.uploadsWithConsent);
-                        if(result.uploadsWithConsent.length>0)
+                        if(result.uploadsWithConsent&&result.uploadsWithConsent.length>0)
 
-                        Promise.all(result.uploadsWithConsent[0].upload_details.map(async (ele, key) => {
+                        Promise.all(result.uploadsWithConsent.map(async (ele, key) => {
                                 var id = ele.created_by
                                 var user = await CoreUsers.getRecord({ id })
                                 return {
                                         ...ele,
-                                        title:result.uploadsWithConsent[0].title,
+                                        // title:result.uploadsWithConsent[0].title,
                                         created_by_details: user.result
                                 }
                         })).then((arr) => {
