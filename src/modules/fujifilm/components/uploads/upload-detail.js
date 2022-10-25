@@ -436,12 +436,12 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                         </Title>
                                                         <div className='detail-header'>
                                                                 <p>ID :{uploads.id}</p>
-                                                                <Search
+                                                                {/* <Search
                                                                         placeholder="Enter Search Value"
                                                                         allowClear
                                                                         style={{ width: '25%', marginTop: '10px', marginBottom: '20px' }}
                                                                         onChange={onSearch}
-                                                                />
+                                                                /> */}
                                                         </div>
                                                         <Table
                                                                 scroll={{ x: true }}
