@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, FileUpload, Users } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, FileUpload, Users,DateUtils } from 'soxo-bootstrap-core';
 
 import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
 
@@ -74,7 +74,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                render: (record) => {
                     return (
                          <span>
-                              {record && record.created_at ? moment(record.created_at).format('DD/MM/YYYY') : null}
+                              {record && record.created_at ? DateUtils.formatDate(record.created_at): null}
                          </span>
                     );
                },
@@ -85,7 +85,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                render: (record) => {
                     return (
                          <span>
-                              {record && record.created_at ? moment(record.created_at).format(' hh:mm A') : null}
+                              {record && record.created_at ? DateUtils.formatTime(record.created_at) : null}
                          </span>
                     );
                },

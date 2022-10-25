@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, Card,DateUtils } from 'soxo-bootstrap-core';
 
 import { MoreOutlined } from '@ant-design/icons';
 
@@ -63,7 +63,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         title: 'Registration Date',
                         key: 'title',
                         render: (record) => {
-                                return moment(record.order_date).format('DD/MM/YYYY')
+                                return DateUtils.getFormattedTimeDate(record.order_date)
 
                         }
                 },
@@ -83,8 +83,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         // dataIndex: 'date',
                         render: (record) => {
 
-                                return record.consent && moment(record.consent.created_at).format('DD/MM/YYYY hh:mm A')
-
+                                return record.consent && DateUtils.getFormattedTimeDate(record.consent.created_at)
                         }
                 },
 
@@ -198,7 +197,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 title: 'Registration Date',
                                 key: 'title',
                                 render: (record) => {
-                                        return record.order_date ? moment(record.order_date).format('DD/MM/YYYY') : null
+                                        return record.order_date ? DateUtils.getFormattedTimeDate(record.order_date): null
 
                                 }
                         },

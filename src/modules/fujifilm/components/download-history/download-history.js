@@ -13,9 +13,8 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Modal, Upload, message, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, Card,DateUtils } from 'soxo-bootstrap-core';
 
-import moment from 'moment'
 import { UserLogs, CoreUsers } from '../../../../models';
 
 const { Title, Text } = Typography;
@@ -106,7 +105,7 @@ export default function DownloadHistory({ ...props }) {
                     key: 'last_download',
                     render: (record) => {
 
-                         return moment(record.created_at).format('DD/MM/YYYY')
+                         return DateUtils.getFormattedTimeDate(record.created_at)
 
                     }
                },
@@ -201,15 +200,15 @@ export default function DownloadHistory({ ...props }) {
                               </div>
                               <div>
                                    <Title level={5}>Registration Date</Title>
-                                   <p>{downloadHistory[0] && downloadHistory[0].order_date ? downloadHistory[0].order_date : null}</p>
+                                   <p>{downloadHistory[0] && downloadHistory[0].order_date ? DateUtils.getFormattedTimeDate(downloadHistory[0].order_date) : null}</p>
                               </div>
                               <div>
                                    <Title level={5}>Consent ID</Title>
                                    <p>{downloadHistory[0] && downloadHistory[0].upload_details_id ? downloadHistory[0].upload_details_id : null}</p>
                               </div>
                               <div>
-                                   <Title level={5}>Consent Status</Title>
-                                   <p>Updated</p>
+                                   {/* <Title level={5}>Consent Status</Title>
+                                   <p>Updated</p> */}
                               </div>
 
 

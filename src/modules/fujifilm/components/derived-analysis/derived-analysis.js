@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Dropdown, Menu, Skeleton } from 'antd';
 
-import { Location, Card } from 'soxo-bootstrap-core';
+import { Location, Card ,DateUtils} from 'soxo-bootstrap-core';
 
 import './derived-analysis.scss';
 
@@ -23,7 +23,6 @@ import { MoreOutlined } from '@ant-design/icons';
 
 import { UploadDetails, CoreUsers, Uploads } from '../../../../models';
 
-import moment from 'moment'
 
 const { Title, Text } = Typography;
 
@@ -61,9 +60,18 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                         }
                 },
                 {
-                        title: 'Content ID',
-                        key: 'source',
-                        dataIndex: 'source'
+                        title: 'Consent ID',
+                        key: 'consent_id',
+                        render: (record) => {
+
+                                if (record.upload_details[0]&&record.upload_details[0].attributes) {
+                                        
+                                        const attributes = JSON.parse(record.upload_details[0].attributes)
+
+                                        return attributes.consent_id;
+                                }
+
+                        }
                 },
                 {
                         title: 'Title',
@@ -75,7 +83,8 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                         key: 'date',
                         render: (record) => {
 
-                                return moment(record.upload_details[0].created_at).format('DD/MM/YYYY')
+                                return DateUtils.getFormattedTimeDate(record.created_at)
+                              
 
                         }
                 },
