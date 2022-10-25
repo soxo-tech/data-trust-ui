@@ -187,7 +187,11 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         {
                                 title: 'Data ID',
                                 key: 'data_id',
-                                dataIndex: 'data_id'
+                                render: (record) => {
+
+                                        return record.id
+
+                                }
                         },
                         {
                                 title: 'Registration Date',
@@ -202,7 +206,11 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 key: 'No of records',
                                 render: (record) => {
 
-                                        return record.consent.id
+                                if (record.attributes) {
+                                        const attributes = JSON.parse(record.attributes)
+
+                                        return attributes.consent_id;
+                                }
 
                                 }
                         },
