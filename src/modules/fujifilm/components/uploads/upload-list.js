@@ -189,16 +189,17 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                value: mode
           }]
 
-         
+
           var baseUrl;
-          if(analysisResult)
-          baseUrl=process.env.REACT_APP_FF
+          
+          if (analysisResult)
+               baseUrl = process.env.REACT_APP_FF
           else
-          baseUrl=process.env.REACT_APP_NURA
+               baseUrl = process.env.REACT_APP_NURA
 
           var config = {
                queries,
-               baseUrl:baseUrl
+               baseUrl: baseUrl
           }
 
           console.log(config)

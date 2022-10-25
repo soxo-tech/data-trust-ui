@@ -8,18 +8,18 @@ import CoreUser from "./core-user";
 
 const Uploads = new Upload();
 
-const UploadDetails= new UploadDetail();
+const UploadDetails = new UploadDetail();
 
-const UserLogs= new UserLog();
+const UserLogs = new UserLog();
 
-const CoreUsers=new CoreUser();
+const CoreUsers = new CoreUser();
 
-export{
-          Uploads,
+export {
+    Uploads,
 
-          UploadDetails,
+    UploadDetails,
 
-          UserLogs,
+    UserLogs,
 
-          CoreUsers
+    CoreUsers
 }

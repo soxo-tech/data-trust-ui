@@ -21,7 +21,7 @@ import ConsentDetails from '../consent-details/consent-details';
 
 import { MoreOutlined } from '@ant-design/icons';
 
-import { UploadDetails, CoreUsers,Uploads } from '../../../../models';
+import { UploadDetails, CoreUsers, Uploads } from '../../../../models';
 
 import moment from 'moment'
 
@@ -147,7 +147,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                                 return (
                                         <div>
                                                 <div style={{ display: 'flex' }}>
-                                                        <Button onClick={(e)=>download(e,ele)}>Download</Button>
+                                                        <Button onClick={(e) => download(e, ele)}>Download</Button>
 
 
                                                         {ffmenu ?
@@ -171,7 +171,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
         /**
          * Function for download
          */
-        function download(e,record) {
+        function download(e, record) {
 
                 const analysisResult=true
                 const bulk=false
@@ -179,9 +179,9 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                 Uploads.downloadFiles(record.id,analysisResult,bulk).then((res) => {
 
                         Uploads.download(res.data)
-                       
+
                         console.log(res)
-                   })
+                })
 
         }
 

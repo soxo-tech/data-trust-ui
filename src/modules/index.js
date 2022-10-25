@@ -8,14 +8,14 @@ import DownloadHistory from "./fujifilm/components/download-history/download-his
 
 import DerivedAnalysis from "./fujifilm/components/derived-analysis/derived-analysis";
 
-export{
-          UploadList,
+export {
+    UploadList,
 
-          UploadDetails,
+    UploadDetails,
 
-          ConsentHistory,
+    ConsentHistory,
 
-          DownloadHistory,
+    DownloadHistory,
 
-          DerivedAnalysis
+    DerivedAnalysis
 }
