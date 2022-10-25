@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, Card,DateUtils } from 'soxo-bootstrap-core';
 
 import { MoreOutlined } from '@ant-design/icons';
 
@@ -63,7 +63,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         title: 'Registration Date',
                         key: 'title',
                         render: (record) => {
-                                return moment(record.order_date).format('DD/MM/YYYY')
+                                return DateUtils.getFormattedTimeDate(record.order_date)
 
                         }
                 },
@@ -83,8 +83,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         // dataIndex: 'date',
                         render: (record) => {
 
-                                return record.consent && moment(record.consent.created_at).format('DD/MM/YYYY hh:mm A')
-
+                                return record.consent && DateUtils.getFormattedTimeDate(record.consent.created_at)
                         }
                 },
 
@@ -106,11 +105,12 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 // dataIndex: 'time',
                 render: (record) => {
 
-                        if (record.attributes) {
+                        if (record.consent.attributes) {
 
-                                const attributes = JSON.parse(record.attributes)
+                                const attributes = JSON.parse(record.consent.attributes)
 
-                                return attributes.lifetime_type;
+
+                                return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifeTime;
                         }
                 }
         },
@@ -121,8 +121,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         render: (record) => {
 
 
-                                if (record.attributes) {
-                                        const attributes = JSON.parse(record.attributes)
+                                if (record.consent.attributes) {
+                                        const attributes = JSON.parse(record.consent.attributes)
 
                                         return attributes.items;
                                 }
@@ -187,13 +187,17 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         {
                                 title: 'Data ID',
                                 key: 'data_id',
-                                dataIndex: 'data_id'
+                                render: (record) => {
+
+                                        return record.id
+
+                                }
                         },
                         {
                                 title: 'Registration Date',
                                 key: 'title',
                                 render: (record) => {
-                                        return record.order_date ? moment(record.order_date).format('DD/MM/YYYY') : null
+                                        return record.order_date ? DateUtils.getFormattedTimeDate(record.order_date): null
 
                                 }
                         },
@@ -202,7 +206,11 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 key: 'No of records',
                                 render: (record) => {
 
-                                        return record.consent && record.consent.id
+                                        if (record.attributes) {
+                                                const attributes = JSON.parse(record.attributes)
+
+                                                return attributes.consent_id;
+                                        }
 
                                 }
                         },
@@ -427,12 +435,12 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                         </Title>
                                                         <div className='detail-header'>
                                                                 <p>ID :{uploads.id}</p>
-                                                                <Search
+                                                                {/* <Search
                                                                         placeholder="Enter Search Value"
                                                                         allowClear
                                                                         style={{ width: '25%', marginTop: '10px', marginBottom: '20px' }}
                                                                         onChange={onSearch}
-                                                                />
+                                                                /> */}
                                                         </div>
                                                         <Table
                                                                 scroll={{ x: true }}

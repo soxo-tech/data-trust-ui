@@ -13,15 +13,14 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Modal, Upload, message, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, Card,DateUtils } from 'soxo-bootstrap-core';
 
-import ConsentDetails from '../consent-details/consent-details';
 import { UserLogs, CoreUsers } from '../../../../models';
 
 const { Title, Text } = Typography;
 
 export default function DownloadHistory({ ...props }) {
-     
+
      const [downloadHistory, setDownloadHistory] = useState([])
 
      const [page, setPage] = useState(1);
@@ -103,8 +102,12 @@ export default function DownloadHistory({ ...props }) {
                },
                {
                     title: 'Last Download',
-                    key: 'last',
-                    dataIndex: 'last'
+                    key: 'last_download',
+                    render: (record) => {
+
+                         return DateUtils.getFormattedTimeDate(record.created_at)
+
+                    }
                },
                {
                     title: 'Discarded Date',
@@ -113,6 +116,31 @@ export default function DownloadHistory({ ...props }) {
                },
 
           ]
+     }
+
+     useEffect(() => {
+          getData();
+
+     }, [])
+
+     /**
+* Function to load the data for screen
+*/
+     async function getData() {
+          var config = {
+               queries: [{
+                    field: 'type',
+                    value: 'download'
+               },
+               {
+                    field: 'psuedonymous_nura_id',
+                    value: id
+
+               }],
+               //Get download histtory of checkup from nura db
+               baseUrl: process.env.REACT_APP_NURA
+          }
+
      }
 
      useEffect(() => {
@@ -172,15 +200,15 @@ export default function DownloadHistory({ ...props }) {
                               </div>
                               <div>
                                    <Title level={5}>Registration Date</Title>
-                                   <p>{downloadHistory[0] && downloadHistory[0].order_date ? downloadHistory[0].order_date : null}</p>
+                                   <p>{downloadHistory[0] && downloadHistory[0].order_date ? DateUtils.getFormattedTimeDate(downloadHistory[0].order_date) : null}</p>
                               </div>
                               <div>
                                    <Title level={5}>Consent ID</Title>
                                    <p>{downloadHistory[0] && downloadHistory[0].upload_details_id ? downloadHistory[0].upload_details_id : null}</p>
                               </div>
                               <div>
-                                   <Title level={5}>Consent Status</Title>
-                                   <p>Updated</p>
+                                   {/* <Title level={5}>Consent Status</Title>
+                                   <p>Updated</p> */}
                               </div>
 
 

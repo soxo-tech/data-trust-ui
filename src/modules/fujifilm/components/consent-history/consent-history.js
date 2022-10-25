@@ -10,7 +10,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Skeleton, } from 'antd';
 
-import { Location, Card } from 'soxo-bootstrap-core';
+import { Location, Card,DateUtils } from 'soxo-bootstrap-core';
 
 import ConsentDetails from '../consent-details/consent-details';
 
@@ -61,7 +61,8 @@ export default function ConsentHistory({ ...props }) {
             key: 'time',
             render: (record) => {
 
-                return moment(record.upload_details[0].created_at).format('DD/MM/YYYY')
+                return DateUtils.getFormattedTimeDate(record.created_at) 
+                
 
             }
         },
@@ -72,7 +73,7 @@ export default function ConsentHistory({ ...props }) {
 
                 const attributes = JSON.parse(record.upload_details[0].attributes)
 
-                return attributes.lifetime_type;
+                return attributes.lifetime_type?attributes.lifetime_type:attributes.lifeTime;
             }
         },
         {
@@ -97,7 +98,8 @@ export default function ConsentHistory({ ...props }) {
                 key: 'regDate',
                 render: (record) => {
 
-                    return moment(record.upload_details[0].order_date).format('DD/MM/YYYY')
+                    return DateUtils.getFormattedTimeDate(record.upload_details[0].order_date)
+                    
 
                 }
             },
@@ -189,11 +191,12 @@ export default function ConsentHistory({ ...props }) {
 
 
                         <Card className={'history'}>
+                        <div className='history-table'>
                             <Title level={5}>Nura ID : {id}</Title>
 
-                            <div className='history-table'>
-                                <p>REGISTRATION NUMBER</p>
-                                <p> {consentHistory && consentHistory[0]&&consentHistory[0].upload_details ?consentHistory[0].upload_details[0].order_date:null}</p>
+                                
+                                <p> {consentHistory && consentHistory[0]&&consentHistory[0].upload_details ?DateUtils.formatDate(consentHistory[0].upload_details[0].order_date):null}</p>
+                                
                             </div>
 
                             <Table
