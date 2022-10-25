@@ -72,7 +72,7 @@ export default function ConsentHistory({ ...props }) {
 
                 const attributes = JSON.parse(record.upload_details[0].attributes)
 
-                return attributes.lifetime_type;
+                return attributes.lifetime_type?attributes.lifetime_type:attributes.lifeTime;
             }
         },
         {

@@ -112,6 +112,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                                 var user = await CoreUsers.getRecord({ id })
                                 return {
                                         ...ele,
+                                        title:result.uploadsWithConsent[0].title,
                                         created_by_details: user.result
                                 }
                         })).then((arr) => {

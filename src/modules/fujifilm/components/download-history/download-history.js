@@ -15,7 +15,7 @@ import { Table, Button, Typography, Modal, Upload, message, Skeleton } from 'ant
 
 import { Location, ReferenceSelect, InputComponent, Card } from 'soxo-bootstrap-core';
 
-import ConsentDetails from '../consent-details/consent-details';
+import moment from 'moment'
 import { UserLogs, CoreUsers } from '../../../../models';
 
 const { Title, Text } = Typography;
@@ -102,8 +102,12 @@ export default function DownloadHistory({ ...props }) {
                               },
                               {
                                         title: 'Last Download',
-                                        key: 'last',
-                                        dataIndex: 'last'
+                                        key: 'last_download',
+                                        render: (record) => {
+
+                                             return moment(record.created_at).format('DD/MM/YYYY')
+
+                                   }
                               },
                               {
                                         title: 'Discarded Date',

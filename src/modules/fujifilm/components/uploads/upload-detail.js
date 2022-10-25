@@ -105,11 +105,12 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 // dataIndex: 'time',
                 render: (record) => {
 
-                        if (record.attributes) {
+                        if (record.consent.attributes) {
 
-                                const attributes = JSON.parse(record.attributes)
+                                const attributes = JSON.parse(record.consent.attributes)
+                           
 
-                                return attributes.lifetime_type;
+                                return attributes.lifetime_type?attributes.lifetime_type:attributes.lifeTime;
                         }
                 }
         },
@@ -120,8 +121,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         render: (record) => {
 
 
-                                if (record.attributes) {
-                                        const attributes = JSON.parse(record.attributes)
+                                if (record.consent.attributes) {
+                                        const attributes = JSON.parse(record.consent.attributes)
 
                                         return attributes.items;
                                 }
