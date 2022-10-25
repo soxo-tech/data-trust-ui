@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, FileUpload, Users,DateUtils } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, FileUpload, Users, DateUtils } from 'soxo-bootstrap-core';
 
 import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
 
@@ -74,7 +74,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                render: (record) => {
                     return (
                          <span>
-                              {record && record.created_at ? DateUtils.formatDate(record.created_at): null}
+                              {record && record.created_at ? DateUtils.formatDate(record.created_at) : null}
                          </span>
                     );
                },
@@ -191,7 +191,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
 
           var baseUrl;
-          
+
           if (analysisResult)
                baseUrl = process.env.REACT_APP_FF
           else
@@ -410,16 +410,20 @@ function UploadConsent({ analysisResult, setVisible, getData }) {
                data.append("psuedonymizedFile", psuedonymizedFile);
                data.append("title", title);
           }
-        
+
           Uploads.uploadFileContent(data, analysisResult).then((result) => {
 
                if (result.success) {
 
-                    if(analysisResult)
-                    message.success(`${result.message}. ${result.result.analysis_length} checkup records  are successfully uploaded`)
+                    if (analysisResult)
+                         // message.success(`${result.message}. ${result.result.analysis_length} checkup records  are successfully uploaded`)
+                         message.success(`${result.message}. Checkup records  are successfully uploaded`)
+
 
                     else
-                    message.success(`${result.message}. ${result.result.checkup_length} checkup records and ${result.result.consent_length} consent records are successfully uploaded`)
+                         message.success(`${result.message}. Checkup records  are successfully uploaded`)
+
+                    // message.success(`${result.message}. ${result.result.checkup_length} checkup records and ${result.result.consent_length} consent records are successfully uploaded`)
 
                     setVisible(false)
 
@@ -540,7 +544,7 @@ function UpdateConsent({ setVisible, id }) {
 
      const [consentFile, setConsentFile] = useState({})
 
-     const [loading,setLoading]=useState(false)
+     const [loading, setLoading] = useState(false)
 
      //On approve the files are send tp backend to upload to blob storage
      function approveUpload() {
@@ -556,11 +560,13 @@ function UpdateConsent({ setVisible, id }) {
           Uploads.updateConsent(data).then((result) => {
                if (result.success) {
 
-                    message.success(`${result.message}. ${result.result.consent_length} Consent are updated and uploaded`)
+                    message.success(`${result.message}. Consent are updated and uploaded`)
+
+                    // message.success(`${result.message}. ${result.result.consent_length} Consent are updated and uploaded`)
                     setLoading(false)
                     setVisible(false)
                }
-               
+
                else {
                     message.error(result.message)
                }
