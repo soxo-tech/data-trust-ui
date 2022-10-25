@@ -187,9 +187,12 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
         function download(e, record) {
 
                 const analysisResult=true
-                const bulk=false
 
-                Uploads.downloadFiles(record.id,analysisResult,bulk).then((res) => {
+                const bulk=false
+                
+                const id=record.upload_details[0].id
+
+                Uploads.downloadFiles(id,analysisResult,bulk).then((res) => {
 
                         Uploads.download(res.data)
 
