@@ -193,14 +193,14 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                                 }
                         },
-                        {
-                                title: 'Registration Date',
-                                key: 'title',
-                                render: (record) => {
-                                        return record.order_date ? DateUtils.getFormattedTimeDate(record.order_date): null
+                        // {
+                        //         title: 'Registration Date',
+                        //         key: 'title',
+                        //         render: (record) => {
+                        //                 return record.order_date ? DateUtils.getFormattedTimeDate(record.order_date): null
 
-                                }
-                        },
+                        //         }
+                        // },
                         {
                                 title: 'Consent ID',
                                 key: 'No of records',
@@ -222,7 +222,12 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         {
                                 title: 'Last Download',
                                 key: 'last_download',
-                                dataIndex: 'last_download'
+                                render: (record) => {
+
+                                        return record.downloads?DateUtils.getFormattedTimeDate(record.downloads.created_at):null
+                                
+
+                                }
                         },
 
                         {
@@ -292,6 +297,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 Uploads.downloadFiles(record.id, analysisResult, bulk).then((res) => {
 
                         Uploads.download(res.data)
+
+                        getData()
 
                         console.log(res)
                 })

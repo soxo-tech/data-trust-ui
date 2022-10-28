@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, FileUpload, Users,DateUtils } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, FileUpload, Users, DateUtils } from 'soxo-bootstrap-core';
 
 import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
 
@@ -45,6 +45,10 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      const [btnLoading, setBtnLoading] = useState(false);
 
+     const [result, setResult] = useState([])
+
+     const [summaryVisible, setSummaryVisible] = useState(false)
+
      const columns = [
           {
                title: '#',
@@ -74,7 +78,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                render: (record) => {
                     return (
                          <span>
-                              {record && record.created_at ? DateUtils.formatDate(record.created_at): null}
+                              {record && record.created_at ? DateUtils.formatDate(record.created_at) : null}
                          </span>
                     );
                },
@@ -120,7 +124,9 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                {
                     title: 'Last Download',
                     key: 'lastDownload',
-                    dataIndex: 'lastDownload'
+                    render: (record) => {
+                         return record.download ? DateUtils.getFormattedTimeDate(record.download.created_at) : null
+                    },
                },)
      }
 
@@ -175,6 +181,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                Uploads.download(res.data)
                setBtnLoading(false)
+               getData()
                console.log(res)
           })
      }
@@ -182,42 +189,61 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
       * Get Upload Data from Uploads table, then load user from core_users for each upload records
       */
      async function getData() {
+          //If analysisResult load analyis result data
+          if (analysisResult) {
+               const result = await Uploads.getData()
 
-
-          const queries = [{
-               field: 'mode',
-               value: mode
-          }]
-
-
-          var baseUrl;
-          
-          if (analysisResult)
-               baseUrl = process.env.REACT_APP_FF
-          else
-               baseUrl = process.env.REACT_APP_NURA
-
-          var config = {
-               queries,
-               baseUrl: baseUrl
+               console.log(result)
+               Promise.all(result.map(async (ele, key) => {
+                    var id = ele.created_by
+                    var user = await CoreUsers.getRecord({ id })
+                    return {
+                         ...ele,
+                         created_by_details: user.result
+                    }
+               })).then((arr) => {
+                    console.log(arr)
+                    setCheckUpData(arr)
+                    setLoading(false)
+               })
           }
 
-          console.log(config)
+          else {
+               const queries = [{
+                    field: 'mode',
+                    value: mode
+               }]
 
-          var result = await Uploads.get(config)
 
-          Promise.all(result.result.map(async (ele, key) => {
-               var id = ele.created_by
-               var user = await CoreUsers.getRecord({ id })
-               return {
-                    ...ele,
-                    created_by_details: user.result
+               var baseUrl;
+
+               if (analysisResult)
+                    baseUrl = process.env.REACT_APP_FF
+               else
+                    baseUrl = process.env.REACT_APP_NURA
+
+               var config = {
+                    queries,
+                    baseUrl: baseUrl
                }
-          })).then((arr) => {
-               console.log(arr)
-               setCheckUpData(arr)
-               setLoading(false)
-          })
+
+               console.log(config)
+
+               var result = await Uploads.get(config)
+
+               Promise.all(result.result.map(async (ele, key) => {
+                    var id = ele.created_by
+                    var user = await CoreUsers.getRecord({ id })
+                    return {
+                         ...ele,
+                         created_by_details: user.result
+                    }
+               })).then((arr) => {
+                    console.log(arr)
+                    setCheckUpData(arr)
+                    setLoading(false)
+               })
+          }
 
      }
 
@@ -290,6 +316,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      function modalVisible(e, ele) {
           setVisible(true)
+        
           setId(ele.id)
      }
 
@@ -340,7 +367,9 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          //     },
                          // }}
                          />)}
-
+               {/**
+                * Upload Consent and Checkup Modal
+                */}
                <Modal
                     destroyOnClose={true}
                     footer={null}
@@ -354,9 +383,16 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setUploadVisible(false);
                     }}
                >
-                    <UploadConsent analysisResult={analysisResult} setVisible={setUploadVisible} getData={getData} />
+                    <UploadConsent analysisResult={analysisResult} setVisible={setUploadVisible} getData={getData} setSummaryVisible={setSummaryVisible} setResult={setResult} />
                </Modal>
+               {/**
+                * Upload Consent and Checkup Modal ends
+                */}
 
+
+               {/**
+                 * Update Consent Modal
+                 */}
                <Modal
                     destroyOnClose={true}
                     footer={null}
@@ -370,8 +406,36 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setVisible(false);
                     }}
                >
-                    <UpdateConsent setVisible={setVisible} id={id} />
+                    <UpdateConsent setVisible={setVisible} id={id} setSummaryVisible={setSummaryVisible} setResult={setResult}  />
                </Modal>
+               {/**
+                * Update Consent Modal
+                */}
+
+
+               {/**
+                * summary modal starts
+               */}
+               <Modal
+                    // destroyOnClose={true}
+                    cancelButtonProps={{ hidden: true }}
+                    title="Upload Summary"
+                    visible={summaryVisible}
+                    okText="Okay"
+                    onOk={() => {
+                         setSummaryVisible(false);
+                         getData()
+                    }}
+                    // onCancel={() => {
+                    //      setSummaryVisible(false);
+                    // }}
+               >
+                    <Summary result={result} analysisResult={analysisResult} />
+               </Modal>
+               {/**
+                * Summary model ends
+                */}
+
           </div>
 
 
@@ -383,7 +447,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
  * @param {*} param0 
  * @returns 
  */
-function UploadConsent({ analysisResult, setVisible, getData }) {
+function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible, setResult }) {
 
      const [consentFile, setConsentFile] = useState({})
 
@@ -413,29 +477,27 @@ function UploadConsent({ analysisResult, setVisible, getData }) {
         
           Uploads.uploadFileContent(data, analysisResult).then((result) => {
 
+
                if (result.success) {
-
-                    if(analysisResult)
-                    message.success(`${result.message}. ${result.result.analysis_length} checkup records  are successfully uploaded`)
-
-                    else
-                    message.success(`${result.message}. ${result.result.checkup_length} checkup records and ${result.result.consent_length} consent records are successfully uploaded`)
+                    setResult({result:result.result,
+                    update:false})
 
                     setVisible(false)
+                    //set summary modal visible true
+                    setSummaryVisible(true)
+
 
                }
                else {
                     message.error(result.message)
                }
                // setVisible(false)
-               getData()
+               // getData()
                setLoading(false)
 
           })
 
      }
-
-
      //Function when uploading consent file
      function handleConsentFile(e) {
           console.log(e.target.files)
@@ -531,16 +593,16 @@ function UploadConsent({ analysisResult, setVisible, getData }) {
 /**
  * Component for uploading consent
  * @param {*} SheetJSFT
-                         * @param {*} uploadProps
-                         * @param {*} files
-                         * @returns
-                         */
+ * @param {*} uploadProps
+ * @param {*} files
+ * @returns
+ */
 
-function UpdateConsent({ setVisible, id }) {
+function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
 
      const [consentFile, setConsentFile] = useState({})
 
-     const [loading,setLoading]=useState(false)
+     const [loading, setLoading] = useState(false)
 
      //On approve the files are send tp backend to upload to blob storage
      function approveUpload() {
@@ -553,14 +615,21 @@ function UpdateConsent({ setVisible, id }) {
 
 
 
-          Uploads.updateConsent(data).then((result) => {
+          Uploads.updateConsent(data).then(async(result) => {
                if (result.success) {
 
-                    message.success(`${result.message}. ${result.result.consent_length} Consent are updated and uploaded`)
+                    //set results to show upload summary
+                    setResult({result:result.result,
+                    update:true})
                     setLoading(false)
+                    //set Visible of the update modal false
                     setVisible(false)
+
+                     //Set summary modal visible true
+                    setSummaryVisible(true)
+
                }
-               
+
                else {
                     message.error(result.message)
                }
@@ -598,6 +667,23 @@ function UpdateConsent({ setVisible, id }) {
                     <Button loading={loading} onClick={approveUpload}>Approve</Button>
                     <Button onClick={cancelUpload}>Cancel</Button>
                </div>
+          </div>
+     )
+}
+
+/**
+ * Function for showing the summary of upload or update of consent or analysis result
+ * @param {*} param0 
+ * @returns 
+ */
+function Summary({ result, analysisResult }) {
+     return (
+          <div>
+               <p>Your upload is successfully Completed</p>
+               {result.update ? <p>{result.result.consent_length} Records were updated</p> :
+                    analysisResult ? <p>{result.result.analysis_length} Records were uploaded</p> : <p>{result.result.checkup_length} checkup records and {result.result.consent_length} consent records were uploaded</p>}
+
+
           </div>
      )
 }

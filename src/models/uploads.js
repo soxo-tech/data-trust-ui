@@ -60,6 +60,23 @@ class Upload extends BaseAPI {
     };
 
 
+       /**
+     * Function to Update consent 
+     * @param {*} file 
+     * @param {*} analysisResult 
+     * @returns 
+     */
+        getData = (id) => {
+
+          
+            const baseUrl = process.env.REACT_APP_FF;
+            
+       
+            //To upload Check up and Consent
+            return ApiUtils.get({baseUrl,url:`uploads/get-data`})
+    };
+
+
     /**
      * Function to download check up and analysis files. This function is used for both bulk and individual downloads
      * @param {*} id 

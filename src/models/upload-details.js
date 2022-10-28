@@ -46,7 +46,7 @@ class UploadDetail extends BaseAPI {
                 baseUrl = process.env.REACT_APP_NURA
 
 
-        return ApiUtils.get({ baseUrl, url: `upload_details/get-details/${uploadId}` })
+        return ApiUtils.get({ baseUrl,url: `upload_details/get-details/${uploadId}` })
 
     }
 
@@ -76,7 +76,11 @@ class UploadDetail extends BaseAPI {
         return ApiUtils.get({baseUrl, url: `upload_details/load-details/${nuraId}` })
 
     }
-
+/**
+ * Function to delete a record
+ * @param {*} id 
+ * @returns 
+ */
     deleteRecord(id){
         return ApiUtils.get({url: `upload_details/delete-record/${id}` })  
     }
