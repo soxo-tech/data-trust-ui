@@ -176,7 +176,7 @@ export default function DownloadHistory({ ...props }) {
                     created_by_details: user.result
                }
           })).then((arr) => {
-               console.log(arr)
+        
                setDownloadHistory(arr)
                setLoading(false)
           })

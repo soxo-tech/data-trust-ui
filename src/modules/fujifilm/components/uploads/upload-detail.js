@@ -280,7 +280,6 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                 UploadDetails.getDetails(id, analysisResult).then(result => {
                         // setDetails(result.result)
-                        console.log(result.upload_details)
 
                         setUploads(result);
 
@@ -524,7 +523,7 @@ function DownloadHistory({ data }) {
                                 created_by_details: user.result
                         }
                 })).then((arr) => {
-                        console.log(arr)
+               
                         setDownloadHistory(arr)
                         //   setLoading(false)
                 })

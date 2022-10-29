@@ -113,8 +113,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
 
                 UploadDetails.loadDetails(id).then(result => {
                         // setDetails(result.result)
-                        console.log(result)
-
+                       
                         // setUploads(result);
 
                         //   setDerivedAnalysis(result.uploadsWithConsent);
@@ -196,7 +195,6 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
 
                         Uploads.download(res.data)
 
-                        console.log(res)
                 })
 
         }

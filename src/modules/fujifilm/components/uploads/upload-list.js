@@ -198,7 +198,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
           const result = await Uploads.getData(analysisResult)
 
-          console.log(result)
           Promise.all(result.map(async (ele, key) => {
                var id = ele.created_by
                var user = await CoreUsers.getRecord({ id })
@@ -207,7 +206,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                     created_by_details: user.result
                }
           })).then((arr) => {
-               console.log(arr)
+             
                setCheckUpData(arr)
                setLoading(false)
           })
@@ -230,7 +229,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           }
 
           Uploads.get(config).then((res) => {
-               console.log(res)
+              
           })
      }
 
@@ -469,20 +468,20 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
      }
      //Function when uploading consent file
      function handleConsentFile(e) {
-          console.log(e.target.files)
+      
           let files = e.target.files[0]
           setConsentFile(files)
      }
 
      function handleAnalysisFile(e) {
-          console.log(e.target.files)
+          
           let files = e.target.files[0]
           setAnalysisFile(files)
      }
 
      //Function when uploading psuedonymized file
      function handlePsuedonymizedFile(e) {
-          console.log(e.target.files)
+        
           let files = e.target.files[0]
           setPsuedonymizedFile(files)
      }

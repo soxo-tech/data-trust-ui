@@ -66,6 +66,8 @@ class Upload extends BaseAPI {
      * @param {*} analysisResult 
      * @returns 
      */
+
+       
         getData = (analysisResult) => {
 
             var mode,baseUrl
