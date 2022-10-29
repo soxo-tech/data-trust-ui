@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Dropdown, Menu, Skeleton } from 'antd';
+import { Table, Button, Typography, Dropdown, Menu, Skeleton ,message} from 'antd';
 
 import { Location, Card ,DateUtils} from 'soxo-bootstrap-core';
 
@@ -193,7 +193,14 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
 
                 Uploads.downloadFiles(id,analysisResult,bulk).then((res) => {
 
-                        Uploads.download(res.data)
+                        if (res.success) {
+                                Uploads.download(res.buffer.data)
+                                // setBtnLoading(false)
+                                getData()
+                           }
+                           else {
+                                message.error(res.message)
+                           }
 
                 })
 

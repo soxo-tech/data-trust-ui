@@ -67,7 +67,7 @@ class Upload extends BaseAPI {
      * @returns 
      */
 
-       
+
         getData = (analysisResult) => {
 
             var mode,baseUrl
@@ -86,7 +86,7 @@ class Upload extends BaseAPI {
         
        
             //To upload Check up and Consent
-            return ApiUtils.get({url:`uploads/get-data/${mode}`})
+            return ApiUtils.get({baseUrl,url:`uploads/get-data/${mode}`})
     };
 
 
