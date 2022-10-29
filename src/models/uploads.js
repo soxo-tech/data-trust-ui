@@ -1,4 +1,6 @@
 /**
+ * 
+ * @author Sameena
  * Uploads Model
  *
  *
@@ -38,6 +40,7 @@ class Upload extends BaseAPI {
      * @param {*} analysisResult 
      * @returns 
      */
+
     uploadFileContent = (file, analysisResult) => {
         if (analysisResult)
             //To upload Analysis Result
@@ -47,47 +50,52 @@ class Upload extends BaseAPI {
             return UploadUtils('uploads/upload-file', file)
     };
 
+
+
     /**
      * Function to Update consent 
      * @param {*} file 
      * @param {*} analysisResult 
      * @returns 
      */
-     updateConsent = (file) => {
-       
-            //To upload Check up and Consent
-            return UploadUtils('uploads/update-consent', file)
+
+    updateConsent = (file) => {
+
+        //To upload Check up and Consent
+        return UploadUtils('uploads/update-consent', file)
     };
 
 
-       /**
-     * Function to Update consent 
-     * @param {*} file 
-     * @param {*} analysisResult 
-     * @returns 
-     */
 
 
-        getData = (analysisResult) => {
+   /* Function to Update consent 
+   * @param {*} file 
+   * @param {*} analysisResult 
+   * @returns 
+   */
 
-            var mode,baseUrl
+    getData = (analysisResult) => {
 
-            if (analysisResult){
-                mode = 'ANALYSIS';
-                baseUrl = process.env.REACT_APP_FF;
-            }
-    
-            //for checkup data download details use nura database
-            else{
-                mode = 'CHECKUP';
-                baseUrl = process.env.REACT_APP_NURA;
-            }
+        var mode, baseUrl
 
-        
-       
-            //To upload Check up and Consent
-            return ApiUtils.get({baseUrl,url:`uploads/get-data/${mode}`})
+        if (analysisResult) {
+            mode = 'ANALYSIS';
+            baseUrl = process.env.REACT_APP_FF;
+        }
+
+        //for checkup data download details use nura database
+        else {
+            mode = 'CHECKUP';
+            baseUrl = process.env.REACT_APP_NURA;
+        }
+
+
+
+        //To upload Check up and Consent
+        return ApiUtils.get({ baseUrl, url: `uploads/get-data/${mode}` })
     };
+
+
 
 
     /**
@@ -97,35 +105,40 @@ class Upload extends BaseAPI {
      * @param {*} bulk 
      * @returns 
      */
+
     downloadFiles = (id, analysisResult, bulk) => {
 
         var mode
         let baseUrl = null;
-        
+
         //For analysis result download details use FF database
-        if (analysisResult){
+        if (analysisResult) {
             mode = 'ANALYSIS';
             baseUrl = process.env.REACT_APP_FF;
         }
 
         //for checkup data download details use nura database
-        else{
+        else {
             mode = 'CHECKUP';
             baseUrl = process.env.REACT_APP_NURA;
         }
 
-        return ApiUtils.get({baseUrl,
+        return ApiUtils.get({
+            baseUrl,
             url: `uploads/download?bulk=${bulk}&id=${id}&mode=${mode}`,
         });
 
 
     };
 
+
+
     /**
      * Download the buffer array from backend
      * @param {*} data 
      * @returns 
      */
+    
     download = (data) => {
         var bytearray = Object.keys(data);
         var arrayelement = Object.values(data);

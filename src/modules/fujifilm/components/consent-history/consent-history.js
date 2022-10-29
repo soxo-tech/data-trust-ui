@@ -91,6 +91,7 @@ export default function ConsentHistory({ ...props }) {
     ]
 
     //Extra columns for fujifilm
+
     if (ffmenu) {
         columns.push(
             {
@@ -157,14 +158,6 @@ export default function ConsentHistory({ ...props }) {
 
     )
 
-
-    /**
-     * function to discard a consent
-     */
-
-    function onDiscard() {
-
-    }
 
     useEffect(() => {
         getData();

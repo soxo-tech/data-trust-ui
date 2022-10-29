@@ -1,8 +1,7 @@
 /**
+ * @author Sameena
  *User Logs Model
- *
- *
- *
+ * 
  *
  */
 

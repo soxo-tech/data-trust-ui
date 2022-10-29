@@ -19,16 +19,13 @@ import { UserLogs, CoreUsers } from '../../../../models';
 
 const { Title, Text } = Typography;
 
-export default function DownloadHistory({ ...props }) {
+export default function DownloadHistory({ ffmenu,...props }) {
 
      const [downloadHistory, setDownloadHistory] = useState([])
 
      const [page, setPage] = useState(1);
 
      const [limit, setLimit] = useState(20);
-
-     //ffmenu is maintaine to determine which user is using(nura or fujifilm)
-     const [ffmenu, setFFmenu] = useState(false)
 
      const [loading, setLoading] = useState(true)
 

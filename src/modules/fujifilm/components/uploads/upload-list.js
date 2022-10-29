@@ -6,7 +6,7 @@
  */
 
 /**
- * Check Up data Listing Component
+ * Check Up data and Analysis Result Listing Component
  */
 
 import React, { useState, useEffect } from 'react';
@@ -17,14 +17,14 @@ import { Location, ReferenceSelect, InputComponent, FileUpload, Users, DateUtils
 
 import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
 
-import moment from 'moment'
-
 import './upload-list.scss';
+
 import { CoreUsers, Uploads, UserLogs } from '../../../../models';
 
 const { Title, Text } = Typography;
 
 export default function UploadList({ ffmenu, analysisResult, mode }) {
+
      const [checkUpData, setCheckUpData] = useState([])
 
      const [page, setPage] = useState(1);
@@ -148,8 +148,9 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                return (
                     analysisResult ?
                          <div style={{ display: 'flex' }}>
-                              {/* <Button onClick={(e) => deleteRecord(e, ele)}>Delete</Button> */}
+
                               <Button onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
+
                               <Dropdown overlay={() => {
                                    return menu(ele)
                               }} placement="bottomLeft">
@@ -157,11 +158,16 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                                    <MoreOutlined />
 
                               </Dropdown>
+
                          </div> :
                          <div style={{ display: 'flex' }}>
+
                               <Button onClick={toUpdate}>Details</Button>
+
                               <Button onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
+
                               {ffmenu ? null : <Button onClick={(e) => modalVisible(e, ele)}>Update Consent</Button>}
+
                          </div>
 
                )
@@ -170,12 +176,17 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      useEffect(() => {
           getData();
-          // getAnalysisResult();
      }, [])
 
 
+     /**
+      * Function to download Files. Bulk is kept true 
+      * @param {*} e 
+      * @param {*} id 
+      */
+
      async function downloadFiles(e, id) {
-          // setBtnLoading(true)
+
           const bulk = true
           Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
 
@@ -189,11 +200,15 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                }
           })
      }
+
+
+
      /**
       * Get Upload Data from Uploads table, then load user from core_users for each upload records
       */
+
      async function getData() {
-          
+
           setLoading(true)
 
           const result = await Uploads.getData(analysisResult)
@@ -206,17 +221,20 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                     created_by_details: user.result
                }
           })).then((arr) => {
-             
+
                setCheckUpData(arr)
                setLoading(false)
           })
 
      }
 
+
+
      /**
       * get upload records along with upload details with  the same id
       * @param {*} id 
       */
+
      function getAnalysisResult(id = 16) {
           var config = {
                queries: [{
@@ -229,7 +247,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           }
 
           Uploads.get(config).then((res) => {
-              
+
           })
      }
 
@@ -237,6 +255,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
      /**
       * Open menu with additional options
       */
+
      const menu = (record) => {
           return (
                <Menu onClick={(event) => {
@@ -267,6 +286,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
      /**
       * columns for analysis result menu
       */
+
      if (analysisResult) {
           columns.forEach((ele) => {
 
@@ -275,6 +295,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                }
           })
      }
+
 
      /**
       * Set Modal visible for update consent
@@ -307,35 +328,43 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          </Button>
 
                     </div>}
-               {loading ? <Skeleton /> :
+
+               {loading ?
+
+                    <Skeleton /> :
+
                     (analysisResult ?
+
                          <Table
                               scroll={{ x: true }}
                               //  rowKey={(record) => record.da_id}
                               dataSource={checkUpData}
                               columns={analysisColumns}
-                         // pagination={{
-                         //     current: page,
-                         //     onChange(current) {
-                         //         setPage(current);
-                         //     },
-                         // }}
+                              // pagination={{
+                              //      current: page,
+                              //      onChange(current) {
+                              //           setPage(current);
+                              //      },
+                              // }}
                          /> :
+
                          <Table
                               scroll={{ x: true }}
                               //  rowKey={(record) => record.da_id}
                               dataSource={checkUpData}
                               columns={columns}
-                         // pagination={{
-                         //     current: page,
-                         //     onChange(current) {
-                         //         setPage(current);
-                         //     },
-                         // }}
+                              // pagination={{
+                              //      current: page,
+                              //      onChange(current) {
+                              //           setPage(current);
+                              //      },
+                              // }}
                          />)}
+
                {/**
                 * Upload Consent and Checkup Modal
                 */}
+
                <Modal
                     destroyOnClose={true}
                     footer={null}
@@ -351,14 +380,18 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                >
                     <UploadConsent analysisResult={analysisResult} setVisible={setUploadVisible} getData={getData} setSummaryVisible={setSummaryVisible} setResult={setResult} />
                </Modal>
+
                {/**
                 * Upload Consent and Checkup Modal ends
                 */}
 
 
+
+
                {/**
                  * Update Consent Modal
                  */}
+
                <Modal
                     destroyOnClose={true}
                     footer={null}
@@ -374,16 +407,20 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                >
                     <UpdateConsent setVisible={setVisible} id={id} setSummaryVisible={setSummaryVisible} setResult={setResult} />
                </Modal>
+
                {/**
                 * Update Consent Modal
                 */}
 
 
+
+
                {/**
                 * summary modal starts
                */}
+
                <Modal
-                    // destroyOnClose={true}
+                   
                     cancelButtonProps={{ hidden: true }}
                     title="Upload Summary"
                     visible={summaryVisible}
@@ -392,12 +429,10 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setSummaryVisible(false);
                          getData()
                     }}
-               // onCancel={() => {
-               //      setSummaryVisible(false);
-               // }}
                >
                     <Summary result={result} analysisResult={analysisResult} />
                </Modal>
+
                {/**
                 * Summary model ends
                 */}
@@ -426,11 +461,14 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
      const [loading, setLoading] = useState(false)
 
      //Onsumbit of the modal, both files with title is send to backend
+
      async function submit() {
+
           setLoading(true)
           const data = new FormData();
 
           if (analysisResult) {
+
                data.append('analysisFile', analysisFile)
                data.append('title', title)
           }
@@ -451,6 +489,7 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
                     })
 
                     setVisible(false)
+
                     //set summary modal visible true
                     setSummaryVisible(true)
 
@@ -466,22 +505,25 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
           })
 
      }
+
+
      //Function when uploading consent file
      function handleConsentFile(e) {
-      
+
           let files = e.target.files[0]
           setConsentFile(files)
      }
 
+     //Function when uploading analysis file
      function handleAnalysisFile(e) {
-          
+
           let files = e.target.files[0]
           setAnalysisFile(files)
      }
 
      //Function when uploading psuedonymized file
      function handlePsuedonymizedFile(e) {
-        
+
           let files = e.target.files[0]
           setPsuedonymizedFile(files)
      }
@@ -490,6 +532,7 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
      function handleTitle(e) {
           setTitle(e.target.value)
      }
+
      return (
 
           <div>
@@ -497,6 +540,7 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
                <Input onChange={handleTitle}></Input>
 
                {analysisResult ?
+
                     <div>
                          <br />
                          <Title level={5}>Analysis Result</Title>
@@ -513,9 +557,6 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
                     <>
 
                          <div>
-
-
-
                               <form id='myform'>
                                    <br />
                                    <Title level={5}>Consent Data</Title>
@@ -538,8 +579,6 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
                                    <br />
                                    <br />
                               </form>
-
-
                          </div>
 
                          <div>
@@ -574,6 +613,7 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
 
      //On approve the files are send tp backend to upload to blob storage
      function approveUpload() {
+
           setLoading(true)
           const data = new FormData();
 
@@ -587,11 +627,13 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
                if (result.success) {
 
                     //set results to show upload summary
+
                     setResult({
                          result: result.result,
                          update: true
                     })
                     setLoading(false)
+
                     //set Visible of the update modal false
                     setVisible(false)
 
@@ -614,7 +656,9 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
      function cancelUpload() {
           setVisible(false)
      }
+
      function handleConsentFile(e) {
+
           let files = e.target.files[0]
           setConsentFile(files)
      }
@@ -647,7 +691,9 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
  * @returns 
  */
 function Summary({ result, analysisResult }) {
+
      return (
+          
           <div>
                <p>Your upload is successfully Completed</p>
                {result.update ? <p>{result.result.consent_length} Records were updated</p> :

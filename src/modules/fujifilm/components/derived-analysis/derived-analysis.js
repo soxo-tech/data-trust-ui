@@ -112,11 +112,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                 setLoading(true);
 
                 UploadDetails.loadDetails(id).then(result => {
-                        // setDetails(result.result)
-                       
-                        // setUploads(result);
-
-                        //   setDerivedAnalysis(result.uploadsWithConsent);
+                        
                         if(result.uploadsWithConsent&&result.uploadsWithConsent.length>0)
 
                         Promise.all(result.uploadsWithConsent.map(async (ele, key) => {
