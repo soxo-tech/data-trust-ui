@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card,DateUtils } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, Card, DateUtils } from 'soxo-bootstrap-core';
 
 import { MoreOutlined } from '@ant-design/icons';
 
@@ -105,7 +105,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 // dataIndex: 'time',
                 render: (record) => {
 
-                        if (record.consent.attributes) {
+                        if (record.consent && record.consent.attributes) {
 
                                 const attributes = JSON.parse(record.consent.attributes)
 
@@ -121,7 +121,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         render: (record) => {
 
 
-                                if (record.consent.attributes) {
+                                if (record.consent && record.consent.attributes) {
                                         const attributes = JSON.parse(record.consent.attributes)
 
                                         return attributes.items;
@@ -224,8 +224,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 key: 'last_download',
                                 render: (record) => {
 
-                                        return record.downloads?DateUtils.getFormattedTimeDate(record.downloads.created_at):null
-                                
+                                        return record.downloads ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
+
 
                                 }
                         },
@@ -296,11 +296,16 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 const bulk = false
                 Uploads.downloadFiles(record.id, analysisResult, bulk).then((res) => {
 
-                        Uploads.download(res.data)
+                        if (res.success) {
+                                
+                                Uploads.download(res.buffer.data)
 
-                        getData()
+                                getData()
 
-                        console.log(res)
+                        }
+                        else {
+                                message.error(res.message)
+                        }
                 })
         }
 

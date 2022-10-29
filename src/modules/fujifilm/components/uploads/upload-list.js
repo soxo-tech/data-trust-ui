@@ -175,75 +175,42 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
 
      async function downloadFiles(e, id) {
-          setBtnLoading(true)
+          // setBtnLoading(true)
           const bulk = true
           Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
 
-               Uploads.download(res.data)
-               setBtnLoading(false)
-               getData()
-               console.log(res)
+               if (res.success) {
+                    Uploads.download(res.buffer.data)
+                    setBtnLoading(false)
+                    getData()
+               }
+               else {
+                    message.error(res.message)
+               }
           })
      }
      /**
       * Get Upload Data from Uploads table, then load user from core_users for each upload records
       */
      async function getData() {
-          //If analysisResult load analyis result data
-          if (analysisResult) {
-               const result = await Uploads.getData()
+          
+          setLoading(true)
 
-               console.log(result)
-               Promise.all(result.map(async (ele, key) => {
-                    var id = ele.created_by
-                    var user = await CoreUsers.getRecord({ id })
-                    return {
-                         ...ele,
-                         created_by_details: user.result
-                    }
-               })).then((arr) => {
-                    console.log(arr)
-                    setCheckUpData(arr)
-                    setLoading(false)
-               })
-          }
+          const result = await Uploads.getData(analysisResult)
 
-          else {
-               const queries = [{
-                    field: 'mode',
-                    value: mode
-               }]
-
-
-               var baseUrl;
-
-               if (analysisResult)
-                    baseUrl = process.env.REACT_APP_FF
-               else
-                    baseUrl = process.env.REACT_APP_NURA
-
-               var config = {
-                    queries,
-                    baseUrl: baseUrl
+          console.log(result)
+          Promise.all(result.map(async (ele, key) => {
+               var id = ele.created_by
+               var user = await CoreUsers.getRecord({ id })
+               return {
+                    ...ele,
+                    created_by_details: user.result
                }
-
-               console.log(config)
-
-               var result = await Uploads.get(config)
-
-               Promise.all(result.result.map(async (ele, key) => {
-                    var id = ele.created_by
-                    var user = await CoreUsers.getRecord({ id })
-                    return {
-                         ...ele,
-                         created_by_details: user.result
-                    }
-               })).then((arr) => {
-                    console.log(arr)
-                    setCheckUpData(arr)
-                    setLoading(false)
-               })
-          }
+          })).then((arr) => {
+               console.log(arr)
+               setCheckUpData(arr)
+               setLoading(false)
+          })
 
      }
 
@@ -316,7 +283,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      function modalVisible(e, ele) {
           setVisible(true)
-        
+
           setId(ele.id)
      }
 
@@ -406,7 +373,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setVisible(false);
                     }}
                >
-                    <UpdateConsent setVisible={setVisible} id={id} setSummaryVisible={setSummaryVisible} setResult={setResult}  />
+                    <UpdateConsent setVisible={setVisible} id={id} setSummaryVisible={setSummaryVisible} setResult={setResult} />
                </Modal>
                {/**
                 * Update Consent Modal
@@ -426,9 +393,9 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          setSummaryVisible(false);
                          getData()
                     }}
-                    // onCancel={() => {
-                    //      setSummaryVisible(false);
-                    // }}
+               // onCancel={() => {
+               //      setSummaryVisible(false);
+               // }}
                >
                     <Summary result={result} analysisResult={analysisResult} />
                </Modal>
@@ -474,13 +441,15 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
                data.append("psuedonymizedFile", psuedonymizedFile);
                data.append("title", title);
           }
-        
+
           Uploads.uploadFileContent(data, analysisResult).then((result) => {
 
 
                if (result.success) {
-                    setResult({result:result.result,
-                    update:false})
+                    setResult({
+                         result: result.result,
+                         update: false
+                    })
 
                     setVisible(false)
                     //set summary modal visible true
@@ -615,17 +584,19 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
 
 
 
-          Uploads.updateConsent(data).then(async(result) => {
+          Uploads.updateConsent(data).then(async (result) => {
                if (result.success) {
 
                     //set results to show upload summary
-                    setResult({result:result.result,
-                    update:true})
+                    setResult({
+                         result: result.result,
+                         update: true
+                    })
                     setLoading(false)
                     //set Visible of the update modal false
                     setVisible(false)
 
-                     //Set summary modal visible true
+                    //Set summary modal visible true
                     setSummaryVisible(true)
 
                }

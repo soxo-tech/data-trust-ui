@@ -66,14 +66,25 @@ class Upload extends BaseAPI {
      * @param {*} analysisResult 
      * @returns 
      */
-        getData = (id) => {
+        getData = (analysisResult) => {
 
-          
-            const baseUrl = process.env.REACT_APP_FF;
-            
+            var mode,baseUrl
+
+            if (analysisResult){
+                mode = 'ANALYSIS';
+                baseUrl = process.env.REACT_APP_FF;
+            }
+    
+            //for checkup data download details use nura database
+            else{
+                mode = 'CHECKUP';
+                baseUrl = process.env.REACT_APP_NURA;
+            }
+
+        
        
             //To upload Check up and Consent
-            return ApiUtils.get({baseUrl,url:`uploads/get-data`})
+            return ApiUtils.get({url:`uploads/get-data/${mode}`})
     };
 
 
