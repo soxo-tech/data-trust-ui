@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Dropdown, Menu, Skeleton } from 'antd';
+import { Table, Button, Typography, Dropdown, Menu, Skeleton ,message} from 'antd';
 
 import { Location, Card ,DateUtils} from 'soxo-bootstrap-core';
 
@@ -112,12 +112,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                 setLoading(true);
 
                 UploadDetails.loadDetails(id).then(result => {
-                        // setDetails(result.result)
-                        console.log(result)
-
-                        // setUploads(result);
-
-                        //   setDerivedAnalysis(result.uploadsWithConsent);
+                        
                         if(result.uploadsWithConsent&&result.uploadsWithConsent.length>0)
 
                         Promise.all(result.uploadsWithConsent.map(async (ele, key) => {
@@ -187,13 +182,22 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
         function download(e, record) {
 
                 const analysisResult=true
+
                 const bulk=false
+                
+                const id=record.upload_details[0].id
 
-                Uploads.downloadFiles(record.id,analysisResult,bulk).then((res) => {
+                Uploads.downloadFiles(id,analysisResult,bulk).then((res) => {
 
-                        Uploads.download(res.data)
+                        if (res.success) {
+                                Uploads.download(res.buffer.data)
+                                // setBtnLoading(false)
+                                getData()
+                           }
+                           else {
+                                message.error(res.message)
+                           }
 
-                        console.log(res)
                 })
 
         }

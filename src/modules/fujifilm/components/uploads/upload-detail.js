@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card,DateUtils } from 'soxo-bootstrap-core';
+import { Location, ReferenceSelect, InputComponent, Card, DateUtils } from 'soxo-bootstrap-core';
 
 import { MoreOutlined } from '@ant-design/icons';
 
@@ -70,7 +70,6 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 {
                         title: 'Consent ID',
                         key: 'No of records',
-                        // dataIndex: 'Number',
                         render: (record) => {
 
                                 return record.consent && record.consent.id
@@ -80,7 +79,6 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 {
                         title: 'Consent Time',
                         key: 'date',
-                        // dataIndex: 'date',
                         render: (record) => {
 
                                 return record.consent && DateUtils.getFormattedTimeDate(record.consent.created_at)
@@ -99,21 +97,22 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         }
 
         // 
-        columns.push({
-                title: 'Lifetime',
-                key: 'time',
-                // dataIndex: 'time',
-                render: (record) => {
+        columns.push(
+                {
+                        title: 'Lifetime',
+                        key: 'time',
+                        // dataIndex: 'time',
+                        render: (record) => {
 
-                        if (record.consent.attributes) {
+                                if (record.consent && record.consent.attributes) {
 
-                                const attributes = JSON.parse(record.consent.attributes)
+                                        const attributes = JSON.parse(record.consent.attributes)
 
 
-                                return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifeTime;
+                                        return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifeTime;
+                                }
                         }
-                }
-        },
+                },
                 {
                         title: 'Items',
                         key: 'by',
@@ -121,7 +120,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         render: (record) => {
 
 
-                                if (record.consent.attributes) {
+                                if (record.consent && record.consent.attributes) {
                                         const attributes = JSON.parse(record.consent.attributes)
 
                                         return attributes.items;
@@ -169,6 +168,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 },
         )
 
+        //For analysis Result
         if (analysisResult) {
                 columns = [
                         {
@@ -193,14 +193,14 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                                 }
                         },
-                        {
-                                title: 'Registration Date',
-                                key: 'title',
-                                render: (record) => {
-                                        return record.order_date ? DateUtils.getFormattedTimeDate(record.order_date): null
+                        // {
+                        //         title: 'Registration Date',
+                        //         key: 'title',
+                        //         render: (record) => {
+                        //                 return record.order_date ? DateUtils.getFormattedTimeDate(record.order_date): null
 
-                                }
-                        },
+                        //         }
+                        // },
                         {
                                 title: 'Consent ID',
                                 key: 'No of records',
@@ -222,7 +222,12 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         {
                                 title: 'Last Download',
                                 key: 'last_download',
-                                dataIndex: 'last_download'
+                                render: (record) => {
+
+                                        return record.downloads ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
+
+
+                                }
                         },
 
                         {
@@ -261,6 +266,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 ]
         }
 
+
         useEffect(() => {
                 getData();
 
@@ -269,13 +275,13 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         /**
          * Function to load the data for screen
          */
+
         function getData() {
 
                 setLoading(true);
 
                 UploadDetails.getDetails(id, analysisResult).then(result => {
                         // setDetails(result.result)
-                        console.log(result.upload_details)
 
                         setUploads(result);
 
@@ -287,19 +293,28 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         /**
          * function for download
          */
+
         function download(e, record) {
                 const bulk = false
                 Uploads.downloadFiles(record.id, analysisResult, bulk).then((res) => {
 
-                        Uploads.download(res.data)
+                        if (res.success) {
 
-                        console.log(res)
+                                Uploads.download(res.buffer.data)
+
+                                getData()
+
+                        }
+                        else {
+                                message.error(res.message)
+                        }
                 })
         }
 
         /**
          * Function for deleting a record
          */
+
         async function deleteRecord(e, record) {
                 const result = await UploadDetails.deleteRecord(record.id)
                 if (result.success) {
@@ -315,6 +330,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         /**
          * Menu for additional options
          */
+
         const menu = (record) => {
 
                 return (<Menu onClick={(event) => {
@@ -346,7 +362,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         };
 
         /**
-         * 
+         * Function to get download history
          * 
          */
         async function getDownloadHistory(record) {
@@ -375,6 +391,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
          * @param {*} params 
          */
         async function handleClick(params, record) {
+
                 if (params.key === 'download_history') {
                         if (analysisResult) {
 
@@ -387,36 +404,30 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 });
                         }
                 }
+
                 else if (params.key === 'consent_history')
+
                         Location.navigate({
                                 url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}`,
                         });
+
                 else if (params.key === 'result_analysis')
+
                         Location.navigate({
                                 url: `/checkup-list/derived-analysis/${record.psuedonymous_nura_id}`,
                         });
         }
 
+
+
         /**
          * Function to be triggered on search
          * @param {} event 
          */
+
         function onSearch(event) {
                 setQuery(event.target.value);
         }
-
-
-        // let filtered = uploads.upload_details.filter((record) => {
-        //         // query = query.toUpperCase();
-
-        //         if (query) {
-        //                 if ((record.psuedonymous_nura_id).indexOf(query) != -1){}
-        //                         return true;
-
-        //         } else {
-        //                 return true;
-        //         }
-        // })
 
         return (
                 <div>
@@ -447,15 +458,18 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                                 //  rowKey={(record) => record.da_id}
                                                                 dataSource={uploads.upload_details}
                                                                 columns={columns}
-                                                        // pagination={{
-                                                        //     current: page,
-                                                        //     onChange(current) {
-                                                        //         setPage(current);
-                                                        //     },
-                                                        // }}
+                                                                // pagination={{
+                                                                //         current: page,
+                                                                //         onChange(current) {
+                                                                //                 setPage(current);
+                                                                //         },
+                                                                // }}
                                                         />
                                                 </Card>
 
+                                                 {/**
+                                                * Modal for Download History
+                                                */}
                                                 <Modal
                                                         destroyOnClose={true}
                                                         footer={null}
@@ -472,6 +486,10 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                         <DownloadHistory data={downloadHistory} />
 
                                                 </Modal>
+
+                                                 {/**
+                                                * Modal for Download History ends
+                                                */}
 
                                         </>}
 
@@ -490,7 +508,13 @@ function DownloadHistory({ data }) {
 
         const [downloadHistory, setDownloadHistory] = useState([])
 
+
+        /**
+         * Function to get download history
+         */
+
         async function getData() {
+
                 var config = {
                         queries: [{
                                 field: 'type',
@@ -512,7 +536,7 @@ function DownloadHistory({ data }) {
                                 created_by_details: user.result
                         }
                 })).then((arr) => {
-                        console.log(arr)
+
                         setDownloadHistory(arr)
                         //   setLoading(false)
                 })
@@ -522,6 +546,7 @@ function DownloadHistory({ data }) {
         useEffect(() => {
                 getData()
         }, [])
+
 
         const columns = [
                 {
@@ -541,11 +566,12 @@ function DownloadHistory({ data }) {
                         }
                 },
         ]
+
         return (
                 <div>
                         <p>Nura ID :</p>
                         <p>{data.psuedonymous_nura_id}</p>
-                        <p>Data   ID</p>
+                        {/* <p>Data   ID</p> */}
                         <p></p>
                         <Table
                                 scroll={{ x: true }}

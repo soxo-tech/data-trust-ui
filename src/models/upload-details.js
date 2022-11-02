@@ -1,8 +1,7 @@
 /**
+ * 
+ * @auhtor Sameena 
  * Upload Details Model
- *
- *
- *
  *
  */
 
@@ -34,6 +33,7 @@ class UploadDetail extends BaseAPI {
      * @param {*} analysisResult 
      * @returns 
      */
+
     getDetails(uploadId, analysisResult) {
 
         let baseUrl = null;
@@ -46,15 +46,19 @@ class UploadDetail extends BaseAPI {
                 baseUrl = process.env.REACT_APP_NURA
 
 
-        return ApiUtils.get({ baseUrl, url: `upload_details/get-details/${uploadId}` })
+        return ApiUtils.get({ baseUrl,url: `upload_details/get-details/${uploadId}` })
 
     }
+
+
+
 
     /**
      * Get consent data
      * @param {*} nuraId 
      * @returns 
      */
+
     getConsent(nuraId) {
         //Get Consent data from Nura database
         var baseUrl=process.env.REACT_APP_NURA
@@ -64,11 +68,12 @@ class UploadDetail extends BaseAPI {
     }
 
 
-/**
- * Get derived analysis data
- * @param {*} nuraId 
- * @returns 
- */
+    /**
+    * Get derived analysis data
+    * @param {*} nuraId 
+    * @returns 
+    */
+
     loadDetails(nuraId) {
         //Get Derived Analysis Result from FF database
         var baseUrl=process.env.REACT_APP_FF
@@ -77,6 +82,13 @@ class UploadDetail extends BaseAPI {
 
     }
 
+
+    /**
+    * Function to delete a record
+    * @param {*} id 
+    * @returns 
+    */
+   
     deleteRecord(id){
         return ApiUtils.get({url: `upload_details/delete-record/${id}` })  
     }
