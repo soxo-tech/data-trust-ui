@@ -22,7 +22,7 @@ import { UploadDetails } from '../../../../models';
 
 const { Title, Text } = Typography;
 
-export default function ConsentHistory({ ...props }) {
+export default function ConsentHistory({ffmenu, ...props }) {
 
     const [consentHistory, setConsentHistory] = useState([])
 
@@ -33,8 +33,6 @@ export default function ConsentHistory({ ...props }) {
 
     const { id } = props.match.params;
 
-    //ffmenu is maintaine to determine which user is using(nura or fujifilm)
-    const [ffmenu, setFFmenu] = useState(false)
 
     const [loading, setLoading] = useState(true)
 
@@ -143,7 +141,7 @@ export default function ConsentHistory({ ...props }) {
 
                     <div>
                         {ffmenu ?
-                            <Button onClick={onDiscard}>Discard</Button> :
+                           null :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 
@@ -158,6 +156,14 @@ export default function ConsentHistory({ ...props }) {
 
     )
 
+
+    /**
+     * function to discard a consent
+     */
+
+    function onDiscard() {
+
+    }
 
     useEffect(() => {
         getData();
