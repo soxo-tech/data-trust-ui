@@ -141,7 +141,7 @@ export default function ConsentHistory({ffmenu, ...props }) {
 
                     <div>
                         {ffmenu ?
-                            <Button onClick={onDiscard}>Discard</Button> :
+                           null :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 
