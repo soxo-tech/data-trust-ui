@@ -4,17 +4,7 @@ import './App.scss';
 
 import *  as CustomComponents from './modules';
 
-
-
 import { RootApplicationAPI } from 'soxo-bootstrap-core';
-
-
-// import * as CustomComponents from './modules/'
-
-// import * as CustomModels from './models/'
-
-// import 'antd/dist/antd.css'; 
-
 
 
 let appSettings = {
