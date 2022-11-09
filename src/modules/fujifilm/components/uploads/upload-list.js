@@ -11,19 +11,19 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu, Skeleton } from 'antd';
+import { Table, Button, Typography, Modal, message, Input, Dropdown, Menu, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, FileUpload, Users, DateUtils } from 'soxo-bootstrap-core';
+import { Location, DateUtils } from 'soxo-bootstrap-core';
 
-import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
 
 import './upload-list.scss';
 
-import { CoreUsers, Uploads, UserLogs } from '../../../../models';
+import { CoreUsers, Uploads } from '../../../../models';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-export default function UploadList({ ffmenu, analysisResult, mode }) {
+export default function UploadList({ ffmenu, analysisResult }) {
 
      const [checkUpData, setCheckUpData] = useState([])
 
@@ -37,13 +37,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      const [uploadVisible, setUploadVisible] = useState(false);
 
-     const [files, setFiles] = useState([]);
-
-     const [checkupFile, setCheckUpFile] = useState([])
-
      const [loading, setLoading] = useState(true);
-
-     const [btnLoading, setBtnLoading] = useState(false);
 
      const [result, setResult] = useState([])
 
@@ -140,10 +134,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                     Location.navigate({
                          url: `/checkup-list/details/${ele.id}`,
                     });
-
                }
-
-
 
                return (
                     analysisResult ?
@@ -188,14 +179,15 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
      async function downloadFiles(e, id) {
 
           const bulk = true
+
           Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
 
                if (res.success) {
+
                     Uploads.download(res.buffer.data)
-                    setBtnLoading(false)
+
                     getData()
-               }
-               else {
+               } else {
                     message.error(res.message)
                }
           })
@@ -225,10 +217,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                setCheckUpData(arr)
                setLoading(false)
           })
-
      }
-
-
 
      /**
       * get upload records along with upload details with  the same id
@@ -251,7 +240,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           })
      }
 
-
      /**
       * Open menu with additional options
       */
@@ -267,12 +255,9 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                          Analysis Details
                     </Menu.Item>
 
-
                </Menu>
           )
      }
-
-
 
      function handleClick(params, record) {
           if (params.key === 'analysis_details')
@@ -280,8 +265,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                     url: `/analysis-result-details/${record.id}`,
                });
      }
-     var analysisColumns = []
 
+     var analysisColumns = []
 
      /**
       * columns for analysis result menu
@@ -295,7 +280,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                }
           })
      }
-
 
      /**
       * Set Modal visible for update consent
@@ -337,28 +321,14 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                          <Table
                               scroll={{ x: true }}
-                              //  rowKey={(record) => record.da_id}
                               dataSource={checkUpData}
                               columns={analysisColumns}
-                         // pagination={{
-                         //      current: page,
-                         //      onChange(current) {
-                         //           setPage(current);
-                         //      },
-                         // }}
                          /> :
 
                          <Table
                               scroll={{ x: true }}
-                              //  rowKey={(record) => record.da_id}
                               dataSource={checkUpData}
                               columns={columns}
-                         // pagination={{
-                         //      current: page,
-                         //      onChange(current) {
-                         //           setPage(current);
-                         //      },
-                         // }}
                          />)}
 
                {/**
@@ -384,8 +354,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                {/**
                 * Upload Consent and Checkup Modal ends
                 */}
-
-
 
 
                {/**
@@ -471,8 +439,7 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
 
                data.append('analysisFile', analysisFile)
                data.append('title', title)
-          }
-          else {
+          } else {
 
                data.append("consentFile", consentFile);
                data.append("psuedonymizedFile", psuedonymizedFile);
@@ -493,19 +460,14 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
                     //set summary modal visible true
                     setSummaryVisible(true)
 
-
-               }
-               else {
+               } else {
                     message.error(result.message)
                }
-               // setVisible(false)
-               // getData()
                setLoading(false)
 
           })
 
      }
-
 
      //Function when uploading consent file
      function handleConsentFile(e) {
@@ -617,11 +579,8 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
           setLoading(true)
           const data = new FormData();
 
-
           data.append('consentFile', consentFile)
           data.append('id', id)
-
-
 
           Uploads.updateConsent(data).then(async (result) => {
                if (result.success) {
@@ -640,15 +599,9 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
                     //Set summary modal visible true
                     setSummaryVisible(true)
 
-               }
-
-               else {
+               } else {
                     message.error(result.message)
                }
-               // setVisible(false)
-               // getData()
-
-
           })
 
      }
@@ -698,8 +651,6 @@ function Summary({ result, analysisResult }) {
                <p>Your upload is successfully Completed</p>
                {result.update ? <p>{result.result.consent_length} Records were updated</p> :
                     analysisResult ? <p>{result.result.analysis_length} Records were uploaded</p> : <p>{result.result.checkup_length} checkup records and {result.result.consent_length} consent records were uploaded</p>}
-
-
           </div>
      )
 }

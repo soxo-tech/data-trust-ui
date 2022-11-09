@@ -11,15 +11,15 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Modal, Upload, message, Skeleton } from 'antd';
+import { Table, Typography, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card,DateUtils } from 'soxo-bootstrap-core';
+import { Card, DateUtils } from 'soxo-bootstrap-core';
 
 import { UserLogs, CoreUsers } from '../../../../models';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-export default function DownloadHistory({ ffmenu,...props }) {
+export default function DownloadHistory({ ffmenu, ...props }) {
 
      const [downloadHistory, setDownloadHistory] = useState([])
 
@@ -31,14 +31,10 @@ export default function DownloadHistory({ ffmenu,...props }) {
 
      const { id } = props.match.params;
 
-
-
      var columns = []
 
      //Columns for fujifilm
-
      if (ffmenu) {
-
 
           columns = [
                {
@@ -75,11 +71,9 @@ export default function DownloadHistory({ ffmenu,...props }) {
                },
 
           ]
+     } else {
 
-     }
-     //Columns for Nura
-     else {
-
+          //Columns for Nura
           columns = [
                {
                     title: '#',
@@ -111,7 +105,6 @@ export default function DownloadHistory({ ffmenu,...props }) {
                     key: 'discarded',
                     dataIndex: 'discarded'
                },
-
           ]
      }
 
@@ -121,8 +114,8 @@ export default function DownloadHistory({ ffmenu,...props }) {
      }, [])
 
      /**
-* Function to load the data for screen
-*/
+     * Function to load the data for screen
+     */
      async function getData() {
           var config = {
                queries: [{
@@ -146,9 +139,10 @@ export default function DownloadHistory({ ffmenu,...props }) {
      }, [])
 
      /**
-* Function to load the data for screen
-*/
+     * Function to load the data for screen
+     */
      async function getData() {
+
           var config = {
                queries: [{
                     field: 'type',
@@ -163,24 +157,25 @@ export default function DownloadHistory({ ffmenu,...props }) {
                baseUrl: process.env.REACT_APP_NURA
           }
 
-
           var result = await UserLogs.get(config)
+
           Promise.all(result.result.map(async (ele, key) => {
+
                var id = ele.created_by
+
                var user = await CoreUsers.getRecord({ id })
+
                return {
                     ...ele,
                     created_by_details: user.result
                }
+
           })).then((arr) => {
-        
+
                setDownloadHistory(arr)
                setLoading(false)
           })
-
      }
-
-
 
      return (
 
@@ -188,7 +183,6 @@ export default function DownloadHistory({ ffmenu,...props }) {
                {loading ? <Skeleton /> : <>
 
                     <Card className={'history'}>
-
 
                          <div className='history-table'>
                               <div>
@@ -208,20 +202,12 @@ export default function DownloadHistory({ ffmenu,...props }) {
                                    <p>Updated</p> */}
                               </div>
 
-
                          </div>
 
                          <Table
                               scroll={{ x: true }}
-                              //  rowKey={(record) => record.da_id}
                               dataSource={downloadHistory}
                               columns={columns}
-                         // pagination={{
-                         //     current: page,
-                         //     onChange(current) {
-                         //         setPage(current);
-                         //     },
-                         // }}
                          />
                     </Card>
                     {/* {ffmenu ? null :
@@ -231,8 +217,5 @@ export default function DownloadHistory({ ffmenu,...props }) {
 
                </>}
           </div>
-
-
      )
 }
-

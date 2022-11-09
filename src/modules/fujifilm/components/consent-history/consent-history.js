@@ -10,19 +10,17 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Skeleton, } from 'antd';
 
-import { Location, Card,DateUtils } from 'soxo-bootstrap-core';
+import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
 
 import ConsentDetails from '../consent-details/consent-details';
 
 import './consent-history.scss';
 
-import moment from 'moment';
-
 import { UploadDetails } from '../../../../models';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-export default function ConsentHistory({ffmenu, ...props }) {
+export default function ConsentHistory({ ffmenu, ...props }) {
 
     const [consentHistory, setConsentHistory] = useState([])
 
@@ -30,12 +28,9 @@ export default function ConsentHistory({ffmenu, ...props }) {
 
     const [limit, setLimit] = useState(20);
 
-
     const { id } = props.match.params;
 
-
     const [loading, setLoading] = useState(true)
-
 
     const columns = [
         {
@@ -59,8 +54,7 @@ export default function ConsentHistory({ffmenu, ...props }) {
             key: 'time',
             render: (record) => {
 
-                return DateUtils.getFormattedTimeDate(record.created_at) 
-                
+                return DateUtils.getFormattedTimeDate(record.created_at)
 
             }
         },
@@ -71,7 +65,7 @@ export default function ConsentHistory({ffmenu, ...props }) {
 
                 const attributes = JSON.parse(record.upload_details[0].attributes)
 
-                return attributes.lifetime_type?attributes.lifetime_type:attributes.lifeTime;
+                return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifeTime;
             }
         },
         {
@@ -83,14 +77,11 @@ export default function ConsentHistory({ffmenu, ...props }) {
 
                 return attributes.items;
             }
-        },
-
-
-    ]
+        }]
 
     //Extra columns for fujifilm
-
     if (ffmenu) {
+
         columns.push(
             {
                 title: 'Registration Date',
@@ -98,7 +89,6 @@ export default function ConsentHistory({ffmenu, ...props }) {
                 render: (record) => {
 
                     return DateUtils.getFormattedTimeDate(record.upload_details[0].order_date)
-                    
 
                 }
             },
@@ -126,7 +116,6 @@ export default function ConsentHistory({ffmenu, ...props }) {
                     Location.navigate({
                         url: `/checkup-list/downloads-history/${id}`,
                     });
-
                 }
 
                 function toDerivedAnalysis() {
@@ -134,36 +123,23 @@ export default function ConsentHistory({ffmenu, ...props }) {
                     Location.navigate({
                         url: `/checkup-list/derived-analysis/${id}`,
                     });
-
                 }
 
                 return (
 
                     <div>
                         {ffmenu ?
-                           null :
+                            null :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 
                                 <Button onClick={toDerivedAnalysis}>Analysis Result</Button>
                             </>}
-
-
                     </div>
                 )
             },
         },
-
     )
-
-
-    /**
-     * function to discard a consent
-     */
-
-    function onDiscard() {
-
-    }
 
     useEffect(() => {
         getData();
@@ -171,7 +147,6 @@ export default function ConsentHistory({ffmenu, ...props }) {
     }, [])
 
     function getData() {
-
 
         UploadDetails.getConsent(id).then(result => {
             setConsentHistory(result.uploadsWithConsent)
@@ -187,36 +162,23 @@ export default function ConsentHistory({ffmenu, ...props }) {
 
                     <div className='consent-history'>
 
-
-
                         <Card className={'history'}>
-                        <div className='history-table'>
-                            <Title level={5}>Nura ID : {id}</Title>
+                            <div className='history-table'>
+                                <Title level={5}>Nura ID : {id}</Title>
 
-                                
-                                <p> {consentHistory && consentHistory[0]&&consentHistory[0].upload_details ?DateUtils.formatDate(consentHistory[0].upload_details[0].order_date):null}</p>
-                                
+                                <p> {consentHistory && consentHistory[0] && consentHistory[0].upload_details ? DateUtils.formatDate(consentHistory[0].upload_details[0].order_date) : null}</p>
                             </div>
 
                             <Table
                                 scroll={{ x: true }}
-                                //  rowKey={(record) => record.da_id}
                                 dataSource={consentHistory}
                                 columns={columns}
-                            // pagination={{
-                            //     current: page,
-                            //     onChange(current) {
-                            //         setPage(current);
-                            //     },
-                            // }}
                             />
                         </Card>
                         {/* {ffmenu ? null :
                             <Card className={'details'}>
                                 <ConsentDetails />
                             </Card>} */}
-
-
                     </div>
                 </div>
             </>
