@@ -90,7 +90,10 @@ class UploadDetail extends BaseAPI {
     */
    
     deleteRecord(id){
-        return ApiUtils.get({url: `upload_details/delete-record/${id}` })  
+
+        var baseUrl=process.env.REACT_APP_FF
+
+        return ApiUtils.get({baseUrl,url: `upload_details/delete-record/${id}` })  
     }
 
 }
