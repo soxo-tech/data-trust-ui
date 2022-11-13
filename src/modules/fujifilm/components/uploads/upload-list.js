@@ -340,12 +340,12 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                               //  rowKey={(record) => record.da_id}
                               dataSource={checkUpData}
                               columns={analysisColumns}
-                              // pagination={{
-                              //      current: page,
-                              //      onChange(current) {
-                              //           setPage(current);
-                              //      },
-                              // }}
+                         // pagination={{
+                         //      current: page,
+                         //      onChange(current) {
+                         //           setPage(current);
+                         //      },
+                         // }}
                          /> :
 
                          <Table
@@ -353,12 +353,12 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                               //  rowKey={(record) => record.da_id}
                               dataSource={checkUpData}
                               columns={columns}
-                              // pagination={{
-                              //      current: page,
-                              //      onChange(current) {
-                              //           setPage(current);
-                              //      },
-                              // }}
+                         // pagination={{
+                         //      current: page,
+                         //      onChange(current) {
+                         //           setPage(current);
+                         //      },
+                         // }}
                          />)}
 
                {/**
@@ -420,7 +420,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                */}
 
                <Modal
-                   
+
                     cancelButtonProps={{ hidden: true }}
                     title="Upload Summary"
                     visible={summaryVisible}
@@ -693,7 +693,7 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
 function Summary({ result, analysisResult }) {
 
      return (
-          
+
           <div>
                <p>Your upload is successfully Completed</p>
                {result.update ? <p>{result.result.consent_length} Records were updated</p> :
