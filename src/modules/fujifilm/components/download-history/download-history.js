@@ -11,13 +11,13 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 
-import { Table, Button, Typography, Modal, Upload, message, Skeleton } from 'antd';
+import { Table, Typography, Skeleton } from 'antd';
 
 import { GlobalContext, Card, DateUtils, Location } from 'soxo-bootstrap-core';
 
 import { UserLogs, CoreUsers } from '../../../../models';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export default function DownloadHistory({ ffmenu, ...props }) {
 
@@ -38,9 +38,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
      var columns = []
 
      //Columns for fujifilm
-
      if (ffmenu) {
-
 
           columns = [
                {
@@ -98,11 +96,9 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                },
 
           ]
+     } else {
 
-     }
-     //Columns for Nura
-     else {
-
+          //Columns for Nura
           columns = [
                {
                     title: '#',
@@ -142,7 +138,6 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                          }
                     }
                },
-
           ]
      }
 
@@ -151,18 +146,19 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      }, [])
 
-
      useEffect(() => {
           getData();
 
      }, [])
 
      /**
-* Function to load the data for screen
-*/
+     * Function to load the data for screen
+     */
      async function getData() {
+
           
           var result = await UserLogs.getDownloadHistory(id)
+
 
           //In ffmenu only load the data for downloads of the current user
           if(ffmenu)
@@ -181,18 +177,18 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                var user = await CoreUsers.get()
                user=user.result.filter((user)=>user.id===id)
 
+
                return {
                     ...ele,
                     created_by_details: user[0]
                }
+
           })).then((arr) => {
+
                setDownloadHistory(arr)
                setLoading(false)
           })
-
      }
-
-
 
      return (
 
@@ -200,7 +196,6 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                {loading ? <Skeleton /> : <>
 
                     <Card className={'history'}>
-
 
                          <div className='history-table'>
                               <div>
@@ -220,20 +215,12 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                                    <p>Updated</p> */}
                               </div>
 
-
                          </div>
 
                          <Table
                               scroll={{ x: true }}
-                              //  rowKey={(record) => record.da_id}
                               dataSource={downloadHistory}
                               columns={columns}
-                         // pagination={{
-                         //     current: page,
-                         //     onChange(current) {
-                         //         setPage(current);
-                         //     },
-                         // }}
                          />
                     </Card>
                     {/* {ffmenu ? null :
@@ -243,8 +230,5 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
                </>}
           </div>
-
-
      )
 }
-

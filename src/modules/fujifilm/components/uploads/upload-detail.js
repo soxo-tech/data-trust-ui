@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message ,Tag} from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card, DateUtils } from 'soxo-bootstrap-core';
+import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
 
 import { MoreOutlined } from '@ant-design/icons';
 
@@ -22,7 +22,6 @@ import moment from 'moment'
 import './upload-detail.scss'
 
 import { UploadDetails, UserLogs, Uploads, CoreUsers } from '../../../../models';
-
 
 const { Title, Text } = Typography;
 
@@ -472,16 +471,16 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                                 //  rowKey={(record) => record.da_id}
                                                                 dataSource={uploads.upload_details}
                                                                 columns={columns}
-                                                                // pagination={{
-                                                                //         current: page,
-                                                                //         onChange(current) {
-                                                                //                 setPage(current);
-                                                                //         },
-                                                                // }}
+                                                        // pagination={{
+                                                        //         current: page,
+                                                        //         onChange(current) {
+                                                        //                 setPage(current);
+                                                        //         },
+                                                        // }}
                                                         />
                                                 </Card>
 
-                                                 {/**
+                                                {/**
                                                 * Modal for Download History
                                                 */}
                                                 <Modal
@@ -501,7 +500,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                                                 </Modal>
 
-                                                 {/**
+                                                {/**
                                                 * Modal for Download History ends
                                                 */}
 
