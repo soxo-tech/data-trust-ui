@@ -5,7 +5,7 @@
  *
  */
 
-import { BaseAPI } from "soxo-bootstrap-core";
+import { BaseAPI, ApiUtils } from "soxo-bootstrap-core";
 
 
 class UserLog extends BaseAPI {
@@ -25,6 +25,16 @@ class UserLog extends BaseAPI {
 
     get modelName() {
         return `UserLogs`;
+    }
+
+    async getDownloadHistory(id, user) {
+
+        const baseUrl = process.env.REACT_APP_NURA;
+
+        return ApiUtils.get({baseUrl,
+
+            url: `user_logs/get-download-history/${id}`,
+        });
     }
 
 }

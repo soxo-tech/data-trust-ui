@@ -9,11 +9,11 @@
  * Check Up data Listing Component
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import { Table, Typography, Skeleton } from 'antd';
 
-import { Card, DateUtils } from 'soxo-bootstrap-core';
+import { GlobalContext, Card, DateUtils, Location } from 'soxo-bootstrap-core';
 
 import { UserLogs, CoreUsers } from '../../../../models';
 
@@ -31,6 +31,10 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      const { id } = props.match.params;
 
+     const { user = {} } = useContext(GlobalContext);
+
+     const { consentId } = Location.search()
+
      var columns = []
 
      //Columns for fujifilm
@@ -47,12 +51,16 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                {
                     title: 'Consent ID',
                     key: 'id',
-                    dataIndex: 'id'
+                    render: (record) => {
+                         return record.consent.id
+                    }
                },
                {
                     title: 'Consent Time',
                     key: 'time',
-                    dataIndex: 'time'
+                    render: (record) => {
+                         return DateUtils.getFormattedTimeDate(record.consent.created_at)
+                    }
                },
                {
                     title: 'Last Download',
@@ -62,12 +70,29 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                {
                     title: 'Lifetime',
                     key: 'lifetime',
-                    dataIndex: 'lifetime'
+                    render: (record) => {
+
+                         if (record.consent && record.consent.attributes) {
+
+                              const attributes = JSON.parse(record.consent.attributes)
+
+
+                              return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifeTime;
+                         }
+                    }
                },
                {
                     title: 'Items',
                     key: 'items',
-                    dataIndex: 'items'
+                    render: (record) => {
+
+
+                         if (record.consent && record.consent.attributes) {
+                              const attributes = JSON.parse(record.consent.attributes)
+
+                              return attributes.items;
+                         }
+                    }
                },
 
           ]
@@ -103,7 +128,15 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                {
                     title: 'Discarded Date',
                     key: 'discarded',
-                    dataIndex: 'discarded'
+                    render: (record) => {
+
+
+                         if (record.consent && record.consent.attributes) {
+                              const attributes = JSON.parse(record.consent.attributes)
+
+                              return attributes.items === 'none' ? record.created_at : null
+                         }
+                    }
                },
           ]
      }
@@ -113,26 +146,6 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      }, [])
 
-     /**
-     * Function to load the data for screen
-     */
-     async function getData() {
-          var config = {
-               queries: [{
-                    field: 'type',
-                    value: 'download'
-               },
-               {
-                    field: 'psuedonymous_nura_id',
-                    value: id
-
-               }],
-               //Get download histtory of checkup from nura db
-               baseUrl: process.env.REACT_APP_NURA
-          }
-
-     }
-
      useEffect(() => {
           getData();
 
@@ -143,31 +156,31 @@ export default function DownloadHistory({ ffmenu, ...props }) {
      */
      async function getData() {
 
-          var config = {
-               queries: [{
-                    field: 'type',
-                    value: 'download'
-               },
-               {
-                    field: 'psuedonymous_nura_id',
-                    value: id
+          
+          var result = await UserLogs.getDownloadHistory(id)
 
-               }],
-               //Get download histtory of checkup from nura db
-               baseUrl: process.env.REACT_APP_NURA
-          }
 
-          var result = await UserLogs.get(config)
+          //In ffmenu only load the data for downloads of the current user
+          if(ffmenu)
 
-          Promise.all(result.result.map(async (ele, key) => {
+          result = result.result.filter((element) => element.created_by === user.id)
+
+          //In Nura load downlaods with respect to consent id
+          else
+          
+          result = result.result.filter((element) => JSON.parse(element.attributes).consent_id === parseInt(consentId))
+
+
+          Promise.all(result.map(async (ele, key) => {
 
                var id = ele.created_by
+               var user = await CoreUsers.get()
+               user=user.result.filter((user)=>user.id===id)
 
-               var user = await CoreUsers.getRecord({ id })
 
                return {
                     ...ele,
-                    created_by_details: user.result
+                    created_by_details: user[0]
                }
 
           })).then((arr) => {
@@ -195,7 +208,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                               </div>
                               <div>
                                    <Title level={5}>Consent ID</Title>
-                                   <p>{downloadHistory[0] && downloadHistory[0].upload_details_id ? downloadHistory[0].upload_details_id : null}</p>
+                                   <p>{downloadHistory[0] && downloadHistory[0].consent ? downloadHistory[0].consent.id : null}</p>
                               </div>
                               <div>
                                    {/* <Title level={5}>Consent Status</Title>

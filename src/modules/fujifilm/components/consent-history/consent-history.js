@@ -20,7 +20,7 @@ import { UploadDetails } from '../../../../models';
 
 const { Title } = Typography;
 
-export default function ConsentHistory({ ffmenu, ...props }) {
+export default function ConsentHistory({ffmenu, ...props }) {
 
     const [consentHistory, setConsentHistory] = useState([])
 
@@ -95,12 +95,22 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             {
                 title: 'Last Download',
                 key: 'lastDownlaod',
-                dataIndex: 'lastDownload'
+                render: (record) => {
+
+                    return record.download.created_at?DateUtils.getFormattedTimeDate(record.download.created_at):null
+                    
+
+                }
             },
             {
                 title: 'Discarded date',
                 key: 'discarded',
-                dataIndex: 'discarded'
+                render: (record) => {
+
+                    const attributes = JSON.parse(record.upload_details[0].attributes)
+    
+                    return attributes.items==='none'?DateUtils.getFormattedTimeDate(record.upload_details[0].created_at):null;
+                }
             },
         )
     }
@@ -114,7 +124,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                 function toDownloadHistory() {
 
                     Location.navigate({
-                        url: `/checkup-list/downloads-history/${id}`,
+                        url: `/checkup-list/downloads-history/${id}?&consentId=${ele.upload_details[0].id}`,
                     });
                 }
 
@@ -129,7 +139,9 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                     <div>
                         {ffmenu ?
-                            null :
+
+                           <Button onClick={onDiscard}>Discard</Button> :
+
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 
@@ -140,6 +152,17 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             },
         },
     )
+
+
+
+    /**
+     * function to discard a consent
+     */
+
+    function onDiscard() {
+
+    }
+
 
     useEffect(() => {
         getData();

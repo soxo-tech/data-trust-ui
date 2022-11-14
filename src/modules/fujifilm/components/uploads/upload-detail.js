@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message } from 'antd';
+import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message ,Tag} from 'antd';
 
 import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
 
@@ -122,7 +122,13 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 if (record.consent && record.consent.attributes) {
                                         const attributes = JSON.parse(record.consent.attributes)
 
-                                        return attributes.items;
+                                        return (
+                                                <>
+                                                {JSON.parse(record.consent.attributes).items==='none'?<Tag color='red'>Consent Updated</Tag>:null}
+                                                <p>{attributes.items}</p>
+                                                </>
+                                                
+                                                );
                                 }
                         }
                 },
@@ -138,10 +144,17 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                         });
                                 }
 
+                                var updated=false
+
+                                if (record.consent && record.consent.attributes) {
+                                        const attributes = JSON.parse(record.consent.attributes)
+                                        if(attributes.items==='none')
+                                        updated=true
+                                }
                                 return (
                                         <div>
                                                 <div style={{ display: 'flex' }}>
-                                                        <Button onClick={(e) => download(e, record)}>Download</Button>
+                                                {updated ?null:<Button onClick={(e) => download(e, record)}>Download</Button>}
 
                                                         {
                                                                 ffmenu
@@ -394,7 +407,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 if (params.key === 'download_history') {
                         if (analysisResult) {
 
-                                await getDownloadHistory(record)
+                                // await getDownloadHistory(record)
+                                setDownloadHistory(record)
                                 setVisible(true)
                         }
                         else {
@@ -524,15 +538,17 @@ function DownloadHistory({ data }) {
                                 value: data.psuedonymous_nura_id
 
                         }],
-                        baseUrl: process.env.REACT_APP_FF
+                        // baseUrl: process.env.REACT_APP_FF
                 }
                 var result = await UserLogs.get(config)
                 Promise.all(result.result.map(async (ele, key) => {
                         var id = ele.created_by
-                        var user = await CoreUsers.getRecord({ id })
+                        var user = await CoreUsers.get()
+                        user=user.result.filter((user)=>user.id===id)
+         
                         return {
-                                ...ele,
-                                created_by_details: user.result
+                             ...ele,
+                             created_by_details: user[0]
                         }
                 })).then((arr) => {
 
