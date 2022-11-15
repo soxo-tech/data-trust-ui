@@ -91,7 +91,12 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 columns.push({
                         title: 'Last Download',
                         key: 'lastDownload',
-                        dataIndex: 'lastDownload'
+                        render: (record) => {
+
+                                return record.downloads && record.downloads.created_at ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
+
+
+                        }
                 })
         }
 
@@ -236,7 +241,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 key: 'last_download',
                                 render: (record) => {
 
-                                        return record.downloads ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
+                                        return record.downloads && record.downloads.created_at ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
 
 
                                 }

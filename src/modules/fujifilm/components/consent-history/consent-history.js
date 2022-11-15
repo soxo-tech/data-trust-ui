@@ -97,7 +97,7 @@ export default function ConsentHistory({ffmenu, ...props }) {
                 key: 'lastDownlaod',
                 render: (record) => {
 
-                    return record.download.created_at?DateUtils.getFormattedTimeDate(record.download.created_at):null
+                    return record.download&&record.download.created_at?DateUtils.getFormattedTimeDate(record.download.created_at):null
                     
 
                 }
