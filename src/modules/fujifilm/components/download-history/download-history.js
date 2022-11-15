@@ -33,7 +33,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      const { user = {} } = useContext(GlobalContext);
 
-     const { consentId } = Location.search()
+     const { consentId,analysisResult } = Location.search()
 
      var columns = []
 
@@ -156,8 +156,9 @@ export default function DownloadHistory({ ffmenu, ...props }) {
      */
      async function getData() {
 
-          
-          var result = await UserLogs.getDownloadHistory(id)
+          // if(analysisResult)
+        
+          var result = await UserLogs.getDownloadHistory(id,true)
 
 
           //In ffmenu only load the data for downloads of the current user
@@ -167,9 +168,12 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
           //In Nura load downlaods with respect to consent id
           else
-          
-          result = result.result.filter((element) => JSON.parse(element.attributes).consent_id === parseInt(consentId))
+       
+          result = result.result.filter((element) => {
 
+               if(element.attributes )
+               
+               return JSON.parse(element.attributes).consent_id === parseInt(consentId)})
 
           Promise.all(result.map(async (ele, key) => {
 
