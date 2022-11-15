@@ -418,7 +418,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         }
                         else {
                                 Location.navigate({
-                                        url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}`,
+                                        url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}?&consentId=${record.consent.id}`,
                                 });
                         }
                 }
