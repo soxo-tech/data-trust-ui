@@ -36,7 +36,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
     const { user = {} } = useContext(GlobalContext);
 
-    ffmenu = true
+    // ffmenu = true
 
     const columns = [
         {
