@@ -5,6 +5,7 @@
  *
  */
 
+import moment from 'moment'
 import { BaseAPI, ApiUtils } from "soxo-bootstrap-core";
 
 
@@ -40,13 +41,13 @@ class UploadDetail extends BaseAPI {
 
         //For Analysis Result load data from FF database
         if (analysisResult)
-                baseUrl = process.env.REACT_APP_FF
+            baseUrl = process.env.REACT_APP_FF
         //Else load data from Nura database 
         else
-                baseUrl = process.env.REACT_APP_NURA
+            baseUrl = process.env.REACT_APP_NURA
 
 
-        return ApiUtils.get({ baseUrl,url: `upload_details/get-details/${uploadId}` })
+        return ApiUtils.get({ url: `upload_details/get-details/${uploadId}` })
 
     }
 
@@ -61,9 +62,9 @@ class UploadDetail extends BaseAPI {
 
     getConsent(nuraId) {
         //Get Consent data from Nura database
-        var baseUrl=process.env.REACT_APP_NURA
+        var baseUrl = process.env.REACT_APP_NURA
 
-        return ApiUtils.get({baseUrl, url: `upload_details/get-consent/${nuraId}` })
+        return ApiUtils.get({ url: `upload_details/get-consent/${nuraId}` })
 
     }
 
@@ -76,9 +77,29 @@ class UploadDetail extends BaseAPI {
 
     loadDetails(nuraId) {
         //Get Derived Analysis Result from FF database
-        var baseUrl=process.env.REACT_APP_FF
+        var baseUrl = process.env.REACT_APP_FF
 
-        return ApiUtils.get({baseUrl, url: `upload_details/load-details/${nuraId}` })
+        return ApiUtils.get({ baseUrl, url: `upload_details/load-details/${nuraId}` })
+
+    }
+
+
+    /**
+   * Discard Consent
+   * @param {*} nuraId 
+   * @returns 
+   */
+
+    discard(id, user) {
+
+        var formBody = {
+                discarded_date: moment(),
+                discarded_by: user.id
+        }
+        //Get Derived Analysis Result from FF database
+        var baseUrl = process.env.REACT_APP_NURA
+
+        return ApiUtils.put({ baseUrl, url: `upload_details/discard/${id}`, formBody })
 
     }
 
@@ -88,12 +109,12 @@ class UploadDetail extends BaseAPI {
     * @param {*} id 
     * @returns 
     */
-   
-    deleteRecord(id){
 
-        var baseUrl=process.env.REACT_APP_FF
+    deleteRecord(id) {
 
-        return ApiUtils.get({baseUrl,url: `upload_details/delete-record/${id}` })  
+        var baseUrl = process.env.REACT_APP_FF
+
+        return ApiUtils.get({ baseUrl, url: `upload_details/delete-record/${id}` })
     }
 
 }
