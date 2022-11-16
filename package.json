@@ -66,6 +66,9 @@
     "start-live": "set PORT=8080 && env-cmd -f .env.live node scripts/start.js",
     "start-ff": "env-cmd -f .env.ff npm run start",
     "start-nura": "env-cmd -f .env.nura npm run start",
+
+    "start-ff-local":"env-cmd -f .env.ff.local npm run start",
+    "start-nura-local":"env-cmd -f .env.nura.local npm run start",
     "build": "node scripts/build.js",
     "build:nura": "env-cmd -f .env.nura npm run build",
     "build:ff": "env-cmd -f .env.ff npm run build",
