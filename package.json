@@ -66,9 +66,16 @@
     "start-live": "set PORT=8080 && env-cmd -f .env.live node scripts/start.js",
     "start-ff": "env-cmd -f .env.ff npm run start",
     "start-nura": "env-cmd -f .env.nura npm run start",
+
+    "start-ff-local":"env-cmd -f .env.ff.local npm run start",
+    "start-nura-local":"env-cmd -f .env.nura.local npm run start",
     "build": "node scripts/build.js",
     "build:nura": "env-cmd -f .env.nura npm run build",
     "build:ff": "env-cmd -f .env.ff npm run build",
+
+    "build:dtpfnura": "env-cmd -f .env.dtpf.nura npm run build",
+    "build:dtpfff": "env-cmd -f .env.dtpf.ff npm run build",
+
     "test": "node scripts/test.js",
     "host": "firebase deploy --only hosting:datatrust",
     "deploy-live": "env-cmd -f .env.live npm run build && cd build && cp index.html 200.html && cd .. && npm run host",

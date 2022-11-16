@@ -20,7 +20,7 @@ import moment from 'moment';
 
 import { UploadDetails, UserLogs } from '../../../../models';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export default function ConsentHistory({ ffmenu, ...props }) {
 
@@ -62,7 +62,6 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                 return DateUtils.getFormattedTimeDate(record.created_at)
 
-
             }
         },
         {
@@ -86,14 +85,11 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                 return attributes && attributes.items ? attributes.items : null;
             }
-        },
-
-
-    ]
+        }]
 
     //Extra columns for fujifilm
-
     if (ffmenu) {
+
         columns.push(
             {
                 title: 'Registration Date',
@@ -120,7 +116,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                 key: 'discarded',
                 render: (record) => {
 
-                        return record.discarded_date? DateUtils.getFormattedTimeDate(record.discarded_date) : null;
+                    return record.discarded_date ? DateUtils.getFormattedTimeDate(record.discarded_date) : null;
                 }
             },
         )
@@ -137,7 +133,6 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                     Location.navigate({
                         url: `/checkup-list/downloads-history/${id}?&consentId=${ele.id}`,
                     });
-
                 }
 
                 function toDerivedAnalysis() {
@@ -145,27 +140,24 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                     Location.navigate({
                         url: `/checkup-list/derived-analysis/${id}`,
                     });
-
                 }
-console.log(ele)
+
                 return (
 
                     <div>
-                        {ffmenu ?ele.discarded_date?null:
+                        {ffmenu ? ele.discarded_date ? null :
                             <Button onClick={(e) => onDiscard(e, ele)}>Discard</Button> :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 
                                 <Button onClick={toDerivedAnalysis}>Analysis Result</Button>
                             </>}
-
-
                     </div>
                 )
             },
         },
-
     )
+
 
 
     /**
@@ -173,15 +165,16 @@ console.log(ele)
      */
 
     async function onDiscard(e, record) {
-      
-        const dataDiscarded=await UploadDetails.discard(record.upload_details_id, user)
 
-        if(dataDiscarded.success){
+        const dataDiscarded = await UploadDetails.discard(record.upload_details_id, user)
+
+        if (dataDiscarded.success) {
             message.success(dataDiscarded.message)
-        }else{
+        } else {
             message.error(dataDiscarded.message)
         }
     }
+
 
     useEffect(() => {
         getData();
@@ -203,6 +196,8 @@ console.log(ele)
 
         UserLogs.get(config).then(result => {
             setConsentHistory(result.result)
+            // UploadDetails.getConsent(id).then(result => {
+            //     setConsentHistory(result.uploadsWithConsent)
             setLoading(false)
         })
     }
@@ -215,8 +210,6 @@ console.log(ele)
 
                     <div className='consent-history'>
 
-
-
                         <Card className={'history'}>
                             <div className='history-table'>
                                 <Title level={5}>Nura ID : {id}</Title>
@@ -224,29 +217,20 @@ console.log(ele)
 
                                 <p> {consentHistory ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p>
 
-                            </div>
+                            </div >
 
                             <Table
                                 scroll={{ x: true }}
-                                //  rowKey={(record) => record.da_id}
                                 dataSource={consentHistory}
                                 columns={columns}
-                            // pagination={{
-                            //     current: page,
-                            //     onChange(current) {
-                            //         setPage(current);
-                            //     },
-                            // }}
                             />
-                        </Card>
+                        </Card >
                         {/* {ffmenu ? null :
                             <Card className={'details'}>
                                 <ConsentDetails />
                             </Card>} */}
-
-
-                    </div>
-                </div>
+                    </div >
+                </div >
             </>
 
 

@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message ,Tag} from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, Card, DateUtils } from 'soxo-bootstrap-core';
+import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
 
 import { MoreOutlined } from '@ant-design/icons';
 
@@ -22,7 +22,6 @@ import moment from 'moment'
 import './upload-detail.scss'
 
 import { UploadDetails, UserLogs, Uploads, CoreUsers } from '../../../../models';
-
 
 const { Title, Text } = Typography;
 
@@ -92,7 +91,12 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 columns.push({
                         title: 'Last Download',
                         key: 'lastDownload',
-                        dataIndex: 'lastDownload'
+                        render: (record) => {
+
+                                return record.downloads && record.downloads.created_at ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
+
+
+                        }
                 })
         }
 
@@ -237,7 +241,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 key: 'last_download',
                                 render: (record) => {
 
-                                        return record.downloads ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
+                                        return record.downloads && record.downloads.created_at ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
 
 
                                 }
@@ -414,7 +418,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         }
                         else {
                                 Location.navigate({
-                                        url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}`,
+                                        url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}?&consentId=${record.consent.id}`,
                                 });
                         }
                 }
@@ -472,16 +476,16 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                                 //  rowKey={(record) => record.da_id}
                                                                 dataSource={uploads.upload_details}
                                                                 columns={columns}
-                                                                // pagination={{
-                                                                //         current: page,
-                                                                //         onChange(current) {
-                                                                //                 setPage(current);
-                                                                //         },
-                                                                // }}
+                                                        // pagination={{
+                                                        //         current: page,
+                                                        //         onChange(current) {
+                                                        //                 setPage(current);
+                                                        //         },
+                                                        // }}
                                                         />
                                                 </Card>
 
-                                                 {/**
+                                                {/**
                                                 * Modal for Download History
                                                 */}
                                                 <Modal
@@ -501,7 +505,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                                                 </Modal>
 
-                                                 {/**
+                                                {/**
                                                 * Modal for Download History ends
                                                 */}
 
