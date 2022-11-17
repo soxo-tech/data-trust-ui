@@ -11,25 +11,22 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Dropdown, Menu, Skeleton ,message} from 'antd';
+import { Table, Button, Typography, Dropdown, Menu, Skeleton, message } from 'antd';
 
-import { Location, Card ,DateUtils} from 'soxo-bootstrap-core';
+import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
 
 import './derived-analysis.scss';
-
-import ConsentDetails from '../consent-details/consent-details';
 
 import { MoreOutlined } from '@ant-design/icons';
 
 import { UploadDetails, CoreUsers, Uploads } from '../../../../models';
 
+const { Title } = Typography;
 
-const { Title, Text } = Typography;
+export default function DerivedAnalysis({ ffmenu, ...props }) {
 
-
-export default function DerivedAnalysis({ ffmenu,...props }) {
-
-        const { id } = props.match.params; //Get pagination number
+        // Get pagination number
+        const { id } = props.match.params;
 
         const [derivedAnalysis, setDerivedAnalysis] = useState([])
 
@@ -39,9 +36,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
 
         const [limit, setLimit] = useState(20);
 
-        //ffmenu is maintaine to determine which user is using(nura or fujifilm)
-
-
+        // ffmenu is maintained to determine which user is using(nura or fujifilm)
         const columns = [
                 {
                         title: '#',
@@ -64,13 +59,12 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                         key: 'consent_id',
                         render: (record) => {
 
-                                if (record.upload_details[0]&&record.upload_details[0].attributes) {
-                                        
+                                if (record.upload_details[0] && record.upload_details[0].attributes) {
+
                                         const attributes = JSON.parse(record.upload_details[0].attributes)
 
                                         return attributes.consent_id;
                                 }
-
                         }
                 },
                 {
@@ -84,7 +78,6 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                         render: (record) => {
 
                                 return DateUtils.getFormattedTimeDate(record.created_at)
-                              
 
                         }
                 },
@@ -92,6 +85,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                         title: 'Upload User',
                         key: 'user',
                         render: (record) => {
+
                                 return record.created_by_details['name']
 
                         }
@@ -103,7 +97,6 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
 
         }, [])
 
-
         /**
          * Function to load the data for screen
          */
@@ -112,33 +105,32 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                 setLoading(true);
 
                 UploadDetails.loadDetails(id).then(result => {
-                        
-                        if(result.uploadsWithConsent&&result.uploadsWithConsent.length>0)
 
-                        Promise.all(result.uploadsWithConsent.map(async (ele, key) => {
-                                var id = ele.created_by
-                                var user = await CoreUsers.get()
-                                user=user.result.filter((user)=>user.id===id)
-                 
-                                return {
-                                     ...ele,
-                                     created_by_details: user[0]
-                                }
-                        })).then((arr) => {
-                                setDerivedAnalysis(arr)
-                                setLoading(false)
-                        })
+                        if (result.uploadsWithConsent && result.uploadsWithConsent.length > 0)
+
+                                Promise.all(result.uploadsWithConsent.map(async (ele, key) => {
+
+                                        var id = ele.created_by
+
+                                        var user = await CoreUsers.getRecord({ id })
+
+                                        return {
+                                                ...ele,
+                                                // title:result.uploadsWithConsent[0].title,
+                                                created_by_details: user.result
+                                        }
+                                })).then((arr) => {
+                                        setDerivedAnalysis(arr)
+                                        setLoading(false)
+                                })
 
                         else
-                        setLoading(false)
-
-                        // setLoading(false);
+                                setLoading(false)
 
                 })
         }
 
-
-        //Extra columns for fujifilm
+        // Extra columns for fujifilm
         if (ffmenu) {
                 columns.push({
                         title: 'Last Download',
@@ -147,62 +139,55 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                 })
         }
 
-        columns.push(
-                {
-                        title: 'Action',
-                        key: 'action',
-                        render: (ele) => {
+        columns.push({
+                title: 'Action',
+                key: 'action',
+                render: (ele) => {
 
-                                return (
-                                        <div>
-                                                <div style={{ display: 'flex' }}>
-                                                        <Button onClick={(e) => download(e, ele)}>Download</Button>
+                        return (
+                                <div>
+                                        <div style={{ display: 'flex' }}>
+                                                <Button onClick={(e) => download(e, ele)}>Download</Button>
 
 
-                                                        {ffmenu ?
+                                                {ffmenu ?
 
-                                                                <Dropdown overlay={() => {
-                                                                        return menu(ele)
-                                                                }} placement="bottomLeft">
+                                                        <Dropdown overlay={() => {
+                                                                return menu(ele)
+                                                        }} placement="bottomLeft">
 
-                                                                        <MoreOutlined />
+                                                                <MoreOutlined />
 
-                                                                </Dropdown> : null}
-                                                </div>
+                                                        </Dropdown> : null}
                                         </div>
+                                </div>
 
-                                )
-                        },
+                        )
                 },
-        )
-
+        })
 
         /**
          * Function for download
          */
         function download(e, record) {
 
-                const analysisResult=true
+                const analysisResult = true
 
-                const bulk=false
-                
-                const id=record.upload_details[0].id
+                const bulk = false
 
-                Uploads.downloadFiles(id,analysisResult,bulk).then((res) => {
+                const id = record.upload_details[0].id
+
+                Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
 
                         if (res.success) {
                                 Uploads.download(res.buffer.data)
                                 // setBtnLoading(false)
                                 getData()
-                           }
-                           else {
+                        } else {
                                 message.error(res.message)
-                           }
-
+                        }
                 })
-
         }
-
 
         /**
          * Open menu with additional options
@@ -225,7 +210,6 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                 )
         }
 
-
         function handleClick(params, record) {
                 if (params.key === 'download_history')
                         Location.navigate({
@@ -239,46 +223,25 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
                 }
         }
 
+        return (<div>
+                <Title level={3}>DERIVED ANALYSIS RESULT </Title>
 
-        return (
-                <div>
+                {
+                        loading
+                                ?
+                                <Skeleton />
+                                :
+                                <>
 
-                        <Title level={3}>DERIVED ANALYSIS RESULT </Title>
-                        {loading ? <Skeleton /> : <>
-
-                                {/* <div className='derived-analysis'>
-                                                  <div>
-                                                            <Title level={5}> Nura ID</Title>
-                                                            <p>NURA45</p>
-                                                  </div>
-                                                  <div className='details'>
-                                                            <p>Consent ID: 2541252</p>
-                                                            <p>Registration Date:26/02/2022</p>
-                                                  </div>
-
-                                        </div> */}
-                                <div className='derived-card'>
-                                        <Card className={'table'}>
-                                                <Table
-                                                        scroll={{ x: true }}
-                                                        //  rowKey={(record) => record.da_id}
-                                                        dataSource={derivedAnalysis}
-                                                        columns={columns}
-                                                // pagination={{
-                                                //     current: page,
-                                                //     onChange(current) {
-                                                //         setPage(current);
-                                                //     },
-                                                // }}
-                                                />
-                                        </Card>
-                                        {/* <Card className={'details'}><ConsentDetails /></Card> */}
-                                </div>
-                        </>}
-
-                </div>
-
-
-        )
+                                        <div className='derived-card'>
+                                                <Card className={'table'}>
+                                                        <Table
+                                                                scroll={{ x: true }}
+                                                                dataSource={derivedAnalysis}
+                                                                columns={columns}
+                                                        />
+                                                </Card>
+                                        </div>
+                                </>}
+        </div>)
 }
-

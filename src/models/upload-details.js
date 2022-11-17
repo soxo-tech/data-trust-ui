@@ -45,9 +45,9 @@ class UploadDetail extends BaseAPI {
         //Else load data from Nura database 
         else
             baseUrl = process.env.REACT_APP_NURA
+            
+        return ApiUtils.get({ baseUrl, url: `upload_details/get-details/${uploadId}` })
 
-
-        return ApiUtils.get({ baseUrl,url: `upload_details/get-details/${uploadId}` })
 
     }
 
@@ -93,8 +93,8 @@ class UploadDetail extends BaseAPI {
     discard(id, user) {
 
         var formBody = {
-                discarded_date: moment(),
-                discarded_by: user.id
+            discarded_date: moment(),
+            discarded_by: user.id
         }
         //Get Derived Analysis Result from FF database
         var baseUrl = process.env.REACT_APP_NURA

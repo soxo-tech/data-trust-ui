@@ -443,160 +443,148 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
 
      )
+
 }
 
 /**
  * Function to upload consent and checkup files
- * @param {*} param0 
- * @returns 
+ * @param {*} param0
+ * @returns
  */
-function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible, setResult }) {
+function UploadConsent({
+  analysisResult,
+  setVisible,
+  getData,
+  setSummaryVisible,
+  setResult,
+}) {
+  const [consentFile, setConsentFile] = useState({})
 
-     const [consentFile, setConsentFile] = useState({})
+  const [psuedonymizedFile, setPsuedonymizedFile] = useState({})
 
-     const [psuedonymizedFile, setPsuedonymizedFile] = useState({})
+  const [analysisFile, setAnalysisFile] = useState({})
 
-     const [analysisFile, setAnalysisFile] = useState({})
+  const [title, setTitle] = useState()
 
-     const [title, setTitle] = useState()
+  const [loading, setLoading] = useState(false)
 
-     const [loading, setLoading] = useState(false)
+  //Onsumbit of the modal, both files with title is send to backend
 
-     //Onsumbit of the modal, both files with title is send to backend
+  async function submit() {
+    setLoading(true)
+    const data = new FormData()
 
-     async function submit() {
+    if (analysisResult) {
+      data.append('analysisFile', analysisFile)
+      data.append('title', title)
+    } else {
+      data.append('consentFile', consentFile)
+      data.append('psuedonymizedFile', psuedonymizedFile)
+      data.append('title', title)
+    }
 
-          setLoading(true)
-          const data = new FormData();
+    Uploads.uploadFileContent(data, analysisResult).then((result) => {
+      if (result.success) {
+        setResult({
+          result: result.result,
+          update: false,
+        })
 
-          if (analysisResult) {
+        setVisible(false)
 
-               data.append('analysisFile', analysisFile)
-               data.append('title', title)
-          }
-          else {
+        //set summary modal visible true
+        setSummaryVisible(true)
+      } else {
+        message.error(result.message)
+      }
+      setLoading(false)
+    })
+  }
 
-               data.append("consentFile", consentFile);
-               data.append("psuedonymizedFile", psuedonymizedFile);
-               data.append("title", title);
-          }
+  //Function when uploading consent file
+  function handleConsentFile(e) {
+    let files = e.target.files[0]
+    setConsentFile(files)
+  }
 
-          Uploads.uploadFileContent(data, analysisResult).then((result) => {
+  //Function when uploading analysis file
+  function handleAnalysisFile(e) {
+    let files = e.target.files[0]
+    setAnalysisFile(files)
+  }
 
+  //Function when uploading psuedonymized file
+  function handlePsuedonymizedFile(e) {
+    let files = e.target.files[0]
+    setPsuedonymizedFile(files)
+  }
 
-               if (result.success) {
-                    setResult({
-                         result: result.result,
-                         update: false
-                    })
+  //Function for onChange of Title
+  function handleTitle(e) {
+    setTitle(e.target.value)
+  }
 
-                    setVisible(false)
+  return (
+    <div>
+      <Title level={5}>Title</Title>
+      <Input onChange={handleTitle}></Input>
 
-                    //set summary modal visible true
-                    setSummaryVisible(true)
+      {analysisResult ? (
+        <div>
+          <br />
+          <Title level={5}>Analysis Result</Title>
 
+          <label>Select File</label>
+          <br />
 
-               }
-               else {
-                    message.error(result.message)
-               }
-               // setVisible(false)
-               // getData()
-               setLoading(false)
-
-          })
-
-     }
-
-
-     //Function when uploading consent file
-     function handleConsentFile(e) {
-
-          let files = e.target.files[0]
-          setConsentFile(files)
-     }
-
-     //Function when uploading analysis file
-     function handleAnalysisFile(e) {
-
-          let files = e.target.files[0]
-          setAnalysisFile(files)
-     }
-
-     //Function when uploading psuedonymized file
-     function handlePsuedonymizedFile(e) {
-
-          let files = e.target.files[0]
-          setPsuedonymizedFile(files)
-     }
-
-     //Function for onChange of Title
-     function handleTitle(e) {
-          setTitle(e.target.value)
-     }
-
-     return (
-
+          <input
+            type="file"
+            name="consentFile"
+            onChange={(e) => handleAnalysisFile(e)}
+          />
+          <br />
+          <br />
+        </div>
+      ) : (
+        <>
           <div>
-               <Title level={5}>Title</Title>
-               <Input onChange={handleTitle}></Input>
+            <form id="myform">
+              <br />
+              <Title level={5}>Consent Data</Title>
+              <label>Select File</label>
+              <br />
 
-               {analysisResult ?
+              <input
+                type="file"
+                name="consentFile"
+                onChange={(e) => handleConsentFile(e)}
+              />
+              <br />
+              <br />
+              <Title level={5}>Psuedonymized Data</Title>
 
-                    <div>
-                         <br />
-                         <Title level={5}>Analysis Result</Title>
+              <label>Select File</label>
+              <br />
 
-                         <label>
-                              Select File
-                         </label>
-                         <br />
-
-                         <input type='file' name='consentFile' onChange={(e) => handleAnalysisFile(e)} />
-                         <br />
-                         <br />
-                    </div> :
-                    <>
-
-                         <div>
-                              <form id='myform'>
-                                   <br />
-                                   <Title level={5}>Consent Data</Title>
-                                   <label>
-                                        Select File
-                                   </label>
-                                   <br />
-
-                                   <input type='file' name='consentFile' onChange={(e) => handleConsentFile(e)} />
-                                   <br />
-                                   <br />
-                                   <Title level={5}>Psuedonymized Data</Title>
-
-                                   <label>
-                                        Select File
-                                   </label>
-                                   <br />
-
-                                   <input type='file' name='psuedonymizedFile' onChange={(e) => handlePsuedonymizedFile(e)} />
-                                   <br />
-                                   <br />
-                              </form>
-                         </div>
-
-                         <div>
-
-                         </div>
-                         <br />
-
-                    </>
-
-               }
-               <Button loading={loading} onClick={submit} >Submit</Button>
-
+              <input
+                type="file"
+                name="psuedonymizedFile"
+                onChange={(e) => handlePsuedonymizedFile(e)}
+              />
+              <br />
+              <br />
+            </form>
           </div>
 
-
-     )
+          <div></div>
+          <br />
+        </>
+      )}
+      <Button loading={loading} onClick={submit}>
+        Submit
+      </Button>
+    </div>
+  )
 }
 
 /**
@@ -608,100 +596,92 @@ function UploadConsent({ analysisResult, setVisible, getData, setSummaryVisible,
  */
 
 function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
+  const [consentFile, setConsentFile] = useState({})
 
-     const [consentFile, setConsentFile] = useState({})
+  const [loading, setLoading] = useState(false)
 
-     const [loading, setLoading] = useState(false)
+  //On approve the files are send tp backend to upload to blob storage
+  function approveUpload() {
+    setLoading(true)
+    const data = new FormData()
 
-     //On approve the files are send tp backend to upload to blob storage
-     function approveUpload() {
+    data.append('consentFile', consentFile)
+    data.append('id', id)
 
-          setLoading(true)
-          const data = new FormData();
+    Uploads.updateConsent(data).then(async (result) => {
+      if (result.success) {
+        //set results to show upload summary
 
+        setResult({
+          result: result.result,
+          update: true,
+        })
+        setLoading(false)
 
-          data.append('consentFile', consentFile)
-          data.append('id', id)
+        //set Visible of the update modal false
+        setVisible(false)
 
+        //Set summary modal visible true
+        setSummaryVisible(true)
+      } else {
+        message.error(result.message)
+      }
+    })
+  }
 
+  function cancelUpload() {
+    setVisible(false)
+  }
 
-          Uploads.updateConsent(data).then(async (result) => {
-               if (result.success) {
+  function handleConsentFile(e) {
+    let files = e.target.files[0]
+    setConsentFile(files)
+  }
 
-                    //set results to show upload summary
+  return (
+    <div>
+      <div>
+        <Title level={5}>Consent Data</Title>
+        <label>Select File</label>
+        <br />
 
-                    setResult({
-                         result: result.result,
-                         update: true
-                    })
-                    setLoading(false)
+        <input
+          type="file"
+          name="consentFile"
+          onChange={(e) => handleConsentFile(e)}
+        />
+        <br />
+      </div>
 
-                    //set Visible of the update modal false
-                    setVisible(false)
-
-                    //Set summary modal visible true
-                    setSummaryVisible(true)
-
-               }
-
-               else {
-                    message.error(result.message)
-               }
-               // setVisible(false)
-               // getData()
-
-
-          })
-
-     }
-
-     function cancelUpload() {
-          setVisible(false)
-     }
-
-     function handleConsentFile(e) {
-
-          let files = e.target.files[0]
-          setConsentFile(files)
-     }
-
-
-     return (
-          <div>
-               <div>
-                    <Title level={5}>Consent Data</Title>
-                    <label>
-                         Select File
-                    </label>
-                    <br />
-
-                    <input type='file' name='consentFile' onChange={(e) => handleConsentFile(e)} />
-                    <br />
-               </div>
-
-               <div className='upload-consent'>
-                    <Button loading={loading} onClick={approveUpload}>Approve</Button>
-                    <Button onClick={cancelUpload}>Cancel</Button>
-               </div>
-          </div>
-     )
+      <div className="upload-consent">
+        <Button loading={loading} onClick={approveUpload}>
+          Approve
+        </Button>
+        <Button onClick={cancelUpload}>Cancel</Button>
+      </div>
+    </div>
+  )
 }
 
 /**
  * Function for showing the summary of upload or update of consent or analysis result
- * @param {*} param0 
- * @returns 
+ * @param {*} param0
+ * @returns
  */
 function Summary({ result, analysisResult }) {
-
-     return (
-
-          <div>
-               <p>Your upload is successfully Completed</p>
-               {result.update ? <p>{result.result.consent_length} Records were updated</p> :
-                    analysisResult ? <p>{result.result.analysis_length} Records were uploaded</p> : <p>{result.result.checkup_length} checkup records and {result.result.consent_length} consent records were uploaded</p>}
-
-
-          </div>
-     )
+  return (
+    <div>
+      <p>Your upload is successfully Completed</p>
+      {result.update ? (
+        <p>{result.result.consent_length} Records were updated</p>
+      ) : analysisResult ? (
+        <p>{result.result.analysis_length} Records were uploaded</p>
+      ) : (
+        <p>
+          {result.result.checkup_length} checkup records and{' '}
+          {result.result.consent_length} consent records were uploaded
+        </p>
+      )}
+    </div>
+  )
 }
