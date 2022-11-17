@@ -12,13 +12,11 @@ import { Table, Button, Typography, Skeleton, message, } from 'antd';
 
 import { Location, Card, DateUtils, GlobalContext } from 'soxo-bootstrap-core';
 
-import ConsentDetails from '../consent-details/consent-details';
+import { ReloadOutlined } from '@ant-design/icons';
 
 import './consent-history.scss';
 
-import moment from 'moment';
-
-import { UploadDetails, UserLogs } from '../../../../models';
+import { UploadDetails } from '../../../../models';
 
 const { Title } = Typography;
 
@@ -26,24 +24,19 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
     const [consentHistory, setConsentHistory] = useState([])
 
-    const [page, setPage] = useState(1);
-
-    const [limit, setLimit] = useState(20);
-
     const { id } = props.match.params;
 
     const [loading, setLoading] = useState(true)
 
     const { user = {} } = useContext(GlobalContext);
 
-    // ffmenu = true
-
     const columns = [
         {
             title: '#',
             dataIndex: 'index',
             render: (value, item, index) => {
-                return (page - 1) * limit + index + 1;
+                return index + 1;
+                // return (page - 1) * limit + index + 1;
             },
         },
         {
@@ -70,8 +63,6 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             render: (record) => {
 
                 const attributes = JSON.parse(record.attributes)
-
-                console.log(attributes)
 
                 return attributes && attributes.lifetime_type ? attributes.lifetime_type : attributes && attributes.lifeTime ? attributes.lifeTime : null
             }
@@ -131,7 +122,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                 function toDownloadHistory() {
 
                     Location.navigate({
-                        url: `/checkup-list/downloads-history/${id}?&consentId=${ele.id}`,
+                        url: `/checkup-list/downloads-history/${id}?&consentId=${ele.upload_details_id}`,
                     });
                 }
 
@@ -142,10 +133,14 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                     });
                 }
 
+                const attributes = JSON.parse(ele.attributes)
+
                 return (
 
                     <div>
-                        {ffmenu ? ele.discarded_date ? null :
+                        {ffmenu ? attributes.items === 'all' ? null :
+
+
                             <Button onClick={(e) => onDiscard(e, ele)}>Discard</Button> :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
@@ -158,8 +153,6 @@ export default function ConsentHistory({ ffmenu, ...props }) {
         },
     )
 
-
-
     /**
      * function to discard a consent
      */
@@ -169,12 +162,13 @@ export default function ConsentHistory({ ffmenu, ...props }) {
         const dataDiscarded = await UploadDetails.discard(record.upload_details_id, user)
 
         if (dataDiscarded.success) {
+
             message.success(dataDiscarded.message)
         } else {
+
             message.error(dataDiscarded.message)
         }
     }
-
 
     useEffect(() => {
         getData();
@@ -194,10 +188,12 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             baseUrl: process.env.REACT_APP_NURA
         }
 
-        UserLogs.get(config).then(result => {
-            setConsentHistory(result.result)
-            // UploadDetails.getConsent(id).then(result => {
-            //     setConsentHistory(result.uploadsWithConsent)
+        setLoading(true)
+
+        UploadDetails.getConsent(id).then(result => {
+
+            setConsentHistory(result.consents)
+
             setLoading(false)
         })
     }
@@ -206,7 +202,19 @@ export default function ConsentHistory({ ffmenu, ...props }) {
         loading ? <Skeleton /> :
             <>
                 <div>
-                    <Title level={3}>Consent History</Title>
+
+                    <div className="page-header">
+
+                        <Title level={3}>Consent History</Title>
+
+                        <div className="page-actions">
+
+                            <Button onClick={getData}>
+                                <ReloadOutlined />
+                            </Button>
+
+                        </div>
+                    </div>
 
                     <div className='consent-history'>
 
@@ -215,7 +223,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                                 <Title level={5}>Nura ID : {id}</Title>
 
 
-                                <p> {consentHistory ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p>
+                                <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p>
 
                             </div >
 
@@ -225,15 +233,9 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                                 columns={columns}
                             />
                         </Card >
-                        {/* {ffmenu ? null :
-                            <Card className={'details'}>
-                                <ConsentDetails />
-                            </Card>} */}
                     </div >
                 </div >
             </>
-
-
     )
 }
 

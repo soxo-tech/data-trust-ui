@@ -213,7 +213,7 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
         function handleClick(params, record) {
                 if (params.key === 'download_history')
                         Location.navigate({
-                                url: `/checkup-list/downloads-history/${record.id}`,
+                                url: `/checkup-list/downloads-history/${id}?&analysisResult=${true}`,
                         });
 
                 else if (params.key === 'result_analysis') {
