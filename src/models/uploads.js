@@ -90,24 +90,31 @@ class Upload extends BaseAPI {
    */
 
   downloadFiles = (id, analysisResult, bulk) => {
+
     var mode
-    let baseUrl = null
+    let baseUrl = null;
+
+    // Variable to record the url to hit for download
+    let endpoint = 'download';
 
     //For analysis result download details use FF database
     if (analysisResult) {
-      mode = 'ANALYSIS'
-      baseUrl = process.env.REACT_APP_FF
-    }
+      mode = 'ANALYSIS';
+      baseUrl = process.env.REACT_APP_FF;
 
-    //for checkup data download details use nura database
-    else {
+      // In case of analysis it has to point different application
+      endpoint = 'download-analysis';
+
+    } else {
+      //for checkup data download details use nura database
+
       mode = 'CHECKUP'
       baseUrl = process.env.REACT_APP_NURA
     }
 
     return ApiUtils.get({
       baseUrl,
-      url: `uploads/download-analysis?bulk=${bulk}&id=${id}&mode=${mode}`,
+      url: `uploads/${endpoint}?bulk=${bulk}&id=${id}&mode=${mode}`,
     })
   }
 
@@ -131,7 +138,7 @@ class Upload extends BaseAPI {
       uint8Array[i] = ascii
     }
     var arrBuffer = uint8Array
-    var newBlob = new Blob([arrBuffer], { type: 'zip' })
+    var newBlob = new Blob([arrBuffer], { type: 'json' })
 
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
       window.navigator.msSaveOrOpenBlob(newBlob)
@@ -143,7 +150,7 @@ class Upload extends BaseAPI {
     var link = document.createElement('a')
     document.body.appendChild(link)
     link.href = res
-    link.download = 'newfile.zip'
+    link.download = 'newfile.json'
     link.click()
     window.URL.revokeObjectURL(res)
     link.remove()

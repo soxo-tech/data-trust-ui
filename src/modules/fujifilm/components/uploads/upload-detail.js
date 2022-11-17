@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message ,Tag} from 'antd';
+import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popconfirm, message, Tag } from 'antd';
 
 import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
 
@@ -131,11 +131,11 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                                         return (
                                                 <>
-                                                {JSON.parse(record.consent.attributes).items==='none'?<Tag color='red'>Consent Updated</Tag>:null}
-                                                <p>{attributes.items}</p>
+                                                        {JSON.parse(record.consent.attributes).items === 'none' ? <Tag color='red'>Consent Updated</Tag> : null}
+                                                        <p>{attributes.items}</p>
                                                 </>
-                                                
-                                                );
+
+                                        );
                                 }
                         }
                 },
@@ -151,17 +151,17 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                         });
                                 }
 
-                                var updated=false
+                                var updated = false
 
                                 if (record.consent && record.consent.attributes) {
                                         const attributes = JSON.parse(record.consent.attributes)
-                                        if(attributes.items==='none')
-                                        updated=true
+                                        if (attributes.items === 'none')
+                                                updated = true
                                 }
                                 return (
                                         <div>
                                                 <div style={{ display: 'flex' }}>
-                                                {updated ?null:<Button onClick={(e) => download(e, record)}>Download</Button>}
+                                                        {updated ? null : <Button onClick={(e) => download(e, record)}>Download</Button>}
 
                                                         {
                                                                 ffmenu
@@ -314,17 +314,19 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
          */
 
         function download(e, record) {
+
                 const bulk = false
+
                 Uploads.downloadFiles(record.id, analysisResult, bulk).then((res) => {
 
                         if (res.success) {
 
-                                Uploads.download(res.buffer.data)
+                                Uploads.download(res.content.data)
+                                // Uploads.download(res.buffer.data)
 
                                 getData()
 
-                        }
-                        else {
+                        } else {
                                 message.error(res.message)
                         }
                 })
@@ -551,11 +553,11 @@ function DownloadHistory({ data }) {
                 Promise.all(result.result.map(async (ele, key) => {
                         var id = ele.created_by
                         var user = await CoreUsers.get()
-                        user=user.result.filter((user)=>user.id===id)
-         
+                        user = user.result.filter((user) => user.id === id)
+
                         return {
-                             ...ele,
-                             created_by_details: user[0]
+                                ...ele,
+                                created_by_details: user[0]
                         }
                 })).then((arr) => {
 
