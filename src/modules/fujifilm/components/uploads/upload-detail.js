@@ -311,7 +311,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                         if (res.success) {
 
-                                Uploads.download(res.content.data)
+                                Uploads.download(res.buffer.data)
                                 // Uploads.download(res.buffer.data)
 
                                 getData()
