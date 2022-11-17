@@ -129,13 +129,9 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                     title: 'Discarded Date',
                     key: 'discarded',
                     render: (record) => {
-
-
-                         if (record.consent && record.consent.attributes) {
-                              const attributes = JSON.parse(record.consent.attributes)
-
-                              return attributes.items === 'none' ? record.created_at : null
-                         }
+                         
+                              return record.consent.discarded_date ? DateUtils.getFormattedTimeDate(record.consent.discarded_date) : null
+                         
                     }
                },
           ]

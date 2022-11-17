@@ -6,21 +6,23 @@
  */
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
-import { Table, Button, Typography, Skeleton, } from 'antd';
+import { Table, Button, Typography, Skeleton, message, } from 'antd';
 
-import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
+import { Location, Card, DateUtils, GlobalContext } from 'soxo-bootstrap-core';
 
 import ConsentDetails from '../consent-details/consent-details';
 
 import './consent-history.scss';
 
-import { UploadDetails } from '../../../../models';
+import moment from 'moment';
+
+import { UploadDetails, UserLogs } from '../../../../models';
 
 const { Title } = Typography;
 
-export default function ConsentHistory({ffmenu, ...props }) {
+export default function ConsentHistory({ ffmenu, ...props }) {
 
     const [consentHistory, setConsentHistory] = useState([])
 
@@ -31,6 +33,10 @@ export default function ConsentHistory({ffmenu, ...props }) {
     const { id } = props.match.params;
 
     const [loading, setLoading] = useState(true)
+
+    const { user = {} } = useContext(GlobalContext);
+
+    // ffmenu = true
 
     const columns = [
         {
@@ -45,7 +51,7 @@ export default function ConsentHistory({ffmenu, ...props }) {
             key: 'id',
             render: (record) => {
 
-                return record.upload_details[0].id
+                return record.upload_details_id
 
             }
         },
@@ -63,9 +69,11 @@ export default function ConsentHistory({ffmenu, ...props }) {
             key: 'lifetime',
             render: (record) => {
 
-                const attributes = JSON.parse(record.upload_details[0].attributes)
+                const attributes = JSON.parse(record.attributes)
 
-                return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifeTime;
+                console.log(attributes)
+
+                return attributes && attributes.lifetime_type ? attributes.lifetime_type : attributes && attributes.lifeTime ? attributes.lifeTime : null
             }
         },
         {
@@ -73,9 +81,9 @@ export default function ConsentHistory({ffmenu, ...props }) {
             key: 'items',
             render: (record) => {
 
-                const attributes = JSON.parse(record.upload_details[0].attributes)
+                const attributes = JSON.parse(record.attributes)
 
-                return attributes.items;
+                return attributes && attributes.items ? attributes.items : null;
             }
         }]
 
@@ -88,7 +96,8 @@ export default function ConsentHistory({ffmenu, ...props }) {
                 key: 'regDate',
                 render: (record) => {
 
-                    return DateUtils.getFormattedTimeDate(record.upload_details[0].order_date)
+                    return DateUtils.getFormattedTimeDate(record.order_date)
+
 
                 }
             },
@@ -97,8 +106,8 @@ export default function ConsentHistory({ffmenu, ...props }) {
                 key: 'lastDownlaod',
                 render: (record) => {
 
-                    return record.download&&record.download.created_at?DateUtils.getFormattedTimeDate(record.download.created_at):null
-                    
+                    return record.download && record.download.created_at ? DateUtils.getFormattedTimeDate(record.download.created_at) : null
+
 
                 }
             },
@@ -107,9 +116,7 @@ export default function ConsentHistory({ffmenu, ...props }) {
                 key: 'discarded',
                 render: (record) => {
 
-                    const attributes = JSON.parse(record.upload_details[0].attributes)
-    
-                    return attributes.items==='none'?DateUtils.getFormattedTimeDate(record.upload_details[0].created_at):null;
+                    return record.discarded_date ? DateUtils.getFormattedTimeDate(record.discarded_date) : null;
                 }
             },
         )
@@ -124,7 +131,7 @@ export default function ConsentHistory({ffmenu, ...props }) {
                 function toDownloadHistory() {
 
                     Location.navigate({
-                        url: `/checkup-list/downloads-history/${id}?&consentId=${ele.upload_details[0].id}`,
+                        url: `/checkup-list/downloads-history/${id}?&consentId=${ele.id}`,
                     });
                 }
 
@@ -138,10 +145,8 @@ export default function ConsentHistory({ffmenu, ...props }) {
                 return (
 
                     <div>
-                        {ffmenu ?
-
-                           <Button onClick={onDiscard}>Discard</Button> :
-
+                        {ffmenu ? ele.discarded_date ? null :
+                            <Button onClick={(e) => onDiscard(e, ele)}>Discard</Button> :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 
@@ -159,8 +164,15 @@ export default function ConsentHistory({ffmenu, ...props }) {
      * function to discard a consent
      */
 
-    function onDiscard() {
+    async function onDiscard(e, record) {
 
+        const dataDiscarded = await UploadDetails.discard(record.upload_details_id, user)
+
+        if (dataDiscarded.success) {
+            message.success(dataDiscarded.message)
+        } else {
+            message.error(dataDiscarded.message)
+        }
     }
 
 
@@ -171,8 +183,21 @@ export default function ConsentHistory({ffmenu, ...props }) {
 
     function getData() {
 
-        UploadDetails.getConsent(id).then(result => {
-            setConsentHistory(result.uploadsWithConsent)
+        const config = {
+            queries: [{
+                field: 'mode',
+                value: 'CONSENT'
+            }, {
+                field: 'psuedonymous_nura_id',
+                value: id
+            }],
+            baseUrl: process.env.REACT_APP_NURA
+        }
+
+        UserLogs.get(config).then(result => {
+            setConsentHistory(result.result)
+            // UploadDetails.getConsent(id).then(result => {
+            //     setConsentHistory(result.uploadsWithConsent)
             setLoading(false)
         })
     }
@@ -189,21 +214,23 @@ export default function ConsentHistory({ffmenu, ...props }) {
                             <div className='history-table'>
                                 <Title level={5}>Nura ID : {id}</Title>
 
-                                <p> {consentHistory && consentHistory[0] && consentHistory[0].upload_details ? DateUtils.formatDate(consentHistory[0].upload_details[0].order_date) : null}</p>
-                            </div>
+
+                                <p> {consentHistory ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p>
+
+                            </div >
 
                             <Table
                                 scroll={{ x: true }}
                                 dataSource={consentHistory}
                                 columns={columns}
                             />
-                        </Card>
+                        </Card >
                         {/* {ffmenu ? null :
                             <Card className={'details'}>
                                 <ConsentDetails />
                             </Card>} */}
-                    </div>
-                </div>
+                    </div >
+                </div >
             </>
 
 
