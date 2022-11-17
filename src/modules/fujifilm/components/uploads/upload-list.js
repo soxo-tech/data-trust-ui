@@ -11,15 +11,15 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Table, Button, Typography, Modal, Upload, message, Input, Dropdown, Menu, Skeleton } from 'antd';
+import { Table, Button, Typography, Modal, message, Input, Dropdown, Menu, Skeleton } from 'antd';
 
-import { Location, ReferenceSelect, InputComponent, FileUpload, Users, DateUtils } from 'soxo-bootstrap-core';
+import { Location, DateUtils } from 'soxo-bootstrap-core';
 
-import { UploadOutlined, MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import './upload-list.scss';
 
-import { CoreUsers, Uploads, UserLogs } from '../../../../models';
+import { CoreUsers, Uploads } from '../../../../models';
 
 const { Title, Text } = Typography;
 
@@ -27,19 +27,11 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      const [checkUpData, setCheckUpData] = useState([])
 
-     const [page, setPage] = useState(1);
-
-     const [limit, setLimit] = useState(20);
-
      const [id, setId] = useState();
 
      const [visible, setVisible] = useState(false);
 
      const [uploadVisible, setUploadVisible] = useState(false);
-
-     const [files, setFiles] = useState([]);
-
-     const [checkupFile, setCheckUpFile] = useState([])
 
      const [loading, setLoading] = useState(true);
 
@@ -54,7 +46,8 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                title: '#',
                dataIndex: 'index',
                render: (value, item, index) => {
-                    return (page - 1) * limit + index + 1;
+                    // return (page - 1) * limit + index + 1;
+                    return index + 1
                },
           },
           {
@@ -147,9 +140,9 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                return (
                     analysisResult ?
-                         <div style={{ display: 'flex' }}>
+                         (<div style={{ display: 'flex' }}>
 
-                              <Button onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
+                              <Button loading={btnLoading} onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
 
                               <Dropdown overlay={() => {
                                    return menu(ele)
@@ -159,16 +152,17 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                               </Dropdown>
 
-                         </div> :
-                         <div style={{ display: 'flex' }}>
+                         </div>)
+                         :
+                         (<div style={{ display: 'flex' }}>
 
                               <Button onClick={toUpdate}>Details</Button>
 
-                              <Button onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
+                              <Button loading={btnLoading} onClick={(e) => downloadFiles(e, ele.id)}>Download</Button>
 
                               {ffmenu ? null : <Button onClick={(e) => modalVisible(e, ele)}>Update Consent</Button>}
 
-                         </div>
+                         </div>)
 
                )
           },
@@ -187,20 +181,22 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
      async function downloadFiles(e, id) {
 
+          setBtnLoading(true);
+
           const bulk = true
+
           Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
+
+               setBtnLoading(false)
 
                if (res.success) {
                     Uploads.download(res.buffer.data)
-                    setBtnLoading(false)
                     getData()
-               }
-               else {
+               } else {
                     message.error(res.message)
                }
           })
      }
-
 
 
      /**
@@ -216,7 +212,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           Promise.all(result.map(async (ele, key) => {
                var id = ele.created_by
                var user = await CoreUsers.get()
-               user=user.result.filter((user)=>user.id===id)
+               user = user.result.filter((user) => user.id === id)
 
                return {
                     ...ele,
@@ -229,30 +225,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
           })
 
      }
-
-
-
-     /**
-      * get upload records along with upload details with  the same id
-      * @param {*} id 
-      */
-
-     function getAnalysisResult(id = 16) {
-          var config = {
-               queries: [{
-                    field: 'id',
-                    value: id
-               }
-
-               ],
-               includes: 'upload_details'
-          }
-
-          Uploads.get(config).then((res) => {
-
-          })
-     }
-
 
      /**
       * Open menu with additional options
@@ -282,6 +254,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                     url: `/analysis-result-details/${record.id}`,
                });
      }
+
      var analysisColumns = []
 
 
@@ -317,19 +290,36 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
      return (
           <div>
 
-               {analysisResult ? <Title level={3}>ANALYSIS RESULTS DATA</Title> : <Title level={3}>CHECK UP DATA</Title>}
+               <div className="page-header">
+
+                    {analysisResult ? <Title level={3}>ANALYSIS RESULTS DATA</Title> : <Title level={3}>CHECK UP DATA</Title>}
 
 
-               {!analysisResult && ffmenu ? null :
+                    <div className="actions">
 
-                    <div className='upload-list'>
+                         {!analysisResult && ffmenu ? null :
+
+                              <div className='upload-list'>
 
 
-                         <Button onClick={uploadModal}>
-                              Upload
+                                   <Button onClick={uploadModal}>
+                                        Upload
+                                   </Button>
+
+                              </div>}
+
+                         <Button onClick={getData}>
+                              <ReloadOutlined />
                          </Button>
 
-                    </div>}
+                    </div>
+
+
+               </div>
+
+
+
+
 
                {loading ?
 
@@ -339,28 +329,15 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
                          <Table
                               scroll={{ x: true }}
-                              //  rowKey={(record) => record.da_id}
                               dataSource={checkUpData}
                               columns={analysisColumns}
-                         // pagination={{
-                         //      current: page,
-                         //      onChange(current) {
-                         //           setPage(current);
-                         //      },
-                         // }}
+
                          /> :
 
                          <Table
                               scroll={{ x: true }}
-                              //  rowKey={(record) => record.da_id}
                               dataSource={checkUpData}
                               columns={columns}
-                         // pagination={{
-                         //      current: page,
-                         //      onChange(current) {
-                         //           setPage(current);
-                         //      },
-                         // }}
                          />)}
 
                {/**
@@ -386,8 +363,6 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                {/**
                 * Upload Consent and Checkup Modal ends
                 */}
-
-
 
 
                {/**
@@ -452,139 +427,139 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
  * @returns
  */
 function UploadConsent({
-  analysisResult,
-  setVisible,
-  getData,
-  setSummaryVisible,
-  setResult,
+     analysisResult,
+     setVisible,
+     getData,
+     setSummaryVisible,
+     setResult,
 }) {
-  const [consentFile, setConsentFile] = useState({})
+     const [consentFile, setConsentFile] = useState({})
 
-  const [psuedonymizedFile, setPsuedonymizedFile] = useState({})
+     const [psuedonymizedFile, setPsuedonymizedFile] = useState({})
 
-  const [analysisFile, setAnalysisFile] = useState({})
+     const [analysisFile, setAnalysisFile] = useState({})
 
-  const [title, setTitle] = useState()
+     const [title, setTitle] = useState()
 
-  const [loading, setLoading] = useState(false)
+     const [loading, setLoading] = useState(false)
 
-  //Onsumbit of the modal, both files with title is send to backend
+     //Onsumbit of the modal, both files with title is send to backend
 
-  async function submit() {
-    setLoading(true)
-    const data = new FormData()
+     async function submit() {
+          setLoading(true)
+          const data = new FormData()
 
-    if (analysisResult) {
-      data.append('analysisFile', analysisFile)
-      data.append('title', title)
-    } else {
-      data.append('consentFile', consentFile)
-      data.append('psuedonymizedFile', psuedonymizedFile)
-      data.append('title', title)
-    }
+          if (analysisResult) {
+               data.append('analysisFile', analysisFile)
+               data.append('title', title)
+          } else {
+               data.append('consentFile', consentFile)
+               data.append('psuedonymizedFile', psuedonymizedFile)
+               data.append('title', title)
+          }
 
-    Uploads.uploadFileContent(data, analysisResult).then((result) => {
-      if (result.success) {
-        setResult({
-          result: result.result,
-          update: false,
-        })
+          Uploads.uploadFileContent(data, analysisResult).then((result) => {
+               if (result.success) {
+                    setResult({
+                         result: result.result,
+                         update: false,
+                    })
 
-        setVisible(false)
+                    setVisible(false)
 
-        //set summary modal visible true
-        setSummaryVisible(true)
-      } else {
-        message.error(result.message)
-      }
-      setLoading(false)
-    })
-  }
+                    //set summary modal visible true
+                    setSummaryVisible(true)
+               } else {
+                    message.error(result.message)
+               }
+               setLoading(false)
+          })
+     }
 
-  //Function when uploading consent file
-  function handleConsentFile(e) {
-    let files = e.target.files[0]
-    setConsentFile(files)
-  }
+     //Function when uploading consent file
+     function handleConsentFile(e) {
+          let files = e.target.files[0]
+          setConsentFile(files)
+     }
 
-  //Function when uploading analysis file
-  function handleAnalysisFile(e) {
-    let files = e.target.files[0]
-    setAnalysisFile(files)
-  }
+     //Function when uploading analysis file
+     function handleAnalysisFile(e) {
+          let files = e.target.files[0]
+          setAnalysisFile(files)
+     }
 
-  //Function when uploading psuedonymized file
-  function handlePsuedonymizedFile(e) {
-    let files = e.target.files[0]
-    setPsuedonymizedFile(files)
-  }
+     //Function when uploading psuedonymized file
+     function handlePsuedonymizedFile(e) {
+          let files = e.target.files[0]
+          setPsuedonymizedFile(files)
+     }
 
-  //Function for onChange of Title
-  function handleTitle(e) {
-    setTitle(e.target.value)
-  }
+     //Function for onChange of Title
+     function handleTitle(e) {
+          setTitle(e.target.value)
+     }
 
-  return (
-    <div>
-      <Title level={5}>Title</Title>
-      <Input onChange={handleTitle}></Input>
-
-      {analysisResult ? (
-        <div>
-          <br />
-          <Title level={5}>Analysis Result</Title>
-
-          <label>Select File</label>
-          <br />
-
-          <input
-            type="file"
-            name="consentFile"
-            onChange={(e) => handleAnalysisFile(e)}
-          />
-          <br />
-          <br />
-        </div>
-      ) : (
-        <>
+     return (
           <div>
-            <form id="myform">
-              <br />
-              <Title level={5}>Consent Data</Title>
-              <label>Select File</label>
-              <br />
+               <Title level={5}>Title</Title>
+               <Input onChange={handleTitle}></Input>
 
-              <input
-                type="file"
-                name="consentFile"
-                onChange={(e) => handleConsentFile(e)}
-              />
-              <br />
-              <br />
-              <Title level={5}>Psuedonymized Data</Title>
+               {analysisResult ? (
+                    <div>
+                         <br />
+                         <Title level={5}>Analysis Result</Title>
 
-              <label>Select File</label>
-              <br />
+                         <label>Select File</label>
+                         <br />
 
-              <input
-                type="file"
-                name="psuedonymizedFile"
-                onChange={(e) => handlePsuedonymizedFile(e)}
-              />
-              <br />
-              <br />
-            </form>
+                         <input
+                              type="file"
+                              name="consentFile"
+                              onChange={(e) => handleAnalysisFile(e)}
+                         />
+                         <br />
+                         <br />
+                    </div>
+               ) : (
+                    <>
+                         <div>
+                              <form id="myform">
+                                   <br />
+                                   <Title level={5}>Consent Data</Title>
+                                   <label>Select File</label>
+                                   <br />
+
+                                   <input
+                                        type="file"
+                                        name="consentFile"
+                                        onChange={(e) => handleConsentFile(e)}
+                                   />
+                                   <br />
+                                   <br />
+                                   <Title level={5}>Psuedonymized Data</Title>
+
+                                   <label>Select File</label>
+                                   <br />
+
+                                   <input
+                                        type="file"
+                                        name="psuedonymizedFile"
+                                        onChange={(e) => handlePsuedonymizedFile(e)}
+                                   />
+                                   <br />
+                                   <br />
+                              </form>
+                         </div>
+
+                         <div></div>
+                         <br />
+                    </>
+               )}
+               <Button loading={loading} onClick={submit}>
+                    Submit
+               </Button>
           </div>
-
-          <div></div>
-          <br />
-        </>
-      )}
-      <Button loading={loading} onClick={submit}>
-        Submit
-      </Button>
-    </div>
-  )
+     )
 }
 
 /**
@@ -596,71 +571,71 @@ function UploadConsent({
  */
 
 function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
-  const [consentFile, setConsentFile] = useState({})
+     const [consentFile, setConsentFile] = useState({})
 
-  const [loading, setLoading] = useState(false)
+     const [loading, setLoading] = useState(false)
 
-  //On approve the files are send tp backend to upload to blob storage
-  function approveUpload() {
-    setLoading(true)
-    const data = new FormData()
+     //On approve the files are send tp backend to upload to blob storage
+     function approveUpload() {
+          setLoading(true)
+          const data = new FormData()
 
-    data.append('consentFile', consentFile)
-    data.append('id', id)
+          data.append('consentFile', consentFile)
+          data.append('id', id)
 
-    Uploads.updateConsent(data).then(async (result) => {
-      if (result.success) {
-        //set results to show upload summary
+          Uploads.updateConsent(data).then(async (result) => {
+               if (result.success) {
+                    //set results to show upload summary
 
-        setResult({
-          result: result.result,
-          update: true,
-        })
-        setLoading(false)
+                    setResult({
+                         result: result.result,
+                         update: true,
+                    })
+                    setLoading(false)
 
-        //set Visible of the update modal false
-        setVisible(false)
+                    //set Visible of the update modal false
+                    setVisible(false)
 
-        //Set summary modal visible true
-        setSummaryVisible(true)
-      } else {
-        message.error(result.message)
-      }
-    })
-  }
+                    //Set summary modal visible true
+                    setSummaryVisible(true)
+               } else {
+                    message.error(result.message)
+               }
+          })
+     }
 
-  function cancelUpload() {
-    setVisible(false)
-  }
+     function cancelUpload() {
+          setVisible(false)
+     }
 
-  function handleConsentFile(e) {
-    let files = e.target.files[0]
-    setConsentFile(files)
-  }
+     function handleConsentFile(e) {
+          let files = e.target.files[0]
+          setConsentFile(files)
+     }
 
-  return (
-    <div>
-      <div>
-        <Title level={5}>Consent Data</Title>
-        <label>Select File</label>
-        <br />
+     return (
+          <div>
+               <div>
+                    <Title level={5}>Consent Data</Title>
+                    <label>Select File</label>
+                    <br />
 
-        <input
-          type="file"
-          name="consentFile"
-          onChange={(e) => handleConsentFile(e)}
-        />
-        <br />
-      </div>
+                    <input
+                         type="file"
+                         name="consentFile"
+                         onChange={(e) => handleConsentFile(e)}
+                    />
+                    <br />
+               </div>
 
-      <div className="upload-consent">
-        <Button loading={loading} onClick={approveUpload}>
-          Approve
-        </Button>
-        <Button onClick={cancelUpload}>Cancel</Button>
-      </div>
-    </div>
-  )
+               <div className="upload-consent">
+                    <Button loading={loading} onClick={approveUpload}>
+                         Approve
+                    </Button>
+                    <Button onClick={cancelUpload}>Cancel</Button>
+               </div>
+          </div>
+     )
 }
 
 /**
@@ -669,19 +644,19 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
  * @returns
  */
 function Summary({ result, analysisResult }) {
-  return (
-    <div>
-      <p>Your upload is successfully Completed</p>
-      {result.update ? (
-        <p>{result.result.consent_length} Records were updated</p>
-      ) : analysisResult ? (
-        <p>{result.result.analysis_length} Records were uploaded</p>
-      ) : (
-        <p>
-          {result.result.checkup_length} checkup records and{' '}
-          {result.result.consent_length} consent records were uploaded
-        </p>
-      )}
-    </div>
-  )
+     return (
+          <div>
+               <p>Your upload is successfully Completed</p>
+               {result.update ? (
+                    <p>{result.result.consent_length} Records were updated</p>
+               ) : analysisResult ? (
+                    <p>{result.result.analysis_length} Records were uploaded</p>
+               ) : (
+                    <p>
+                         {result.result.checkup_length} checkup records and{' '}
+                         {result.result.consent_length} consent records were uploaded
+                    </p>
+               )}
+          </div>
+     )
 }

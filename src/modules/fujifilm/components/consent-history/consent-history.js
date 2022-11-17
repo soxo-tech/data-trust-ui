@@ -12,23 +12,17 @@ import { Table, Button, Typography, Skeleton, message, } from 'antd';
 
 import { Location, Card, DateUtils, GlobalContext } from 'soxo-bootstrap-core';
 
-import ConsentDetails from '../consent-details/consent-details';
+import { ReloadOutlined } from '@ant-design/icons';
 
 import './consent-history.scss';
 
-import moment from 'moment';
-
-import { UploadDetails, UserLogs } from '../../../../models';
+import { UploadDetails } from '../../../../models';
 
 const { Title } = Typography;
 
 export default function ConsentHistory({ ffmenu, ...props }) {
 
     const [consentHistory, setConsentHistory] = useState([])
-
-    const [page, setPage] = useState(1);
-
-    const [limit, setLimit] = useState(20);
 
     const { id } = props.match.params;
 
@@ -41,7 +35,8 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             title: '#',
             dataIndex: 'index',
             render: (value, item, index) => {
-                return (page - 1) * limit + index + 1;
+                return index + 1;
+                // return (page - 1) * limit + index + 1;
             },
         },
         {
@@ -137,14 +132,14 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                         url: `/checkup-list/derived-analysis/${id}`,
                     });
                 }
-t
+
                 const attributes = JSON.parse(ele.attributes)
 
                 return (
 
                     <div>
-                        {ffmenu ? attributes.items==='all' ? null :
-                        
+                        {ffmenu ? attributes.items === 'all' ? null :
+
 
                             <Button onClick={(e) => onDiscard(e, ele)}>Discard</Button> :
                             <>
@@ -157,8 +152,6 @@ t
             },
         },
     )
-
-
 
     /**
      * function to discard a consent
@@ -176,7 +169,6 @@ t
             message.error(dataDiscarded.message)
         }
     }
-
 
     useEffect(() => {
         getData();
@@ -196,8 +188,9 @@ t
             baseUrl: process.env.REACT_APP_NURA
         }
 
+        setLoading(true)
 
-       UploadDetails.getConsent(id).then(result => {
+        UploadDetails.getConsent(id).then(result => {
 
             setConsentHistory(result.consents)
 
@@ -209,7 +202,19 @@ t
         loading ? <Skeleton /> :
             <>
                 <div>
-                    <Title level={3}>Consent History</Title>
+
+                    <div className="page-header">
+
+                        <Title level={3}>Consent History</Title>
+
+                        <div className="page-actions">
+
+                            <Button onClick={getData}>
+                                <ReloadOutlined />
+                            </Button>
+
+                        </div>
+                    </div>
 
                     <div className='consent-history'>
 
@@ -228,15 +233,9 @@ t
                                 columns={columns}
                             />
                         </Card >
-                        {/* {ffmenu ? null :
-                            <Card className={'details'}>
-                                <ConsentDetails />
-                            </Card>} */}
                     </div >
                 </div >
             </>
-
-
     )
 }
 

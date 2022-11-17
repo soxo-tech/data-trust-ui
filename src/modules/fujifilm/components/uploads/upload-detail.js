@@ -15,7 +15,7 @@ import { Table, Button, Typography, Input, Dropdown, Menu, Modal, Skeleton, Popc
 
 import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
 
-import { MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import moment from 'moment'
 
@@ -23,9 +23,7 @@ import './upload-detail.scss'
 
 import { UploadDetails, UserLogs, Uploads, CoreUsers } from '../../../../models';
 
-const { Title, Text } = Typography;
-
-const { Search } = Input;
+const { Title } = Typography;
 
 export default function UploadDetailComponent({ analysisResult, ffmenu, caption, ...props }) {
 
@@ -34,12 +32,6 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
         const [loading, setLoading] = useState(false);
 
         const [downloadHistory, setDownloadHistory] = useState([])
-
-        const [page, setPage] = useState(1);
-
-        const [limit, setLimit] = useState(20);
-
-        var [query, setQuery] = useState('');
 
         const [visible, setVisible] = useState(false);
 
@@ -50,7 +42,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         title: '#',
                         dataIndex: 'index',
                         render: (value, item, index) => {
-                                return (page - 1) * limit + index + 1;
+                                return index + 1;
+                                // return (page - 1) * limit + index + 1;
                         },
                 },
                 {
@@ -62,9 +55,9 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         title: 'Registration Date',
                         key: 'title',
                         render: (record) => {
-                                
-                                if(record.order_date)
-                                return DateUtils.getFormattedTimeDate(record.order_date)
+
+                                if (record.order_date)
+                                        return DateUtils.getFormattedTimeDate(record.order_date)
 
                         }
                 },
@@ -94,9 +87,9 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         title: 'Last Download',
                         key: 'lastDownload',
                         render: (record) => {
-                                
-                                if(record.downloads && record.downloads.created_at)
-                                return record.downloads ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
+
+                                if (record.downloads && record.downloads.created_at)
+                                        return record.downloads ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
 
                         }
                 })
@@ -194,7 +187,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 title: '#',
                                 dataIndex: 'index',
                                 render: (value, item, index) => {
-                                        return (page - 1) * limit + index + 1;
+                                        // return (page - 1) * limit + index + 1;
+                                        return index + 1;
                                 },
                         },
                         {
@@ -275,8 +269,6 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                                 <MoreOutlined />
                                                                 {/* </Button> */}
                                                         </Dropdown>
-
-
                                                 </div>
                                         )
                                 },
@@ -300,12 +292,10 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 setLoading(true);
 
                 UploadDetails.getDetails(id, analysisResult).then(result => {
-                        // setDetails(result.result)
 
                         setUploads(result);
 
                         setLoading(false);
-
                 })
         }
 
@@ -419,36 +409,23 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 // await getDownloadHistory(record)
                                 setDownloadHistory(record)
                                 setVisible(true)
-                        }
-                        else {
+                        } else {
                                 Location.navigate({
                                         url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}?&consentId=${record.consent.id}`,
                                 });
                         }
-                }
-
-                else if (params.key === 'consent_history')
+                } else if (params.key === 'consent_history') {
 
                         Location.navigate({
                                 url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}`,
                         });
 
-                else if (params.key === 'result_analysis')
+                } else if (params.key === 'result_analysis') {
 
                         Location.navigate({
                                 url: `/checkup-list/derived-analysis/${record.psuedonymous_nura_id}`,
                         });
-        }
-
-
-
-        /**
-         * Function to be triggered on search
-         * @param {} event 
-         */
-
-        function onSearch(event) {
-                setQuery(event.target.value);
+                }
         }
 
         return (
@@ -461,31 +438,33 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                         :
                                         <>
 
-                                                <Title level={3}>{caption}</Title>
+                                                <div className="page-header">
+
+                                                        <Title level={3}>{caption}</Title>
+
+
+                                                        <div className="page-actions">
+
+                                                                <Button onClick={getData}>
+                                                                        <ReloadOutlined />
+                                                                </Button>
+
+                                                        </div>
+
+                                                </div>
+
                                                 <Card>
                                                         <Title level={4}>
                                                                 {uploads.title}
                                                         </Title>
                                                         <div className='detail-header'>
                                                                 <p>ID :{uploads.id}</p>
-                                                                {/* <Search
-                                                                        placeholder="Enter Search Value"
-                                                                        allowClear
-                                                                        style={{ width: '25%', marginTop: '10px', marginBottom: '20px' }}
-                                                                        onChange={onSearch}
-                                                                /> */}
+
                                                         </div>
                                                         <Table
                                                                 scroll={{ x: true }}
-                                                                //  rowKey={(record) => record.da_id}
                                                                 dataSource={uploads.upload_details}
                                                                 columns={columns}
-                                                        // pagination={{
-                                                        //         current: page,
-                                                        //         onChange(current) {
-                                                        //                 setPage(current);
-                                                        //         },
-                                                        // }}
                                                         />
                                                 </Card>
 
@@ -514,22 +493,19 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                 */}
 
                                         </>}
-
                 </div>
-
-
         )
 }
 
+/**
+ * Download history to be diplayed as a Component
+ * 
+ * @param {*} param0 
+ * @returns 
+ */
 function DownloadHistory({ data }) {
 
-        const [page, setPage] = useState(1);
-
-        const [limit, setLimit] = useState(20);
-
-
         const [downloadHistory, setDownloadHistory] = useState([])
-
 
         /**
          * Function to get download history
@@ -549,10 +525,15 @@ function DownloadHistory({ data }) {
                         }],
                         // baseUrl: process.env.REACT_APP_FF
                 }
+
                 var result = await UserLogs.get(config)
+
                 Promise.all(result.result.map(async (ele, key) => {
+
                         var id = ele.created_by
+
                         var user = await CoreUsers.get()
+
                         user = user.result.filter((user) => user.id === id)
 
                         return {
@@ -577,7 +558,8 @@ function DownloadHistory({ data }) {
                         title: '#',
                         dataIndex: 'index',
                         render: (value, item, index) => {
-                                return (page - 1) * limit + index + 1;
+                                // return (page - 1) * limit + index + 1;
+                                return index + 1;
                         },
                 },
                 {
@@ -595,19 +577,14 @@ function DownloadHistory({ data }) {
                 <div>
                         <p>Nura ID :</p>
                         <p>{data.psuedonymous_nura_id}</p>
-                        {/* <p>Data   ID</p> */}
+
                         <p></p>
+
                         <Table
                                 scroll={{ x: true }}
-                                //  rowKey={(record) => record.da_id}
                                 dataSource={downloadHistory}
                                 columns={columns}
-                        // pagination={{
-                        //     current: page,
-                        //     onChange(current) {
-                        //         setPage(current);
-                        //     },
-                        // }}
+
                         />
                 </div>
 
