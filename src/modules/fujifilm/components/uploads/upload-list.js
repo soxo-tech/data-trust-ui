@@ -215,10 +215,12 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
           Promise.all(result.map(async (ele, key) => {
                var id = ele.created_by
-               var user = await CoreUsers.getRecord({ id })
+               var user = await CoreUsers.get()
+               user=user.result.filter((user)=>user.id===id)
+
                return {
                     ...ele,
-                    created_by_details: user.result
+                    created_by_details: user[0]
                }
           })).then((arr) => {
 

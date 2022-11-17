@@ -27,13 +27,21 @@ class UserLog extends BaseAPI {
         return `UserLogs`;
     }
 
-    async getDownloadHistory(id, user) {
+    async getDownloadHistory(id, analysisResult) {
+        
+        var baseUrl
 
-        const baseUrl = process.env.REACT_APP_NURA;
+        if (analysisResult)
+            baseUrl = process.env.REACT_APP_FF;
+        else{
+            baseUrl = process.env.REACT_APP_NURA;
+            analysisResult=false
+        }
 
-        return ApiUtils.get({baseUrl,
+        return ApiUtils.get({
+            baseUrl,
 
-            url: `user_logs/get-download-history/${id}`,
+            url: `user_logs/get-download-history?id=${id}&analysisResult=${analysisResult}`,
         });
     }
 

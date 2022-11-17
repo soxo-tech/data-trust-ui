@@ -117,11 +117,12 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
 
                         Promise.all(result.uploadsWithConsent.map(async (ele, key) => {
                                 var id = ele.created_by
-                                var user = await CoreUsers.getRecord({ id })
+                                var user = await CoreUsers.get()
+                                user=user.result.filter((user)=>user.id===id)
+                 
                                 return {
-                                        ...ele,
-                                        // title:result.uploadsWithConsent[0].title,
-                                        created_by_details: user.result
+                                     ...ele,
+                                     created_by_details: user[0]
                                 }
                         })).then((arr) => {
                                 setDerivedAnalysis(arr)
@@ -228,7 +229,7 @@ export default function DerivedAnalysis({ ffmenu,...props }) {
         function handleClick(params, record) {
                 if (params.key === 'download_history')
                         Location.navigate({
-                                url: `/checkup-list/downloads-history/${record.id}`,
+                                url: `/checkup-list/downloads-history/${id}?&analysisResult=${true}`,
                         });
 
                 else if (params.key === 'result_analysis') {

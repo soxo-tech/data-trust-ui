@@ -33,7 +33,11 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      const { user = {} } = useContext(GlobalContext);
 
-     const { consentId } = Location.search()
+     var { consentId, analysisResult } = Location.search()
+
+     if (analysisResult) {
+          analysisResult = eval(analysisResult)
+     }
 
      var columns = []
 
@@ -54,13 +58,19 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                     title: 'Consent ID',
                     key: 'id',
                     render: (record) => {
-                         return record.consent.id
+
+                         const attributes=JSON.parse(record.attributes)
+                   
+                         return attributes.consent_id
                     }
                },
                {
                     title: 'Consent Time',
                     key: 'time',
                     render: (record) => {
+
+                         if(record.consent)
+
                          return DateUtils.getFormattedTimeDate(record.consent.created_at)
                     }
                },
@@ -133,9 +143,9 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                     title: 'Discarded Date',
                     key: 'discarded',
                     render: (record) => {
-                         
-                              return record.consent.discarded_date ? DateUtils.getFormattedTimeDate(record.consent.discarded_date) : null
-                         
+
+                         return record.consent.discarded_date ? DateUtils.getFormattedTimeDate(record.consent.discarded_date) : null
+
                     }
                },
 
@@ -157,25 +167,29 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 * Function to load the data for screen
 */
      async function getData() {
-          
-          var result = await UserLogs.getDownloadHistory(id)
+
+          var result = await UserLogs.getDownloadHistory(id, analysisResult)
 
           //In ffmenu only load the data for downloads of the current user
-          if(ffmenu)
+          if (ffmenu && analysisResult !== true)
 
-          result = result.result.filter((element) => element.created_by === user.id)
+               result = result.result.filter((element) => element.created_by === user.id)
+
+          //To gete download history of analysis result
+          else if (analysisResult === true)
+
+               result = result.result
 
           //In Nura load downlaods with respect to consent id
           else
-          
-          result = result.result.filter((element) => JSON.parse(element.attributes).consent_id === parseInt(consentId))
 
+               result = result.result.filter((element) => JSON.parse(element.attributes).consent_id === parseInt(consentId))
 
           Promise.all(result.map(async (ele, key) => {
 
                var id = ele.created_by
                var user = await CoreUsers.get()
-               user=user.result.filter((user)=>user.id===id)
+               user = user.result.filter((user) => user.id === id)
 
                return {
                     ...ele,

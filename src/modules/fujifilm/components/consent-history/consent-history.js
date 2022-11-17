@@ -36,7 +36,6 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
     const { user = {} } = useContext(GlobalContext);
 
-    ffmenu = true
 
     const columns = [
         {
@@ -71,8 +70,6 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             render: (record) => {
 
                 const attributes = JSON.parse(record.attributes)
-
-                console.log(attributes)
 
                 return attributes && attributes.lifetime_type ? attributes.lifetime_type : attributes && attributes.lifeTime ? attributes.lifeTime : null
             }
@@ -120,7 +117,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                 key: 'discarded',
                 render: (record) => {
 
-                        return record.discarded_date? DateUtils.getFormattedTimeDate(record.discarded_date) : null;
+                    return record.discarded_date ? DateUtils.getFormattedTimeDate(record.discarded_date) : null;
                 }
             },
         )
@@ -135,7 +132,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                 function toDownloadHistory() {
 
                     Location.navigate({
-                        url: `/checkup-list/downloads-history/${id}?&consentId=${ele.id}`,
+                        url: `/checkup-list/downloads-history/${id}?&consentId=${ele.upload_details_id}`,
                     });
 
                 }
@@ -147,11 +144,14 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                     });
 
                 }
-console.log(ele)
+
+                const attributes = JSON.parse(ele.attributes)
+
                 return (
 
                     <div>
-                        {ffmenu ?ele.discarded_date?null:
+                        {ffmenu ? attributes.items==='all' ? null :
+                        
                             <Button onClick={(e) => onDiscard(e, ele)}>Discard</Button> :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
@@ -173,12 +173,14 @@ console.log(ele)
      */
 
     async function onDiscard(e, record) {
-      
-        const dataDiscarded=await UploadDetails.discard(record.upload_details_id, user)
 
-        if(dataDiscarded.success){
+        const dataDiscarded = await UploadDetails.discard(record.upload_details_id, user)
+
+        if (dataDiscarded.success) {
+
             message.success(dataDiscarded.message)
-        }else{
+        } else {
+
             message.error(dataDiscarded.message)
         }
     }
@@ -201,8 +203,10 @@ console.log(ele)
             baseUrl: process.env.REACT_APP_NURA
         }
 
-        UserLogs.get(config).then(result => {
-            setConsentHistory(result.result)
+       UploadDetails.getConsent(id).then(result => {
+
+            setConsentHistory(result.consents)
+
             setLoading(false)
         })
     }
@@ -222,7 +226,7 @@ console.log(ele)
                                 <Title level={5}>Nura ID : {id}</Title>
 
 
-                                <p> {consentHistory ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p>
+                                <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p>
 
                             </div>
 

@@ -63,6 +63,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                         title: 'Registration Date',
                         key: 'title',
                         render: (record) => {
+                                
+                                if(record.order_date)
                                 return DateUtils.getFormattedTimeDate(record.order_date)
 
                         }
@@ -92,7 +94,13 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                 columns.push({
                         title: 'Last Download',
                         key: 'lastDownload',
-                        dataIndex: 'lastDownload'
+                        render: (record) => {
+                                
+                                if(record.downloads && record.downloads.created_at)
+                                return record.downloads ? DateUtils.getFormattedTimeDate(record.downloads.created_at) : null
+
+
+                        }
                 })
         }
 
