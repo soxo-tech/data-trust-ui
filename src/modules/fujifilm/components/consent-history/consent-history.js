@@ -201,7 +201,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
     return (
         loading ? <Skeleton /> :
             <>
-                <div>
+                <div className="card card-shadow">
 
                     <div className="page-header">
 
@@ -218,12 +218,11 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                     <div className='consent-history'>
 
-                        <Card className={'history'}>
+                        <div className={'history'}>
                             <div className='history-table'>
                                 <Title level={5}>Nura ID : {id}</Title>
 
-
-                                {/* <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p> */}
+                               {/* <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p> */}
 
                             </div >
 
@@ -232,7 +231,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                                 dataSource={consentHistory}
                                 columns={columns}
                             />
-                        </Card >
+                        </div >
                     </div >
                 </div >
             </>

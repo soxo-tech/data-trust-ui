@@ -430,7 +430,7 @@ export default function UploadDetailComponent({
   }
 
   return (
-    <div>
+    <div className='card card-shadow'>
       {loading ? (
         <Skeleton />
       ) : (
@@ -445,7 +445,7 @@ export default function UploadDetailComponent({
             </div>
           </div>
 
-          <Card>
+          <div>
             <Title level={4}>{uploads.title}</Title>
             <div className="detail-header">
               <p>ID :{uploads.id}</p>
@@ -455,7 +455,7 @@ export default function UploadDetailComponent({
               dataSource={uploads.upload_details}
               columns={columns}
             />
-          </Card>
+          </div>
 
           {/**
            * Modal for Download History

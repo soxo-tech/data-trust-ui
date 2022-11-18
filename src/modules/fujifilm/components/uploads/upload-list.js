@@ -300,12 +300,12 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
   }
 
   return (
-    <div>
+    <div className="card card-shadow">
       <div className="page-header">
         {analysisResult ? (
-          <Title level={3}>ANALYSIS RESULTS DATA</Title>
+          <Title level={3}>Analysis Results Data</Title>
         ) : (
-          <Title level={3}>CHECK UP DATA</Title>
+          <Title level={3}>Pseudonymised Checkup Data</Title>
         )}
 
         <div className="actions">
@@ -500,7 +500,7 @@ function UploadConsent({
   }
 
   return (
-    <div>
+    <div className="card card-shadow">
       <Title level={5}>Title</Title>
       <Input onChange={handleTitle}></Input>
 
