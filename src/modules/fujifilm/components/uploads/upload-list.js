@@ -347,7 +347,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                <Modal
                     destroyOnClose={true}
                     footer={null}
-                    title="Upload Consent"
+                    title="Data to Upload"
                     visible={uploadVisible}
                     okText="Okay"
                     onOk={() => {
@@ -372,7 +372,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
                <Modal
                     destroyOnClose={true}
                     footer={null}
-                    title="Update Consent"
+                    title="Data to Upload"
                     visible={visible}
                     okText="Okay"
                     onOk={() => {
@@ -536,7 +536,7 @@ function UploadConsent({
                                    />
                                    <br />
                                    <br />
-                                   <Title level={5}>Psuedonymized Data</Title>
+                                   <Title level={5}>Pseudonymised Checkup Data</Title>
 
                                    <label>Select File</label>
                                    <br />

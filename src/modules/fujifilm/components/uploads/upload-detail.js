@@ -27,6 +27,8 @@ const { Title } = Typography;
 
 export default function UploadDetailComponent({ analysisResult, ffmenu, caption, ...props }) {
 
+        const [downloadLoading, setDownloadLoading] = useState(false);
+
         const [uploads, setUploads] = useState([]);
 
         const [loading, setLoading] = useState(false);
@@ -154,7 +156,14 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                 return (
                                         <div>
                                                 <div style={{ display: 'flex' }}>
-                                                        {updated ? null : <Button onClick={(e) => download(e, record)}>Download</Button>}
+
+                                                        {
+                                                                updated
+                                                                        ?
+                                                                        null
+                                                                        :
+                                                                        <Button loading={downloadLoading} onClick={(e) => download(e, record)}>Download</Button>
+                                                        }
 
                                                         {
                                                                 ffmenu
@@ -251,7 +260,8 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                         return (
                                                 <div className='action'>
 
-                                                        <Button onClick={(e) => download(e, record)}>Download</Button>
+                                                        <Button loading={downloadLoading} onClick={(e) => download(e, record)}>Download</Button>
+
                                                         <Popconfirm
                                                                 title="Are you sure you want to delete the record? "
                                                                 onConfirm={(e) => deleteRecord(e, record)}
@@ -262,6 +272,7 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
                                                                 <Button >Delete</Button>
 
                                                         </Popconfirm>
+
                                                         <Dropdown overlay={() => {
                                                                 return menu(record)
                                                         }} placement="bottomLeft">
@@ -307,7 +318,11 @@ export default function UploadDetailComponent({ analysisResult, ffmenu, caption,
 
                 const bulk = false
 
+                setDownloadLoading(true);
+
                 Uploads.downloadFiles(record.id, analysisResult, bulk).then((res) => {
+
+                        setDownloadLoading(false);
 
                         if (res.success) {
 
