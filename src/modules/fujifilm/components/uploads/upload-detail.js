@@ -69,14 +69,14 @@ export default function UploadDetailComponent({
       key: 'id',
       dataIndex: 'psuedonymous_nura_id',
     },
-    {
-      title: 'Registration Date',
-      key: 'title',
-      render: (record) => {
-        if (record.order_date)
-          return DateUtils.getFormattedTimeDate(record.order_date)
-      },
-    },
+    // {
+    //   title: 'Registration Date',
+    //   key: 'title',
+    //   render: (record) => {
+    //     if (record.order_date)
+    //       return DateUtils.getFormattedTimeDate(record.order_date)
+    //   },
+    // },
     {
       title: 'Consent ID',
       key: 'No of records',

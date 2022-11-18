@@ -212,10 +212,10 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                                    <Title level={5}>Nura ID</Title>
                                    <p>{downloadHistory[0] && downloadHistory[0].pseudonymous_nura_id ? downloadHistory[0].pseudonymous_nura_id : id}</p>
                               </div>
-                              <div>
+                              {/* <div>
                                    <Title level={5}>Registration Date</Title>
                                    <p>{downloadHistory[0] && downloadHistory[0].order_date ? DateUtils.getFormattedTimeDate(downloadHistory[0].order_date) : null}</p>
-                              </div>
+                              </div> */}
                               <div>
                                    <Title level={5}>Consent ID</Title>
                                    <p>{downloadHistory[0] && downloadHistory[0].consent ? downloadHistory[0].consent.id : null}</p>

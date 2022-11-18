@@ -82,16 +82,16 @@ export default function ConsentHistory({ ffmenu, ...props }) {
     if (ffmenu) {
 
         columns.push(
-            {
-                title: 'Registration Date',
-                key: 'regDate',
-                render: (record) => {
+            // {
+            //     title: 'Registration Date',
+            //     key: 'regDate',
+            //     render: (record) => {
 
-                    return DateUtils.getFormattedTimeDate(record.order_date)
+            //         return DateUtils.getFormattedTimeDate(record.order_date)
 
 
-                }
-            },
+            //     }
+            // },
             {
                 title: 'Last Download',
                 key: 'lastDownlaod',
@@ -223,7 +223,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                                 <Title level={5}>Nura ID : {id}</Title>
 
 
-                                <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p>
+                                {/* <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p> */}
 
                             </div >
 
