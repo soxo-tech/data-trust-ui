@@ -29,7 +29,10 @@ let appSettings = {
 
       resolve(localStorage.access_token);
     })
-  }
+  },
+  renderCustomHeader: () => {
+    return <h3 className="location-display">{process.env.REACT_APP_LOCATION}</h3>;
+},
 }
 
 
