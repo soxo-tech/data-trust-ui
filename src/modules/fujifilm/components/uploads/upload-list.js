@@ -199,11 +199,17 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
     const bulk = true
 
     Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
+      console.log(res.buffer)
       if (res.success) {
-        //Each content is downloaded as zip
-        res.buffer.map((data) => {
-          Uploads.download(data)
-        })
+        // For analysis each content is downloaded as zip
+        if (analysisResult) {
+          res.buffer.map((data) => {
+            Uploads.download(data, analysisResult)
+          })
+        } else {
+          // For checkup download content is downloaded a s json for now
+          Uploads.download(res.buffer.data, analysisResult)
+        }
 
         setBtnLoading(false)
 

@@ -9,239 +9,227 @@
  * Check Up data Listing Component
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
-import { Table, Button, Typography, Dropdown, Menu, Skeleton, message } from 'antd';
+import {
+  Table,
+  Button,
+  Typography,
+  Dropdown,
+  Menu,
+  Skeleton,
+  message,
+} from 'antd'
 
-import { Location, Card, DateUtils } from 'soxo-bootstrap-core';
+import { Location, Card, DateUtils } from 'soxo-bootstrap-core'
 
-import './derived-analysis.scss';
+import './derived-analysis.scss'
 
-import { MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons'
 
-import { UploadDetails, CoreUsers, Uploads } from '../../../../models';
+import { UploadDetails, CoreUsers, Uploads } from '../../../../models'
 
-const { Title } = Typography;
+const { Title } = Typography
 
 export default function DerivedAnalysis({ ffmenu, ...props }) {
+  // Get pagination number
+  const { id } = props.match.params
 
-        // Get pagination number
-        const { id } = props.match.params;
+  const [derivedAnalysis, setDerivedAnalysis] = useState([])
 
-        const [derivedAnalysis, setDerivedAnalysis] = useState([])
+  const [loading, setLoading] = useState(false)
 
-        const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1)
 
-        const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20)
 
-        const [limit, setLimit] = useState(20);
+  // ffmenu is maintained to determine which user is using(nura or fujifilm)
+  const columns = [
+    {
+      title: '#',
+      dataIndex: 'index',
+      render: (value, item, index) => {
+        return (page - 1) * limit + index + 1
+      },
+    },
+    {
+      title: 'Data ID',
+      key: 'id',
+      render: (record) => {
+        return record.upload_details[0].id
+      },
+    },
+    {
+      title: 'Consent ID',
+      key: 'consent_id',
+      render: (record) => {
+        if (record.upload_details[0] && record.upload_details[0].attributes) {
+          const attributes = JSON.parse(record.upload_details[0].attributes)
 
-        // ffmenu is maintained to determine which user is using(nura or fujifilm)
-        const columns = [
-                {
-                        title: '#',
-                        dataIndex: 'index',
-                        render: (value, item, index) => {
-                                return (page - 1) * limit + index + 1;
-                        },
-                },
-                {
-                        title: 'Data ID',
-                        key: 'id',
-                        render: (record) => {
-
-                                return record.upload_details[0].id
-
-                        }
-                },
-                {
-                        title: 'Consent ID',
-                        key: 'consent_id',
-                        render: (record) => {
-
-                                if (record.upload_details[0] && record.upload_details[0].attributes) {
-
-                                        const attributes = JSON.parse(record.upload_details[0].attributes)
-
-                                        return attributes.consent_id;
-                                }
-                        }
-                },
-                {
-                        title: 'Title',
-                        key: 'title',
-                        dataIndex: 'title'
-                },
-                {
-                        title: 'Upload Date',
-                        key: 'date',
-                        render: (record) => {
-
-                                return DateUtils.getFormattedTimeDate(record.created_at)
-
-                        }
-                },
-                {
-                        title: 'Upload User',
-                        key: 'user',
-                        render: (record) => {
-
-                                return record.created_by_details['name']
-
-                        }
-                },
-        ]
-
-        useEffect(() => {
-                getData();
-
-        }, [])
-
-        /**
-         * Function to load the data for screen
-         */
-        function getData() {
-
-                setLoading(true);
-
-                UploadDetails.loadDetails(id).then(result => {
-
-                        if (result.uploadsWithConsent && result.uploadsWithConsent.length > 0)
-
-                                Promise.all(result.uploadsWithConsent.map(async (ele, key) => {
-
-                                        var id = ele.created_by
-
-                                        var user = await CoreUsers.getRecord({ id })
-
-                                        return {
-                                                ...ele,
-                                                // title:result.uploadsWithConsent[0].title,
-                                                created_by_details: user.result
-                                        }
-                                })).then((arr) => {
-                                        setDerivedAnalysis(arr)
-                                        setLoading(false)
-                                })
-
-                        else
-                                setLoading(false)
-
-                })
+          return attributes.consent_id
         }
+      },
+    },
+    {
+      title: 'Title',
+      key: 'title',
+      dataIndex: 'title',
+    },
+    {
+      title: 'Upload Date',
+      key: 'date',
+      render: (record) => {
+        return DateUtils.getFormattedTimeDate(record.created_at)
+      },
+    },
+    {
+      title: 'Upload User',
+      key: 'user',
+      render: (record) => {
+        return record.created_by_details['name']
+      },
+    },
+  ]
 
-        // Extra columns for fujifilm
-        if (ffmenu) {
-                columns.push({
-                        title: 'Last Download',
-                        key: 'lastDownload',
-                        dataIndex: 'lastDownload'
-                })
-        }
+  useEffect(() => {
+    getData()
+  }, [])
 
-        columns.push({
-                title: 'Action',
-                key: 'action',
-                render: (ele) => {
+  /**
+   * Function to load the data for screen
+   */
+  function getData() {
+    setLoading(true)
 
-                        return (
-                                <div>
-                                        <div style={{ display: 'flex' }}>
-                                                <Button onClick={(e) => download(e, ele)}>Download</Button>
+    UploadDetails.loadDetails(id).then((result) => {
+      if (result.uploadsWithConsent && result.uploadsWithConsent.length > 0)
+        Promise.all(
+          result.uploadsWithConsent.map(async (ele, key) => {
+            var id = ele.created_by
 
+            var user = await CoreUsers.getRecord({ id })
 
-                                                {ffmenu ?
-
-                                                        <Dropdown overlay={() => {
-                                                                return menu(ele)
-                                                        }} placement="bottomLeft">
-
-                                                                <MoreOutlined />
-
-                                                        </Dropdown> : null}
-                                        </div>
-                                </div>
-
-                        )
-                },
+            return {
+              ...ele,
+              // title:result.uploadsWithConsent[0].title,
+              created_by_details: user.result,
+            }
+          }),
+        ).then((arr) => {
+          setDerivedAnalysis(arr)
+          setLoading(false)
         })
+      else setLoading(false)
+    })
+  }
 
-        /**
-         * Function for download
-         */
-        function download(e, record) {
+  // Extra columns for fujifilm
+  if (ffmenu) {
+    columns.push({
+      title: 'Last Download',
+      key: 'lastDownload',
+      dataIndex: 'lastDownload',
+    })
+  }
 
-                const analysisResult = true
+  columns.push({
+    title: 'Action',
+    key: 'action',
+    render: (ele) => {
+      return (
+        <div>
+          <div style={{ display: 'flex' }}>
+            <Button onClick={(e) => download(e, ele)}>Download</Button>
 
-                const bulk = false
+            {ffmenu ? (
+              <Dropdown
+                overlay={() => {
+                  return menu(ele)
+                }}
+                placement="bottomLeft"
+              >
+                <MoreOutlined />
+              </Dropdown>
+            ) : null}
+          </div>
+        </div>
+      )
+    },
+  })
 
-                const id = record.upload_details[0].id
+  /**
+   * Function for download
+   */
+  function download(e, record) {
+    const analysisResult = true
 
-                Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
+    const bulk = false
 
-                        if (res.success) {
-                                Uploads.download(res.buffer.data)
-                                // setBtnLoading(false)
-                                getData()
-                        } else {
-                                message.error(res.message)
-                        }
-                })
+    const id = record.upload_details[0].id
+
+    Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
+      if (res.success) {
+        if (analysisResult) {
+          Uploads.download(res.buffer[0], analysisResult)
+        } else {
+          Uploads.download(res.buffer.data, analysisResult)
         }
+        // setBtnLoading(false)
+        getData()
+      } else {
+        message.error(res.message)
+      }
+    })
+  }
 
-        /**
-         * Open menu with additional options
-         */
-        const menu = (record) => {
-                return (
-                        <Menu onClick={(event) => {
+  /**
+   * Open menu with additional options
+   */
+  const menu = (record) => {
+    return (
+      <Menu
+        onClick={(event) => {
+          handleClick(event, record)
+        }}
+      >
+        <Menu.Item key="download_history">Download History</Menu.Item>
 
-                                handleClick(event, record);
+        <Menu.Item key="result_analysis">Result Analysis</Menu.Item>
+      </Menu>
+    )
+  }
 
-                        }}>
-                                <Menu.Item key="download_history" >
-                                        Download History
-                                </Menu.Item>
+  function handleClick(params, record) {
+    if (params.key === 'download_history')
+      Location.navigate({
+        url: `/checkup-list/downloads-history/${id}?&analysisResult=${true}`,
+      })
+    else if (params.key === 'result_analysis') {
+      Location.navigate({
+        url: `/analysis-result`,
+      })
+    }
+  }
 
-                                <Menu.Item key="result_analysis" >
-                                        Result Analysis
-                                </Menu.Item>
-                        </Menu>
-                )
-        }
+  return (
+    <div>
+      <Title level={3}>DERIVED ANALYSIS RESULT </Title>
 
-        function handleClick(params, record) {
-                if (params.key === 'download_history')
-                        Location.navigate({
-                                url: `/checkup-list/downloads-history/${id}?&analysisResult=${true}`,
-                        });
-
-                else if (params.key === 'result_analysis') {
-                        Location.navigate({
-                                url: `/analysis-result`,
-                        });
-                }
-        }
-
-        return (<div>
-                <Title level={3}>DERIVED ANALYSIS RESULT </Title>
-
-                {
-                        loading
-                                ?
-                                <Skeleton />
-                                :
-                                <>
-
-                                        <div className='derived-card'>
-                                                <Card className={'table'}>
-                                                        <Table
-                                                                scroll={{ x: true }}
-                                                                dataSource={derivedAnalysis}
-                                                                columns={columns}
-                                                        />
-                                                </Card>
-                                        </div>
-                                </>}
-        </div>)
+      {loading ? (
+        <Skeleton />
+      ) : (
+        <>
+          <div className="derived-card">
+            <Card className={'table'}>
+              <Table
+                scroll={{ x: true }}
+                dataSource={derivedAnalysis}
+                columns={columns}
+              />
+            </Card>
+          </div>
+        </>
+      )}
+    </div>
+  )
 }
