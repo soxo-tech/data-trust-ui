@@ -169,11 +169,8 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
     Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
       if (res.success) {
-        if (analysisResult) {
-          Uploads.download(res.buffer[0], analysisResult)
-        } else {
-          Uploads.download(res.buffer.data, analysisResult)
-        }
+        Uploads.download(res.buffer[0], analysisResult)
+
         // setBtnLoading(false)
         getData()
       } else {
