@@ -466,6 +466,7 @@ function UploadConsent({
         message.error(result.message)
       }
       setLoading(false)
+      getData()
     })
   }
 
