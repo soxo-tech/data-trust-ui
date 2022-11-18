@@ -122,7 +122,16 @@ class Upload extends BaseAPI {
    * @returns
    */
 
-  download = (data) => {
+  download = (data, analysisResult) => {
+    var type
+
+    // Only for analysis, file should be of zip type
+    if (analysisResult) {
+      type = 'zip'
+    } else {
+      type = 'json'
+    }
+
     var bytearray = Object.keys(data)
     var arrayelement = Object.values(data)
     var uint8Array = new Uint8Array(bytearray.length)
@@ -136,7 +145,7 @@ class Upload extends BaseAPI {
       uint8Array[i] = ascii
     }
     var arrBuffer = uint8Array
-    var newBlob = new Blob([arrBuffer], { type: 'zip' })
+    var newBlob = new Blob([arrBuffer], { type: type })
 
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
       window.navigator.msSaveOrOpenBlob(newBlob)
@@ -148,7 +157,13 @@ class Upload extends BaseAPI {
     var link = document.createElement('a')
     document.body.appendChild(link)
     link.href = res
-    link.download = 'newfile.zip'
+
+    if (analysisResult) {
+      link.download = 'newfile.zip'
+    } else {
+      link.download = 'newfile.json'
+    }
+
     link.click()
     window.URL.revokeObjectURL(res)
     link.remove()
