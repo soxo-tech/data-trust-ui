@@ -237,11 +237,11 @@ export default function UploadDetailComponent({
           }
         },
       },
-      {
-        title: 'Consent Status',
-        key: 'status',
-        dataIndex: 'status',
-      },
+      // {
+      //   title: 'Consent Status',
+      //   key: 'status',
+      //   dataIndex: 'status',
+      // },
       {
         title: 'Last Download',
         key: 'last_download',
