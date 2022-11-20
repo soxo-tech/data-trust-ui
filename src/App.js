@@ -31,8 +31,10 @@ let appSettings = {
     })
   },
   renderCustomHeader: () => {
-    return <h3 className="location-display">{process.env.REACT_APP_LOCATION}</h3>;
-},
+    return <h3 className="location-display">
+
+      {process.env.REACT_APP_LOCATION}</h3>;
+  },
 }
 
 

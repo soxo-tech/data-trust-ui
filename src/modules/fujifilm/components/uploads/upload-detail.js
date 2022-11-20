@@ -88,10 +88,8 @@ export default function UploadDetailComponent({
       title: 'Consent Time',
       key: 'date',
       render: (record) => {
-        return (
-          record.consent &&
-          DateUtils.getFormattedTimeDate(record.consent.created_at)
-        )
+
+        return (record.consent && record.consent.consent_time ? DateUtils.getFormattedTimeDate(record.consent.consent_time) : 'Not Available')
       },
     },
   ]
@@ -131,17 +129,41 @@ export default function UploadDetailComponent({
       key: 'by',
       // dataIndex: 'by',
       render: (record) => {
+
         if (record.consent && record.consent.attributes) {
+
           const attributes = JSON.parse(record.consent.attributes)
 
-          return (
-            <>
-              {JSON.parse(record.consent.attributes).items === 'none' ? (
-                <Tag color="red">Consent Updated</Tag>
-              ) : null}
-              <p>{attributes.items}</p>
-            </>
-          )
+          if (attributes.items === 'none') {
+
+            return (<><p>{attributes.items}</p><Tag color="red">Consent Updated</Tag></>)
+
+          } else if (attributes.items === 'all') {
+
+
+            return (
+              <>
+                <p>{attributes.items}</p>
+              </>
+            )
+
+
+          } else {
+
+
+            return (
+              <>
+                <p>{attributes.items.join(',')}</p>
+              </>
+            )
+
+
+          }
+
+        } else {
+
+          return null;
+
         }
       },
     },
@@ -150,8 +172,9 @@ export default function UploadDetailComponent({
       key: 'action',
       render: (record) => {
         function toConsentHistory() {
+
           Location.navigate({
-            url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}`,
+            url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}?data_id=${record.id}`,
           })
         }
 
@@ -562,7 +585,8 @@ function DownloadHistory({ data }) {
       title: 'Last Download',
       key: 'last_download',
       render: (record) => {
-        return moment(record.created_at).format('DD/MM/YYYY HH:mm:ss')
+
+        return DateUtils.getFormattedTimeDate((record.created_at));
       },
     },
   ]

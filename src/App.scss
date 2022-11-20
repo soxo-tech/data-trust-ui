@@ -37,21 +37,27 @@
   }
 }
 
-.sidemenu .intro {
-  .logo-wrapper {
-    border-bottom: none !important;
+.sidemenu {
+  .intro {
+    .logo-wrapper {
+      border-bottom: none !important;
+    }
+
+    .location-display {
+      background: linear-gradient(to right, rgb(223 223 223), rgb(220 220 220));
+      font-size: 20px;
+      font-weight: bold;
+      padding: 0px 5%;
+    }
+
+    .logo-welcome {
+      width: 150px !important;
+      margin: 10px !important;
+    }
   }
 
-  .location-display {
-    background: linear-gradient(to right, rgb(223 223 223), rgb(220 220 220));
-    font-size: 14px;
-    font-weight: bold;
-    padding: 0px 5%;
-  }
-
-  .logo-welcome {
+  .footer-logo {
     width: 150px !important;
-    margin: 10px !important;
   }
 }
 
@@ -70,7 +76,7 @@
   /* border: 1px solid #b7b7b7; */
   /* padding: 4px; */
   text-align: center;
-  border: none!important;
+  border: none !important;
   // border-radius 16px !important;
   margin: none;
   /* margin: 20px 0px 30px; */

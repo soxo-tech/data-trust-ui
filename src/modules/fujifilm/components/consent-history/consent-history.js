@@ -8,9 +8,9 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 
-import { Table, Button, Typography, Skeleton, message,Popconfirm } from 'antd';
+import { Table, Button, Typography, Skeleton, message, Popconfirm, Tag } from 'antd';
 
-import { Location, Card, DateUtils, GlobalContext } from 'soxo-bootstrap-core';
+import { Location, DateUtils, GlobalContext } from 'soxo-bootstrap-core';
 
 import { ReloadOutlined } from '@ant-design/icons';
 
@@ -21,6 +21,8 @@ import { UploadDetails } from '../../../../models';
 const { Title } = Typography;
 
 export default function ConsentHistory({ ffmenu, ...props }) {
+
+    let urlParams = Location.search();
 
     const [consentHistory, setConsentHistory] = useState([])
 
@@ -53,7 +55,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             key: 'time',
             render: (record) => {
 
-                return DateUtils.getFormattedTimeDate(record.created_at)
+                return record.consent_time ? DateUtils.getFormattedTimeDate(record.consent_time) : 'Not Available'
 
             }
         },
@@ -72,9 +74,18 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             key: 'items',
             render: (record) => {
 
-                const attributes = JSON.parse(record.attributes)
+                const attributes = JSON.parse(record.attributes);
 
-                return attributes && attributes.items ? attributes.items : null;
+                if (attributes && attributes.items && typeof (attributes.items) === 'string') {
+
+                    return <Tag>{attributes.items}</Tag >;
+
+                } else {
+
+                    return <Tag>{attributes.items.join(',')}</Tag >
+
+                }
+
             }
         }]
 
@@ -82,16 +93,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
     if (ffmenu) {
 
         columns.push(
-            // {
-            //     title: 'Registration Date',
-            //     key: 'regDate',
-            //     render: (record) => {
 
-            //         return DateUtils.getFormattedTimeDate(record.order_date)
-
-
-            //     }
-            // },
             {
                 title: 'Last Download',
                 key: 'lastDownlaod',
@@ -117,7 +119,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
         {
             title: 'Action',
             key: 'action',
-            render: (ele,record) => {
+            render: (ele, record) => {
 
                 function toDownloadHistory() {
 
@@ -135,24 +137,27 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                 const attributes = JSON.parse(ele.attributes)
 
+                let checkupId = attributes.checkup_id;
+
                 return (
 
                     <div>
                         {ffmenu ? attributes.items === 'all' ? null :
                             <Popconfirm
-                             title="Are you sure you want to discard the consent? "
-                             onConfirm={(e) => onDiscard(e, ele)}
-                             onCancel={() => {}}
-                             okText="Yes"
-                             cancelText="No"
+                                title="Are you sure you want to discard the consent? "
+                                onConfirm={(e) => onDiscard(e, ele)}
+                                onCancel={() => { }}
+                                okText="Yes"
+                                cancelText="No"
                             >
                                 <Button disabled={record.discarded_date}>Discard</Button>
                             </Popconfirm>
-                                :
+                            :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 
-                                <Button onClick={toDerivedAnalysis}>Analysis Result</Button>
+                                {/* The analysis result may be loaded with the previous checkup . So we control this feature */}
+                                {checkupId == urlParams.data_id ? <Button onClick={toDerivedAnalysis}>Analysis Result</Button> : null}
                             </>}
                     </div>
                 )
@@ -229,7 +234,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                             <div className='history-table'>
                                 <Title level={5}>Nura ID : {id}</Title>
 
-                               {/* <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p> */}
+                                {/* <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p> */}
 
                             </div >
 
