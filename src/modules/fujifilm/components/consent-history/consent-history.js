@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 
-import { Table, Button, Typography, Skeleton, message, Popconfirm } from 'antd';
+import { Table, Button, Typography, Skeleton, message, Popconfirm, Tag } from 'antd';
 
 import { Location, DateUtils, GlobalContext } from 'soxo-bootstrap-core';
 
@@ -74,9 +74,18 @@ export default function ConsentHistory({ ffmenu, ...props }) {
             key: 'items',
             render: (record) => {
 
-                const attributes = JSON.parse(record.attributes)
+                const attributes = JSON.parse(record.attributes);
 
-                return attributes && attributes.items ? attributes.items : null;
+                if (attributes && attributes.items && typeof (attributes.items) === 'string') {
+
+                    return <Tag>{attributes.items}</Tag >;
+
+                } else {
+
+                    return <Tag>{attributes.items.join(',')}</Tag >
+
+                }
+
             }
         }]
 

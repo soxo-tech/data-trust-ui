@@ -129,17 +129,41 @@ export default function UploadDetailComponent({
       key: 'by',
       // dataIndex: 'by',
       render: (record) => {
+
         if (record.consent && record.consent.attributes) {
+
           const attributes = JSON.parse(record.consent.attributes)
 
-          return (
-            <>
-              {JSON.parse(record.consent.attributes).items === 'none' ? (
-                <Tag color="red">Consent Updated</Tag>
-              ) : null}
-              <p>{attributes.items}</p>
-            </>
-          )
+          if (attributes.items === 'none') {
+
+            return (<><p>{attributes.items}</p><Tag color="red">Consent Updated</Tag></>)
+
+          } else if (attributes.items === 'all') {
+
+
+            return (
+              <>
+                <p>{attributes.items}</p>
+              </>
+            )
+
+
+          } else {
+
+
+            return (
+              <>
+                <p>{attributes.items.join(',')}</p>
+              </>
+            )
+
+
+          }
+
+        } else {
+
+          return null;
+
         }
       },
     },
