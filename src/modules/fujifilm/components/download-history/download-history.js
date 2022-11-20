@@ -206,7 +206,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                {loading ? <Skeleton /> : <>
 
                     <Card className={'history'}>
-
+                      <Title level={3}>Download History</Title>
                          <div className='history-table'>
                               <div>
                                    <Title level={5}>Nura ID</Title>

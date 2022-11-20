@@ -551,7 +551,7 @@ function DownloadHistory({ data }) {
       title: 'Last Download',
       key: 'last_download',
       render: (record) => {
-        return moment(record.created_at).format('DD/MM/YYYY')
+        return moment(record.created_at).format('DD/MM/YYYY HH:mm:ss')
       },
     },
   ]

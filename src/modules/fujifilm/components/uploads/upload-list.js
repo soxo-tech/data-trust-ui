@@ -21,6 +21,7 @@ import {
   Dropdown,
   Menu,
   Skeleton,
+  Form,
 } from 'antd'
 
 import { Location, DateUtils } from 'soxo-bootstrap-core'
@@ -303,7 +304,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
     <div className="card card-shadow">
       <div className="page-header">
         {analysisResult ? (
-          <Title level={3}>Analysis Results Data</Title>
+          <Title level={3}>Analysis Results</Title>
         ) : (
           <Title level={3}>Pseudonymised Checkup Data</Title>
         )}
@@ -501,9 +502,19 @@ function UploadConsent({
 
   return (
     <div className="card card-shadow">
-      <Title level={5}>Title</Title>
+      <Form onFinish={submit}>
+        <Title level={5}>Title</Title>
+         <Form.Item
+          name="title"                  
+          rules={[
+              {
+                 required: true,
+                  message: 'Title is required',
+              },
+          ]}
+      >
       <Input onChange={handleTitle}></Input>
-
+      </Form.Item>
       {analysisResult ? (
         <div>
           <br />
@@ -536,7 +547,7 @@ function UploadConsent({
               />
               <br />
               <br />
-              <Title level={5}>Pseudonymised Checkup Data</Title>
+              <Title level={5}>Pseudonymized Checkup Data</Title>
 
               <label>Select File</label>
               <br />
@@ -555,9 +566,10 @@ function UploadConsent({
           <br />
         </>
       )}
-      <Button loading={loading} onClick={submit}>
+      <Button loading={loading} htmlType="submit">
         Submit
       </Button>
+      </Form>
     </div>
   )
 }

@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 
-import { Table, Button, Typography, Skeleton, message, } from 'antd';
+import { Table, Button, Typography, Skeleton, message,Popconfirm } from 'antd';
 
 import { Location, Card, DateUtils, GlobalContext } from 'soxo-bootstrap-core';
 
@@ -117,7 +117,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
         {
             title: 'Action',
             key: 'action',
-            render: (ele) => {
+            render: (ele,record) => {
 
                 function toDownloadHistory() {
 
@@ -139,9 +139,16 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                     <div>
                         {ffmenu ? attributes.items === 'all' ? null :
-
-
-                            <Button onClick={(e) => onDiscard(e, ele)}>Discard</Button> :
+                            <Popconfirm
+                             title="Are you sure you want to discard the consent? "
+                             onConfirm={(e) => onDiscard(e, ele)}
+                             onCancel={() => {}}
+                             okText="Yes"
+                             cancelText="No"
+                            >
+                                <Button disabled={record.discarded_date}>Discard</Button>
+                            </Popconfirm>
+                                :
                             <>
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 

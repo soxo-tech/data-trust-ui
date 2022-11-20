@@ -210,7 +210,6 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
   return (
     <div>
-      <Title level={3}>DERIVED ANALYSIS RESULT </Title>
 
       {loading ? (
         <Skeleton />
@@ -218,6 +217,9 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
         <>
           <div className="derived-card">
             <Card className={'table'}>
+
+              <Title level={3}>Derived Analysis Results </Title>
+
               <Table
                 scroll={{ x: true }}
                 dataSource={derivedAnalysis}
