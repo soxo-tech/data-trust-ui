@@ -306,7 +306,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
         {analysisResult ? (
           <Title level={3}>Analysis Results</Title>
         ) : (
-          <Title level={3}>Check-up Datas</Title>
+          <Title level={3}>Pseudonymised Checkup Data</Title>
         )}
 
         <div className="actions">
