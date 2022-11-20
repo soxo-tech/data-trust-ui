@@ -232,6 +232,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
     const result = await Uploads.getData(analysisResult)
 
+    // Below approach has to be changed and moved to backend
     Promise.all(
       result.map(async (ele, key) => {
         var id = ele.created_by
@@ -244,7 +245,13 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
         }
       }),
     ).then((arr) => {
-      setCheckUpData(arr)
+
+      let data = arr.sort((a, b) => {
+
+        return a.id < b.id
+      })
+
+      setCheckUpData([...data])
       setLoading(false)
     })
   }
@@ -504,71 +511,71 @@ function UploadConsent({
     <div className="card card-shadow">
       <Form onFinish={submit}>
         <Title level={5}>Title</Title>
-         <Form.Item
-          name="title"                  
+        <Form.Item
+          name="title"
           rules={[
-              {
-                 required: true,
-                  message: 'Title is required',
-              },
+            {
+              required: true,
+              message: 'Title is required',
+            },
           ]}
-      >
-      <Input onChange={handleTitle}></Input>
-      </Form.Item>
-      {analysisResult ? (
-        <div>
-          <br />
-          <Title level={5}>Analysis Result</Title>
-
-          <label>Select File</label>
-          <br />
-
-          <input
-            type="file"
-            name="consentFile"
-            onChange={(e) => handleAnalysisFile(e)}
-          />
-          <br />
-          <br />
-        </div>
-      ) : (
-        <>
+        >
+          <Input onChange={handleTitle}></Input>
+        </Form.Item>
+        {analysisResult ? (
           <div>
-            <form id="myform">
-              <br />
-              <Title level={5}>Consent Data</Title>
-              <label>Select File</label>
-              <br />
+            <br />
+            <Title level={5}>Analysis Result</Title>
 
-              <input
-                type="file"
-                name="consentFile"
-                onChange={(e) => handleConsentFile(e)}
-              />
-              <br />
-              <br />
-              <Title level={5}>Pseudonymized Checkup Data</Title>
+            <label>Select File</label>
+            <br />
 
-              <label>Select File</label>
-              <br />
-
-              <input
-                type="file"
-                name="psuedonymizedFile"
-                onChange={(e) => handlePsuedonymizedFile(e)}
-              />
-              <br />
-              <br />
-            </form>
+            <input
+              type="file"
+              name="consentFile"
+              onChange={(e) => handleAnalysisFile(e)}
+            />
+            <br />
+            <br />
           </div>
+        ) : (
+          <>
+            <div>
+              <form id="myform">
+                <br />
+                <Title level={5}>Consent Data</Title>
+                <label>Select File</label>
+                <br />
 
-          <div></div>
-          <br />
-        </>
-      )}
-      <Button loading={loading} htmlType="submit">
-        Submit
-      </Button>
+                <input
+                  type="file"
+                  name="consentFile"
+                  onChange={(e) => handleConsentFile(e)}
+                />
+                <br />
+                <br />
+                <Title level={5}>Pseudonymized Checkup Data</Title>
+
+                <label>Select File</label>
+                <br />
+
+                <input
+                  type="file"
+                  name="psuedonymizedFile"
+                  onChange={(e) => handlePsuedonymizedFile(e)}
+                />
+                <br />
+                <br />
+              </form>
+            </div>
+
+            <div></div>
+            <br />
+          </>
+        )}
+        <Button loading={loading} htmlType="submit">
+          Submit
+        </Button>
       </Form>
     </div>
   )
