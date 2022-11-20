@@ -70,9 +70,20 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
                          if (record.consent)
 
-                              return DateUtils.getFormattedTimeDate(record.consent.created_at)
+                              return DateUtils.getFormattedTimeDate(record.consent.consent_time)
                     }
                },
+
+               {
+                    title: 'Downloaded User',
+                    key: 'user',
+                    render: (record) => {
+
+                         return record.created_by_details['name']
+
+                    }
+               },
+
                {
                     title: 'Last Download',
                     key: 'last',

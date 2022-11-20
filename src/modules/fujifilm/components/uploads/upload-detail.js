@@ -88,10 +88,8 @@ export default function UploadDetailComponent({
       title: 'Consent Time',
       key: 'date',
       render: (record) => {
-        return (
-          record.consent &&
-          DateUtils.getFormattedTimeDate(record.consent.created_at)
-        )
+
+        return (record.consent && record.consent.consent_time ? DateUtils.getFormattedTimeDate(record.consent.consent_time) : 'Not Available')
       },
     },
   ]
@@ -150,8 +148,9 @@ export default function UploadDetailComponent({
       key: 'action',
       render: (record) => {
         function toConsentHistory() {
+
           Location.navigate({
-            url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}`,
+            url: `/checkup-list/update-consent/${record.psuedonymous_nura_id}?data_id=${record.id}`,
           })
         }
 
@@ -562,7 +561,8 @@ function DownloadHistory({ data }) {
       title: 'Last Download',
       key: 'last_download',
       render: (record) => {
-        return moment(record.created_at).format('DD/MM/YYYY HH:mm:ss')
+
+        return DateUtils.getFormattedTimeDate((record.created_at));
       },
     },
   ]
