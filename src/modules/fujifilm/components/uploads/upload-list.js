@@ -119,11 +119,11 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
   //Additional columns for fujifilm
   if (ffmenu) {
     columns.push(
-      {
-        title: 'Consent Status',
-        key: 'status',
-        dataIndex: 'status',
-      },
+      // {
+      //   title: 'Consent Status',
+      //   key: 'status',
+      //   dataIndex: 'status',
+      // },
       {
         title: 'Last Download',
         key: 'lastDownload',

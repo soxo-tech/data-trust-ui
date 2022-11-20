@@ -268,7 +268,7 @@ export default function UploadDetailComponent({
               <Popconfirm
                 title="Are you sure you want to delete the record? "
                 onConfirm={(e) => deleteRecord(e, record)}
-                onCancel={() => {}}
+                onCancel={() => { }}
                 okText="Yes"
                 cancelText="No"
               >
@@ -547,6 +547,17 @@ function DownloadHistory({ data }) {
         return index + 1
       },
     },
+
+    {
+      title: 'Downloaded User',
+      key: 'user',
+      render: (record) => {
+
+        return record.created_by_details['name']
+
+      }
+    },
+
     {
       title: 'Last Download',
       key: 'last_download',

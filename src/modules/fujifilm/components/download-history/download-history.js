@@ -58,8 +58,8 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                     key: 'id',
                     render: (record) => {
 
-                         const attributes=JSON.parse(record.attributes)
-                   
+                         const attributes = JSON.parse(record.attributes)
+
                          return attributes.consent_id
                     }
                },
@@ -68,15 +68,19 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                     key: 'time',
                     render: (record) => {
 
-                         if(record.consent)
+                         if (record.consent)
 
-                         return DateUtils.getFormattedTimeDate(record.consent.created_at)
+                              return DateUtils.getFormattedTimeDate(record.consent.created_at)
                     }
                },
                {
                     title: 'Last Download',
                     key: 'last',
-                    dataIndex: 'last'
+                    render: (record) => {
+
+                         return DateUtils.getFormattedTimeDate(record.created_at)
+
+                    }
                },
                {
                     title: 'Lifetime',
@@ -206,7 +210,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                {loading ? <Skeleton /> : <>
 
                     <Card className={'history'}>
-                      <Title level={3}>Download History</Title>
+                         <Title level={3}>Download History</Title>
                          <div className='history-table'>
                               <div>
                                    <Title level={5}>Nura ID</Title>
