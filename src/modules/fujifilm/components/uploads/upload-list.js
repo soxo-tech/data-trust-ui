@@ -313,7 +313,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
         {analysisResult ? (
           <Title level={3}>Analysis Results</Title>
         ) : (
-          <Title level={3}>Pseudonymised Checkup Data</Title>
+          <Title level={3}>Pseudonymized Checkup Data</Title>
         )}
 
         <div className="actions">
@@ -477,7 +477,7 @@ function UploadConsent({
         //set summary modal visible true
         setSummaryVisible(true)
       } else {
-        message.error(result.message)
+        message.error("Please check the files")
       }
       setLoading(false)
       getData()
