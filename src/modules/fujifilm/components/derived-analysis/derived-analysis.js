@@ -102,24 +102,10 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
     setLoading(true)
 
     UploadDetails.loadDetails(id).then((result) => {
-      if (result.uploadsWithConsent && result.uploadsWithConsent.length > 0)
-        Promise.all(
-          result.uploadsWithConsent.map(async (ele, key) => {
-            var id = ele.created_by
 
-            var user = await CoreUsers.getRecord({ id })
+      setDerivedAnalysis(result.uploadsWithConsent)
+      setLoading(false)
 
-            return {
-              ...ele,
-              // title:result.uploadsWithConsent[0].title,
-              created_by_details: user.result,
-            }
-          }),
-        ).then((arr) => {
-          setDerivedAnalysis(arr)
-          setLoading(false)
-        })
-      else setLoading(false)
     })
   }
 
