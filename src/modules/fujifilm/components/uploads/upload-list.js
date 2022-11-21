@@ -107,7 +107,7 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
       render: (record) => {
         return (
           <span>
-            {record && record.created_by
+            {record && record.created_by_details
               ? record.created_by_details['name']
               : null}
           </span>
@@ -233,27 +233,27 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
     const result = await Uploads.getData(analysisResult)
 
     // Below approach has to be changed and moved to backend
-    Promise.all(
-      result.map(async (ele, key) => {
-        var id = ele.created_by
-        var user = await CoreUsers.get()
-        user = user.result.filter((user) => user.id === id)
+    // Promise.all(
+    //   result.map(async (ele, key) => {
+    //     // var id = ele.created_by
+    //     // var user = await CoreUsers.get()
+    //     // user = user.result.filter((user) => user.id === id)
 
-        return {
-          ...ele,
-          created_by_details: user[0],
-        }
-      }),
-    ).then((arr) => {
+    //     return {
+    //       ...ele,
+    //       // created_by_details: user[0],
+    //     }
+    //   }),
+    // ).then((arr) => {
 
-      let data = arr.sort((a, b) => {
+      let data = result.sort((a, b) => {
 
         return a.id < b.id
       })
 
       setCheckUpData([...data])
       setLoading(false)
-    })
+    // })
   }
 
   /**

@@ -196,23 +196,9 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
                result = result.result.filter((element) => JSON.parse(element.attributes).consent_id === parseInt(consentId))
 
-          Promise.all(result.map(async (ele, key) => {
-
-               var id = ele.created_by
-               var user = await CoreUsers.get()
-               user = user.result.filter((user) => user.id === id)
-
-
-               return {
-                    ...ele,
-                    created_by_details: user[0]
-               }
-
-          })).then((arr) => {
-
-               setDownloadHistory(arr)
+               setDownloadHistory(result)
                setLoading(false)
-          })
+         
      }
 
      return (
