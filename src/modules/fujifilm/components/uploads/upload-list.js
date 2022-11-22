@@ -228,16 +228,18 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
    */
 
   async function getData() {
+    
     setLoading(true)
 
     let result = await Uploads.getData(analysisResult)
 
-    result=result.sort((a,b) => a.id < b.id ?1:-1);
+    //Sort the result array with respect to id
+    result = result.sort((a, b) => a.id < b.id ? 1 : -1);
 
-      setCheckUpData(result)
+    setCheckUpData(result)
 
-      setLoading(false)
-    
+    setLoading(false)
+
   }
 
   /**
