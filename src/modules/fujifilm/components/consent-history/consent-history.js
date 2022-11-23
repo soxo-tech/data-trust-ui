@@ -66,7 +66,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                 const attributes = JSON.parse(record.attributes)
 
-                return attributes && attributes.lifetime_type ? attributes.lifetime_type : attributes && attributes.lifeTime ? attributes.lifeTime : null
+                return attributes && attributes.lifetime_type ? attributes.lifetime_type : attributes && attributes.lifetimeType ? attributes.lifetimeType : null
             }
         },
         {
@@ -137,7 +137,10 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                 const attributes = JSON.parse(ele.attributes)
 
-                let checkupId = attributes.checkup_id;
+                let checkupId 
+
+                if (attributes.checkupId)
+                    checkupId = attributes.checkupId;
 
                 return (
 

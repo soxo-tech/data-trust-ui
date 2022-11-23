@@ -60,7 +60,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
                          const attributes = JSON.parse(record.attributes)
 
-                         return attributes.consent_id
+                         return attributes.consentId ? attributes.consentId : null
                     }
                },
                {
@@ -103,7 +103,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                               const attributes = JSON.parse(record.consent.attributes)
 
 
-                              return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifeTime;
+                              return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifetimeType;
                          }
                     }
                },
@@ -194,11 +194,14 @@ export default function DownloadHistory({ ffmenu, ...props }) {
           //In Nura load downlaods with respect to consent id
           else
 
-               result = result.result.filter((element) => JSON.parse(element.attributes).consent_id === parseInt(consentId))
+               result = result.result.filter((element) => {
+                    if (JSON.parse(element.attributes) && JSON.parse(element.attributes).consentId)
+                         return JSON.parse(element.attributes).consentId === parseInt(consentId)
+               })
 
-               setDownloadHistory(result)
-               setLoading(false)
-         
+          setDownloadHistory(result)
+          setLoading(false)
+
      }
 
      return (
