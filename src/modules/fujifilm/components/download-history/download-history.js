@@ -33,7 +33,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      const { user = {} } = useContext(GlobalContext);
 
-     var { consentId, analysisResult } = Location.search()
+     var { consent_id, analysisResult } = Location.search()
 
      if (analysisResult) {
           analysisResult = eval(analysisResult)
@@ -60,7 +60,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
                          const attributes = JSON.parse(record.attributes)
 
-                         return attributes.consentId ? attributes.consentId : null
+                         return attributes.consent_id ? attributes.consent_id : null
                     }
                },
                {
@@ -195,8 +195,8 @@ export default function DownloadHistory({ ffmenu, ...props }) {
           else
 
                result = result.result.filter((element) => {
-                    if (JSON.parse(element.attributes) && JSON.parse(element.attributes).consentId)
-                         return JSON.parse(element.attributes).consentId === parseInt(consentId)
+                    if (JSON.parse(element.attributes) && JSON.parse(element.attributes).consent_id)
+                         return JSON.parse(element.attributes).consent_id === parseInt(consent_id)
                })
 
           setDownloadHistory(result)

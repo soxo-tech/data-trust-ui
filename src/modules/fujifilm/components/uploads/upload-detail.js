@@ -256,7 +256,7 @@ export default function UploadDetailComponent({
           if (record.attributes) {
             const attributes = JSON.parse(record.attributes)
 
-            return attributes.consentId?attributes.consentId:null
+            return attributes.consent_id?attributes.consent_id:null
           }
         },
       },
@@ -438,7 +438,7 @@ export default function UploadDetailComponent({
         setVisible(true)
       } else {
         Location.navigate({
-          url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}?&consentId=${record.consent.id}`,
+          url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}?&consent_id=${record.consent.id}`,
         })
       }
     } else if (params.key === 'consent_history') {

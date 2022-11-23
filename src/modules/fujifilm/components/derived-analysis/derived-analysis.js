@@ -64,9 +64,10 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
       key: 'consent_id',
       render: (record) => {
         if (record.upload_details[0] && record.upload_details[0].attributes) {
+
           const attributes = JSON.parse(record.upload_details[0].attributes)
 
-          return attributes.consentId?attributes.consentId:null
+          return attributes.consent_id?attributes.consent_id:null
         }
       },
     },

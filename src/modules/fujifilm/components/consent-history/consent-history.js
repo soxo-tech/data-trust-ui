@@ -124,7 +124,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                 function toDownloadHistory() {
 
                     Location.navigate({
-                        url: `/checkup-list/downloads-history/${id}?&consentId=${ele.upload_details_id}`,
+                        url: `/checkup-list/downloads-history/${id}?&consent_id=${ele.upload_details_id}`,
                     });
                 }
 
@@ -139,8 +139,8 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                 let checkupId 
 
-                if (attributes.checkupId)
-                    checkupId = attributes.checkupId;
+                if (attributes.checkup_id)
+                    checkupId = attributes.checkup_id;
 
                 return (
 
