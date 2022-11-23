@@ -120,7 +120,7 @@ export default function UploadDetailComponent({
 
           return attributes.lifetime_type
             ? attributes.lifetime_type
-            : attributes.lifeTime
+            : attributes.lifetimeType
         }
       },
     },
@@ -256,7 +256,7 @@ export default function UploadDetailComponent({
           if (record.attributes) {
             const attributes = JSON.parse(record.attributes)
 
-            return attributes.consent_id
+            return attributes.consentId?attributes.consentId:null
           }
         },
       },
