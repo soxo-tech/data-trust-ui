@@ -228,32 +228,18 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
    */
 
   async function getData() {
+    
     setLoading(true)
 
-    const result = await Uploads.getData(analysisResult)
+    let result = await Uploads.getData(analysisResult)
 
-    // Below approach has to be changed and moved to backend
-    // Promise.all(
-    //   result.map(async (ele, key) => {
-    //     // var id = ele.created_by
-    //     // var user = await CoreUsers.get()
-    //     // user = user.result.filter((user) => user.id === id)
+    //Sort the result array with respect to id
+    result = result.sort((a, b) => a.id < b.id ? 1 : -1);
 
-    //     return {
-    //       ...ele,
-    //       // created_by_details: user[0],
-    //     }
-    //   }),
-    // ).then((arr) => {
+    setCheckUpData(result)
 
-      let data = result.sort((a, b) => {
+    setLoading(false)
 
-        return a.id < b.id
-      })
-
-      setCheckUpData([...data])
-      setLoading(false)
-    // })
   }
 
   /**
