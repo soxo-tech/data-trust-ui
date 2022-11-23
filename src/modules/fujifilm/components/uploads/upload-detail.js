@@ -536,25 +536,28 @@ function DownloadHistory({ data }) {
       // baseUrl: process.env.REACT_APP_FF
     }
 
-    var result = await UserLogs.get(config)
+    var result = await UserLogs.getLogs(config)
 
-    Promise.all(
-      result.result.map(async (ele, key) => {
-        var id = ele.created_by
+    setDownloadHistory(result)
 
-        var user = await CoreUsers.get()
+    // Promise.all(
+    //   result.result.map(async (ele, key) => {
 
-        user = user.result.filter((user) => user.id === id)
+    //     var id = ele.created_by
 
-        return {
-          ...ele,
-          created_by_details: user[0],
-        }
-      }),
-    ).then((arr) => {
-      setDownloadHistory(arr)
-      //   setLoading(false)
-    })
+    //     var user = await CoreUsers.get()
+
+    //     user = user.result.filter((user) => user.id === id)
+
+    //     return {
+    //       ...ele,
+    //       created_by_details: user[0],
+    //     }
+    //   }),
+    // ).then((arr) => {
+    //   setDownloadHistory(arr)
+    //   //   setLoading(false)
+    // })
   }
 
   useEffect(() => {
