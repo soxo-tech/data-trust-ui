@@ -27,7 +27,9 @@ import './derived-analysis.scss'
 
 import { MoreOutlined } from '@ant-design/icons'
 
-import { UploadDetails, CoreUsers, Uploads } from '../../../../models'
+import { UploadDetails, CoreUsers, Uploads } from '../../../../models';
+
+import ErrorBoundary from '../error'
 
 const { Title } = Typography
 
@@ -67,7 +69,7 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
           const attributes = JSON.parse(record.upload_details[0].attributes)
 
-          return attributes.consent_id?attributes.consent_id:null
+          return attributes.consent_id
         }
       },
     },
@@ -196,7 +198,8 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
   }
 
   return (
-    <div>
+
+    <ErrorBoundary>
 
       {loading ? (
         <Skeleton />
@@ -216,6 +219,6 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
           </div>
         </>
       )}
-    </div>
+    </ErrorBoundary>
   )
 }

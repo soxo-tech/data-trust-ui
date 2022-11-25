@@ -18,6 +18,8 @@ import './consent-history.scss';
 
 import { UploadDetails } from '../../../../models';
 
+import ErrorBoundary from '../error';
+
 const { Title } = Typography;
 
 export default function ConsentHistory({ ffmenu, ...props }) {
@@ -66,7 +68,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                 const attributes = JSON.parse(record.attributes)
 
-                return attributes && attributes.lifetime_type ? attributes.lifetime_type : attributes && attributes.lifetimeType ? attributes.lifetimeType : null
+                return  attributes.lifetime_type || null
             }
         },
         {
@@ -137,7 +139,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                 const attributes = JSON.parse(ele.attributes)
 
-                let checkupId 
+                let checkupId
 
                 if (attributes.checkup_id)
                     checkupId = attributes.checkup_id;
@@ -214,42 +216,44 @@ export default function ConsentHistory({ ffmenu, ...props }) {
     }
 
     return (
-        loading ? <Skeleton /> :
-            <>
-                <div className="card card-shadow">
+        <ErrorBoundary>
+            {loading ? <Skeleton /> :
+                <>
+                    <div className="card card-shadow">
 
-                    <div className="page-header">
+                        <div className="page-header">
 
-                        <Title level={3}>Consent History</Title>
+                            <Title level={3}>Consent History</Title>
 
-                        <div className="page-actions">
+                            <div className="page-actions">
 
-                            <Button onClick={getData}>
-                                <ReloadOutlined />
-                            </Button>
+                                <Button onClick={getData}>
+                                    <ReloadOutlined />
+                                </Button>
 
+                            </div>
                         </div>
-                    </div>
 
-                    <div className='consent-history'>
+                        <div className='consent-history'>
 
-                        <div className={'history'}>
-                            <div className='history-table'>
-                                <Title level={5}>Nura ID : {id}</Title>
+                            <div className={'history'}>
+                                <div className='history-table'>
+                                    <Title level={5}>Nura ID : {id}</Title>
 
-                                {/* <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p> */}
+                                    {/* <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p> */}
 
+                                </div >
+
+                                <Table
+                                    scroll={{ x: true }}
+                                    dataSource={consentHistory}
+                                    columns={columns}
+                                />
                             </div >
-
-                            <Table
-                                scroll={{ x: true }}
-                                dataSource={consentHistory}
-                                columns={columns}
-                            />
                         </div >
                     </div >
-                </div >
-            </>
+                </>}
+        </ErrorBoundary>
     )
 }
 
