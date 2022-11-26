@@ -30,7 +30,9 @@ import { MoreOutlined, ReloadOutlined } from '@ant-design/icons'
 
 import './upload-list.scss'
 
-import { CoreUsers, Uploads } from '../../../../models'
+import { CoreUsers, Uploads } from '../../../../models';
+
+import ErrorBoundary from '../error'
 
 const { Title, Text } = Typography
 
@@ -228,32 +230,18 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
    */
 
   async function getData() {
+    
     setLoading(true)
 
-    const result = await Uploads.getData(analysisResult)
+    let result = await Uploads.getData(analysisResult)
 
-    // Below approach has to be changed and moved to backend
-    // Promise.all(
-    //   result.map(async (ele, key) => {
-    //     // var id = ele.created_by
-    //     // var user = await CoreUsers.get()
-    //     // user = user.result.filter((user) => user.id === id)
+    //Sort the result array with respect to id
+    result = result.sort((a, b) => a.id < b.id ? 1 : -1);
 
-    //     return {
-    //       ...ele,
-    //       // created_by_details: user[0],
-    //     }
-    //   }),
-    // ).then((arr) => {
+    setCheckUpData(result)
 
-      let data = result.sort((a, b) => {
+    setLoading(false)
 
-        return a.id < b.id
-      })
-
-      setCheckUpData([...data])
-      setLoading(false)
-    // })
   }
 
   /**
@@ -308,123 +296,125 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
   }
 
   return (
-    <div className="card card-shadow">
-      <div className="page-header">
-        {analysisResult ? (
-          <Title level={3}>Analysis Results</Title>
-        ) : (
-          <Title level={3}>Pseudonymized Checkup Data</Title>
-        )}
-
-        <div className="actions">
-          {!analysisResult && ffmenu ? null : (
-            <div className="upload-list">
-              <Button onClick={uploadModal}>Upload</Button>
-            </div>
+    <ErrorBoundary>
+      <div className="card card-shadow">
+        <div className="page-header">
+          {analysisResult ? (
+            <Title level={3}>Analysis Results</Title>
+          ) : (
+            <Title level={3}>Pseudonymized Checkup Data</Title>
           )}
 
-          <Button onClick={getData}>
-            <ReloadOutlined />
-          </Button>
+          <div className="actions">
+            {!analysisResult && ffmenu ? null : (
+              <div className="upload-list">
+                <Button onClick={uploadModal}>Upload</Button>
+              </div>
+            )}
+
+            <Button onClick={getData}>
+              <ReloadOutlined />
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {loading ? (
-        <Skeleton />
-      ) : analysisResult ? (
-        <Table
-          scroll={{ x: true }}
-          dataSource={checkUpData}
-          columns={analysisColumns}
-        />
-      ) : (
-        <Table
-          scroll={{ x: true }}
-          dataSource={checkUpData}
-          columns={columns}
-        />
-      )}
+        {loading ? (
+          <Skeleton />
+        ) : analysisResult ? (
+          <Table
+            scroll={{ x: true }}
+            dataSource={checkUpData}
+            columns={analysisColumns}
+          />
+        ) : (
+          <Table
+            scroll={{ x: true }}
+            dataSource={checkUpData}
+            columns={columns}
+          />
+        )}
 
-      {/**
+        {/**
        * Upload Consent and Checkup Modal
        */}
 
-      <Modal
-        destroyOnClose={true}
-        footer={null}
-        title="Data to Upload"
-        visible={uploadVisible}
-        okText="Okay"
-        onOk={() => {
-          setUploadVisible(false)
-        }}
-        onCancel={() => {
-          setUploadVisible(false)
-        }}
-      >
-        <UploadConsent
-          analysisResult={analysisResult}
-          setVisible={setUploadVisible}
-          getData={getData}
-          setSummaryVisible={setSummaryVisible}
-          setResult={setResult}
-        />
-      </Modal>
+        <Modal
+          destroyOnClose={true}
+          footer={null}
+          title="Data to Upload"
+          visible={uploadVisible}
+          okText="Okay"
+          onOk={() => {
+            setUploadVisible(false)
+          }}
+          onCancel={() => {
+            setUploadVisible(false)
+          }}
+        >
+          <UploadConsent
+            analysisResult={analysisResult}
+            setVisible={setUploadVisible}
+            getData={getData}
+            setSummaryVisible={setSummaryVisible}
+            setResult={setResult}
+          />
+        </Modal>
 
-      {/**
+        {/**
        * Upload Consent and Checkup Modal ends
        */}
 
-      {/**
+        {/**
        * Update Consent Modal
        */}
 
-      <Modal
-        destroyOnClose={true}
-        footer={null}
-        title="Data to Upload"
-        visible={visible}
-        okText="Okay"
-        onOk={() => {
-          setVisible(false)
-        }}
-        onCancel={() => {
-          setVisible(false)
-        }}
-      >
-        <UpdateConsent
-          setVisible={setVisible}
-          id={id}
-          setSummaryVisible={setSummaryVisible}
-          setResult={setResult}
-        />
-      </Modal>
+        <Modal
+          destroyOnClose={true}
+          footer={null}
+          title="Data to Upload"
+          visible={visible}
+          okText="Okay"
+          onOk={() => {
+            setVisible(false)
+          }}
+          onCancel={() => {
+            setVisible(false)
+          }}
+        >
+          <UpdateConsent
+            setVisible={setVisible}
+            id={id}
+            setSummaryVisible={setSummaryVisible}
+            setResult={setResult}
+          />
+        </Modal>
 
-      {/**
+        {/**
        * Update Consent Modal
        */}
 
-      {/**
+        {/**
        * summary modal starts
        */}
 
-      <Modal
-        cancelButtonProps={{ hidden: true }}
-        title="Upload Summary"
-        visible={summaryVisible}
-        okText="Okay"
-        onOk={() => {
-          setSummaryVisible(false)
-          getData()
-        }}
-      >
-        <Summary result={result} analysisResult={analysisResult} />
-      </Modal>
+        <Modal
+          cancelButtonProps={{ hidden: true }}
+          title="Upload Summary"
+          visible={summaryVisible}
+          okText="Okay"
+          onOk={() => {
+            setSummaryVisible(false)
+            getData()
+          }}
+        >
+          <Summary result={result} analysisResult={analysisResult} />
+        </Modal>
 
-      {/**
+        {/**
        * Summary model ends
        */}
-    </div>
+      </div>
+    </ErrorBoundary>
   )
 }
 
@@ -508,76 +498,78 @@ function UploadConsent({
   }
 
   return (
-    <div className="card card-shadow">
-      <Form onFinish={submit}>
-        <Title level={5}>Title</Title>
-        <Form.Item
-          name="title"
-          rules={[
-            {
-              required: true,
-              message: 'Title is required',
-            },
-          ]}
-        >
-          <Input onChange={handleTitle}></Input>
-        </Form.Item>
-        {analysisResult ? (
-          <div>
-            <br />
-            <Title level={5}>Analysis Result</Title>
-
-            <label>Select File</label>
-            <br />
-
-            <input
-              type="file"
-              name="consentFile"
-              onChange={(e) => handleAnalysisFile(e)}
-            />
-            <br />
-            <br />
-          </div>
-        ) : (
-          <>
+    <ErrorBoundary>
+      <div className="card card-shadow">
+        <Form onFinish={submit}>
+          <Title level={5}>Title</Title>
+          <Form.Item
+            name="title"
+            rules={[
+              {
+                required: true,
+                message: 'Title is required',
+              },
+            ]}
+          >
+            <Input onChange={handleTitle}></Input>
+          </Form.Item>
+          {analysisResult ? (
             <div>
-              <form id="myform">
-                <br />
-                <Title level={5}>Consent Data</Title>
-                <label>Select File</label>
-                <br />
+              <br />
+              <Title level={5}>Analysis Result</Title>
 
-                <input
-                  type="file"
-                  name="consentFile"
-                  onChange={(e) => handleConsentFile(e)}
-                />
-                <br />
-                <br />
-                <Title level={5}>Pseudonymized Checkup Data</Title>
+              <label>Select File</label>
+              <br />
 
-                <label>Select File</label>
-                <br />
-
-                <input
-                  type="file"
-                  name="psuedonymizedFile"
-                  onChange={(e) => handlePsuedonymizedFile(e)}
-                />
-                <br />
-                <br />
-              </form>
+              <input
+                type="file"
+                name="consentFile"
+                onChange={(e) => handleAnalysisFile(e)}
+              />
+              <br />
+              <br />
             </div>
+          ) : (
+            <>
+              <div>
+                <form id="myform">
+                  <br />
+                  <Title level={5}>Consent Data</Title>
+                  <label>Select File</label>
+                  <br />
 
-            <div></div>
-            <br />
-          </>
-        )}
-        <Button loading={loading} htmlType="submit">
-          Submit
-        </Button>
-      </Form>
-    </div>
+                  <input
+                    type="file"
+                    name="consentFile"
+                    onChange={(e) => handleConsentFile(e)}
+                  />
+                  <br />
+                  <br />
+                  <Title level={5}>Pseudonymized Checkup Data</Title>
+
+                  <label>Select File</label>
+                  <br />
+
+                  <input
+                    type="file"
+                    name="psuedonymizedFile"
+                    onChange={(e) => handlePsuedonymizedFile(e)}
+                  />
+                  <br />
+                  <br />
+                </form>
+              </div>
+
+              <div></div>
+              <br />
+            </>
+          )}
+          <Button loading={loading} htmlType="submit">
+            Submit
+          </Button>
+        </Form>
+      </div>
+    </ErrorBoundary>
   )
 }
 
@@ -633,27 +625,29 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
   }
 
   return (
-    <div>
+    <ErrorBoundary>
       <div>
-        <Title level={5}>Consent Data</Title>
-        <label>Select File</label>
-        <br />
+        <div>
+          <Title level={5}>Consent Data</Title>
+          <label>Select File</label>
+          <br />
 
-        <input
-          type="file"
-          name="consentFile"
-          onChange={(e) => handleConsentFile(e)}
-        />
-        <br />
-      </div>
+          <input
+            type="file"
+            name="consentFile"
+            onChange={(e) => handleConsentFile(e)}
+          />
+          <br />
+        </div>
 
-      <div className="upload-consent">
-        <Button loading={loading} onClick={approveUpload}>
-          Approve
-        </Button>
-        <Button onClick={cancelUpload}>Cancel</Button>
+        <div className="upload-consent">
+          <Button loading={loading} onClick={approveUpload}>
+            Approve
+          </Button>
+          <Button onClick={cancelUpload}>Cancel</Button>
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   )
 }
 
@@ -664,18 +658,20 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
  */
 function Summary({ result, analysisResult }) {
   return (
-    <div>
-      <p>Your upload is successfully Completed</p>
-      {result.update ? (
-        <p>{result.result.consent_length} Records were updated</p>
-      ) : analysisResult ? (
-        <p>{result.result.analysis_length} Records were uploaded</p>
-      ) : (
-        <p>
-          {result.result.checkup_length} checkup records and{' '}
-          {result.result.consent_length} consent records were uploaded
-        </p>
-      )}
-    </div>
+    <ErrorBoundary>
+      <div>
+        <p>Your upload is successfully Completed</p>
+        {result.update ? (
+          <p>{result.result.consent_length} Records were updated</p>
+        ) : analysisResult ? (
+          <p>{result.result.analysis_length} Records were uploaded</p>
+        ) : (
+          <p>
+            {result.result.checkup_length} checkup records and{' '}
+            {result.result.consent_length} consent records were uploaded
+          </p>
+        )}
+      </div>
+    </ErrorBoundary>
   )
 }

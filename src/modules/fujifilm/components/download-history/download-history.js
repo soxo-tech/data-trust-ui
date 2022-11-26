@@ -17,6 +17,8 @@ import { GlobalContext, Card, DateUtils, Location } from 'soxo-bootstrap-core';
 
 import { UserLogs, CoreUsers } from '../../../../models';
 
+import ErrorBoundary from '../error';
+
 const { Title } = Typography;
 
 export default function DownloadHistory({ ffmenu, ...props }) {
@@ -33,7 +35,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      const { user = {} } = useContext(GlobalContext);
 
-     var { consentId, analysisResult } = Location.search()
+     var { consent_id, analysisResult } = Location.search()
 
      if (analysisResult) {
           analysisResult = eval(analysisResult)
@@ -103,7 +105,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                               const attributes = JSON.parse(record.consent.attributes)
 
 
-                              return attributes.lifetime_type ? attributes.lifetime_type : attributes.lifeTime;
+                              return attributes.lifetime_type
                          }
                     }
                },
@@ -194,52 +196,58 @@ export default function DownloadHistory({ ffmenu, ...props }) {
           //In Nura load downlaods with respect to consent id
           else
 
-               result = result.result.filter((element) => JSON.parse(element.attributes).consent_id === parseInt(consentId))
+               result = result.result.filter((element) => {
+                    const attributes = JSON.parse(element.attributes)
+                    if (attributes.consent_id)
+                         return attributes.consent_id === parseInt(consent_id)
+               })
 
-               setDownloadHistory(result)
-               setLoading(false)
-         
+          setDownloadHistory(result)
+          setLoading(false)
+
      }
 
      return (
 
-          <div className='consent-history'>
-               {loading ? <Skeleton /> : <>
+          <ErrorBoundary>
+               <div className='consent-history'>
+                    {loading ? <Skeleton /> : <>
 
-                    <Card className={'history'}>
-                         <Title level={3}>Download History</Title>
-                         <div className='history-table'>
-                              <div>
-                                   <Title level={5}>Nura ID</Title>
-                                   <p>{downloadHistory[0] && downloadHistory[0].pseudonymous_nura_id ? downloadHistory[0].pseudonymous_nura_id : id}</p>
-                              </div>
-                              {/* <div>
+                         <Card className={'history'}>
+                              <Title level={3}>Download History</Title>
+                              <div className='history-table'>
+                                   <div>
+                                        <Title level={5}>Nura ID</Title>
+                                        <p>{downloadHistory[0] && downloadHistory[0].pseudonymous_nura_id ? downloadHistory[0].pseudonymous_nura_id : id}</p>
+                                   </div>
+                                   {/* <div>
                                    <Title level={5}>Registration Date</Title>
                                    <p>{downloadHistory[0] && downloadHistory[0].order_date ? DateUtils.getFormattedTimeDate(downloadHistory[0].order_date) : null}</p>
                               </div> */}
-                              <div>
-                                   <Title level={5}>Consent ID</Title>
-                                   <p>{downloadHistory[0] && downloadHistory[0].consent ? downloadHistory[0].consent.id : null}</p>
-                              </div>
-                              <div>
-                                   {/* <Title level={5}>Consent Status</Title>
+                                   <div>
+                                        <Title level={5}>Consent ID</Title>
+                                        <p>{downloadHistory[0] && downloadHistory[0].consent ? downloadHistory[0].consent.id : null}</p>
+                                   </div>
+                                   <div>
+                                        {/* <Title level={5}>Consent Status</Title>
                                    <p>Updated</p> */}
+                                   </div>
+
                               </div>
 
-                         </div>
-
-                         <Table
-                              scroll={{ x: true }}
-                              dataSource={downloadHistory}
-                              columns={columns}
-                         />
-                    </Card>
-                    {/* {ffmenu ? null :
+                              <Table
+                                   scroll={{ x: true }}
+                                   dataSource={downloadHistory}
+                                   columns={columns}
+                              />
+                         </Card>
+                         {/* {ffmenu ? null :
                                                   <Card className={'details'}>
                                                             <ConsentDetails />
                                                   </Card>} */}
 
-               </>}
-          </div>
+                    </>}
+               </div>
+          </ErrorBoundary>
      )
 }

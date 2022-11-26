@@ -35,6 +35,8 @@ import './upload-detail.scss'
 
 import { UploadDetails, UserLogs, Uploads, CoreUsers } from '../../../../models'
 
+import ErrorBoundary from '../error'
+
 const { Title } = Typography
 
 export default function UploadDetailComponent({
@@ -119,8 +121,7 @@ export default function UploadDetailComponent({
           const attributes = JSON.parse(record.consent.attributes)
 
           return attributes.lifetime_type
-            ? attributes.lifetime_type
-            : attributes.lifeTime
+           
         }
       },
     },
@@ -256,7 +257,7 @@ export default function UploadDetailComponent({
           if (record.attributes) {
             const attributes = JSON.parse(record.attributes)
 
-            return attributes.consent_id
+            return attributes.consent_id 
           }
         },
       },
@@ -438,7 +439,7 @@ export default function UploadDetailComponent({
         setVisible(true)
       } else {
         Location.navigate({
-          url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}?&consentId=${record.consent.id}`,
+          url: `/checkup-list/downloads-history/${record.psuedonymous_nura_id}?&consent_id=${record.consent.id}`,
         })
       }
     } else if (params.key === 'consent_history') {
@@ -453,58 +454,60 @@ export default function UploadDetailComponent({
   }
 
   return (
-    <div className='card card-shadow'>
-      {loading ? (
-        <Skeleton />
-      ) : (
-        <>
-          <div className="page-header">
-            <Title level={3}>{caption}</Title>
+    <ErrorBoundary>
+      <div className='card card-shadow'>
+        {loading ? (
+          <Skeleton />
+        ) : (
+          <>
+            <div className="page-header">
+              <Title level={3}>{caption}</Title>
 
-            <div className="page-actions">
-              <Button onClick={getData}>
-                <ReloadOutlined />
-              </Button>
+              <div className="page-actions">
+                <Button onClick={getData}>
+                  <ReloadOutlined />
+                </Button>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <Title level={4}>{uploads.title}</Title>
-            <div className="detail-header">
-              <p>ID :{uploads.id}</p>
+            <div>
+              <Title level={4}>{uploads.title}</Title>
+              <div className="detail-header">
+                <p>ID :{uploads.id}</p>
+              </div>
+              <Table
+                scroll={{ x: true }}
+                dataSource={uploads.upload_details}
+                columns={columns}
+              />
             </div>
-            <Table
-              scroll={{ x: true }}
-              dataSource={uploads.upload_details}
-              columns={columns}
-            />
-          </div>
 
-          {/**
+            {/**
            * Modal for Download History
            */}
-          <Modal
-            destroyOnClose={true}
-            footer={null}
-            title="Download History"
-            visible={visible}
-            okText="Okay"
-            onOk={() => {
-              setVisible(false)
-            }}
-            onCancel={() => {
-              setVisible(false)
-            }}
-          >
-            <DownloadHistory data={downloadHistory} />
-          </Modal>
+            <Modal
+              destroyOnClose={true}
+              footer={null}
+              title="Download History"
+              visible={visible}
+              okText="Okay"
+              onOk={() => {
+                setVisible(false)
+              }}
+              onCancel={() => {
+                setVisible(false)
+              }}
+            >
+              <DownloadHistory data={downloadHistory} />
+            </Modal>
 
-          {/**
+            {/**
            * Modal for Download History ends
            */}
-        </>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+    </ErrorBoundary>
   )
 }
 
@@ -595,17 +598,19 @@ function DownloadHistory({ data }) {
   ]
 
   return (
-    <div>
-      <p>Nura ID :</p>
-      <p>{data.psuedonymous_nura_id}</p>
+    <ErrorBoundary>
+      <div>
+        <p>Nura ID :</p>
+        <p>{data.psuedonymous_nura_id}</p>
 
-      <p></p>
+        <p></p>
 
-      <Table
-        scroll={{ x: true }}
-        dataSource={downloadHistory}
-        columns={columns}
-      />
-    </div>
+        <Table
+          scroll={{ x: true }}
+          dataSource={downloadHistory}
+          columns={columns}
+        />
+      </div>
+    </ErrorBoundary>
   )
 }
