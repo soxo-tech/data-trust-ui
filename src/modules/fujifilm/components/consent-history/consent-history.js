@@ -133,7 +133,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                 function toDerivedAnalysis() {
 
                     Location.navigate({
-                        url: `/checkup-list/derived-analysis/${id}`,
+                        url: `/checkup-list/derived-analysis/${id}?&consentId=${ele.upload_details_id}`,
                     });
                 }
 

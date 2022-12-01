@@ -45,6 +45,8 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
   const [limit, setLimit] = useState(20)
 
+  var { consentId } = Location.search()
+
   // ffmenu is maintained to determine which user is using(nura or fujifilm)
   const columns = [
     {
@@ -58,7 +60,7 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
       title: 'Data ID',
       key: 'id',
       render: (record) => {
-        return record.upload_details[0].id
+        return record.upload_details[0].id||null
       },
     },
     {
@@ -105,8 +107,22 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
     setLoading(true)
 
     UploadDetails.loadDetails(id).then((result) => {
+      console.log(result.uploadsWithConsent[0].upload_details[0].attributes)
 
-      setDerivedAnalysis(result.uploadsWithConsent)
+      // This filtering is used to get analysis result of the consent id in url
+      // Here each analysis is mapped and the upload details of the analysis is filtered to get the upload details with the same consent id
+      
+      result=result.uploadsWithConsent.map((ele)=>{
+        ele.upload_details=ele.upload_details.filter((item)=>JSON.parse(item.attributes).consent_id===consentId)||[]
+        return ele
+      })
+      
+      // If there is no upload detail with the same consent id
+      // There are few confusions in this part, all data with mode ANALYSIS and nura id is loaded
+      // The received data is an array of uploads with array of upload details
+      result=result.filter((element)=>element.upload_details.length>0)
+
+      setDerivedAnalysis(result)
       setLoading(false)
 
     })
