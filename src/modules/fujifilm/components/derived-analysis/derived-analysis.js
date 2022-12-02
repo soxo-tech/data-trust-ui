@@ -60,16 +60,16 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
       title: 'Data ID',
       key: 'id',
       render: (record) => {
-        return record.upload_details[0].id||null
+        return record.id
       },
     },
     {
       title: 'Consent ID',
       key: 'consent_id',
       render: (record) => {
-        if (record.upload_details[0] && record.upload_details[0].attributes) {
+        if (record && record.attributes) {
 
-          const attributes = JSON.parse(record.upload_details[0].attributes)
+          const attributes = JSON.parse(record.attributes)
 
           return attributes.consent_id
         }
@@ -78,7 +78,9 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
     {
       title: 'Title',
       key: 'title',
-      dataIndex: 'title',
+      render: (record) => {
+        return record.uploads[0].title
+      },
     },
     {
       title: 'Upload Date',
@@ -107,20 +109,11 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
     setLoading(true)
 
     UploadDetails.loadDetails(id).then((result) => {
-      console.log(result.uploadsWithConsent[0].upload_details[0].attributes)
 
       // This filtering is used to get analysis result of the consent id in url
-      // Here each analysis is mapped and the upload details of the analysis is filtered to get the upload details with the same consent id
       
-      result=result.uploadsWithConsent.map((ele)=>{
-        ele.upload_details=ele.upload_details.filter((item)=>JSON.parse(item.attributes).consent_id===consentId)||[]
-        return ele
-      })
-      
-      // If there is no upload detail with the same consent id
-      // There are few confusions in this part, all data with mode ANALYSIS and nura id is loaded
-      // The received data is an array of uploads with array of upload details
-      result=result.filter((element)=>element.upload_details.length>0)
+
+      result=result.uploadsWithConsent.filter((element)=>JSON.parse(element.attributes).consent_id===consentId)
 
       setDerivedAnalysis(result)
       setLoading(false)
@@ -133,7 +126,10 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
     columns.push({
       title: 'Last Download',
       key: 'lastDownload',
-      dataIndex: 'lastDownload',
+      render: (record) => {
+        console.log(record)
+        return DateUtils.getFormattedTimeDate(record.downloads[0].created_at)
+      },
     })
   }
 

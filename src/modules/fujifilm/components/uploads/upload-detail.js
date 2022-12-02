@@ -448,7 +448,7 @@ export default function UploadDetailComponent({
       })
     } else if (params.key === 'result_analysis') {
       Location.navigate({
-        url: `/checkup-list/derived-analysis/${record.psuedonymous_nura_id}`,
+        url: `/checkup-list/derived-analysis/${record.psuedonymous_nura_id}?&consentId=${record.consent.id}`,
       })
     }
   }
