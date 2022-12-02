@@ -45,6 +45,8 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
   const [limit, setLimit] = useState(20)
 
+  var { consentId } = Location.search()
+
   // ffmenu is maintained to determine which user is using(nura or fujifilm)
   const columns = [
     {
@@ -58,16 +60,16 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
       title: 'Data ID',
       key: 'id',
       render: (record) => {
-        return record.upload_details[0].id
+        return record.id
       },
     },
     {
       title: 'Consent ID',
       key: 'consent_id',
       render: (record) => {
-        if (record.upload_details[0] && record.upload_details[0].attributes) {
+        if (record && record.attributes) {
 
-          const attributes = JSON.parse(record.upload_details[0].attributes)
+          const attributes = JSON.parse(record.attributes)
 
           return attributes.consent_id
         }
@@ -76,7 +78,9 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
     {
       title: 'Title',
       key: 'title',
-      dataIndex: 'title',
+      render: (record) => {
+        return record.uploads[0].title
+      },
     },
     {
       title: 'Upload Date',
@@ -106,7 +110,12 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
     UploadDetails.loadDetails(id).then((result) => {
 
-      setDerivedAnalysis(result.uploadsWithConsent)
+      // This filtering is used to get analysis result of the consent id in url
+      
+
+      result=result.uploadsWithConsent.filter((element)=>JSON.parse(element.attributes).consent_id===consentId)
+
+      setDerivedAnalysis(result)
       setLoading(false)
 
     })
@@ -117,7 +126,10 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
     columns.push({
       title: 'Last Download',
       key: 'lastDownload',
-      dataIndex: 'lastDownload',
+      render: (record) => {
+        console.log(record)
+        return DateUtils.getFormattedTimeDate(record.downloads[0].created_at)
+      },
     })
   }
 
