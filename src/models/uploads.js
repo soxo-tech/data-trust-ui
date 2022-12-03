@@ -123,14 +123,9 @@ class Upload extends BaseAPI {
    */
 
   download = (data, analysisResult) => {
-    var type
+    
+    var type = 'zip'
 
-    // Only for analysis, file should be of zip type
-    if (analysisResult) {
-      type = 'zip'
-    } else {
-      type = 'json'
-    }
 
     var bytearray = Object.keys(data)
     var arrayelement = Object.values(data)
@@ -158,11 +153,9 @@ class Upload extends BaseAPI {
     document.body.appendChild(link)
     link.href = res
 
-    if (analysisResult) {
+  
       link.download = 'newfile.zip'
-    } else {
-      link.download = 'newfile.json'
-    }
+   
 
     link.click()
     window.URL.revokeObjectURL(res)
