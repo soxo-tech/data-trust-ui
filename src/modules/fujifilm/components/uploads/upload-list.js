@@ -611,6 +611,7 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
         setSummaryVisible(true)
       } else {
         message.error(result.message)
+        setLoading(false)
       }
     })
   }
@@ -660,7 +661,7 @@ function Summary({ result, analysisResult }) {
   return (
     <ErrorBoundary>
       <div>
-        <p>Your upload is successfully Completed</p>
+        <p>Your Upload is Successfully Completed</p>
         {result.update ? (
           <p>{result.result.consent_length} Records were updated</p>
         ) : analysisResult ? (
