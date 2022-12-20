@@ -55,16 +55,17 @@ export default function UploadDetailComponent({
 
   const [visible, setVisible] = useState(false)
 
+  const [page, setPage] = useState(1);
+
+  const [limit, setLimit] = useState(10);
+
   const { id } = props.match.params
 
   var columns = [
     {
       title: '#',
       dataIndex: 'index',
-      render: (value, item, index) => {
-        return index + 1
-        // return (page - 1) * limit + index + 1;
-      },
+      render: (value, item, index) => (page - 1) * limit + index + 1,
     },
     {
       title: 'Nura ID',
@@ -479,6 +480,12 @@ export default function UploadDetailComponent({
                 scroll={{ x: true }}
                 dataSource={uploads.upload_details}
                 columns={columns}
+                pagination={{
+                  current: page,
+                  onChange(current) {
+                      setPage(current);
+                  },
+              }}
               />
             </div>
 

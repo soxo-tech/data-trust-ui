@@ -53,14 +53,15 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
 
   const [summaryVisible, setSummaryVisible] = useState(false)
 
+  const [page, setPage] = useState(1);
+
+  const [limit, setLimit] = useState(10);
+
   const columns = [
     {
       title: '#',
       dataIndex: 'index',
-      render: (value, item, index) => {
-        // return (page - 1) * limit + index + 1;
-        return index + 1
-      },
+      render: (value, item, index) => (page - 1) * limit + index + 1,
     },
     {
       title: 'ID',
@@ -325,12 +326,24 @@ export default function UploadList({ ffmenu, analysisResult, mode }) {
             scroll={{ x: true }}
             dataSource={checkUpData}
             columns={analysisColumns}
+            pagination={{
+              current: page,
+              onChange(current) {
+                  setPage(current);
+              },
+          }}
           />
         ) : (
           <Table
             scroll={{ x: true }}
             dataSource={checkUpData}
             columns={columns}
+            pagination={{
+              current: page,
+              onChange(current) {
+                  setPage(current);
+              },
+          }}
           />
         )}
 

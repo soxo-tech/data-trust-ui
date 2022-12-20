@@ -34,14 +34,15 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
     const { user = {} } = useContext(GlobalContext);
 
+    const [page, setPage] = useState(1);
+
+    const [limit, setLimit] = useState(10);
+
     const columns = [
         {
             title: '#',
             dataIndex: 'index',
-            render: (value, item, index) => {
-                return index + 1;
-                // return (page - 1) * limit + index + 1;
-            },
+            render: (value, item, index) => (page - 1) * limit + index + 1,
         },
         {
             title: 'Consent ID',
@@ -248,6 +249,12 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                                     scroll={{ x: true }}
                                     dataSource={consentHistory}
                                     columns={columns}
+                                    pagination={{
+                                        current: page,
+                                        onChange(current) {
+                                            setPage(current);
+                                        },
+                                    }}
                                 />
                             </div >
                         </div >
