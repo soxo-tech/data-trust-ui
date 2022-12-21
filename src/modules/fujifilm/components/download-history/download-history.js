@@ -27,7 +27,7 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      const [page, setPage] = useState(1);
 
-     const [limit, setLimit] = useState(20);
+     const [limit, setLimit] = useState(10);
 
      const [loading, setLoading] = useState(true)
 
@@ -239,6 +239,12 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                                    scroll={{ x: true }}
                                    dataSource={downloadHistory}
                                    columns={columns}
+                                   pagination={{
+                                        current: page,
+                                        onChange(current) {
+                                            setPage(current);
+                                        },
+                                    }}
                               />
                          </Card>
                          {/* {ffmenu ? null :

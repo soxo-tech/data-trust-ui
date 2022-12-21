@@ -43,7 +43,7 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
   const [page, setPage] = useState(1)
 
-  const [limit, setLimit] = useState(20)
+  const [limit, setLimit] = useState(10)
 
   var { consentId } = Location.search()
 
@@ -226,6 +226,12 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
                 scroll={{ x: true }}
                 dataSource={derivedAnalysis}
                 columns={columns}
+                pagination={{
+                  current: page,
+                  onChange(current) {
+                      setPage(current);
+                  },
+              }}
               />
             </Card>
           </div>
