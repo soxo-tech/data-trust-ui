@@ -33,9 +33,7 @@ import ErrorBoundary from '../error'
 
 const { Title } = Typography
 
-export default function DerivedAnalysis({ ffmenu, ...props }) {
-  // Get pagination number
-  const { id } = props.match.params
+export default function DerivedAnalysis({ ffmenu, id, ...props }) {
 
   const [derivedAnalysis, setDerivedAnalysis] = useState([])
 
@@ -44,6 +42,9 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
   const [page, setPage] = useState(1)
 
   const [limit, setLimit] = useState(10)
+
+  if (props.match)
+    id = props.match.params
 
   var { consentId } = Location.search()
 
@@ -100,7 +101,7 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [consentId])
 
   /**
    * Function to load the data for screen
@@ -111,9 +112,11 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
     UploadDetails.loadDetails(id).then((result) => {
 
       // This filtering is used to get analysis result of the consent id in url
-      
+      if (consentId)
+        result = result.uploadsWithConsent.filter((element) => JSON.parse(element.attributes).consent_id === consentId)
 
-      result=result.uploadsWithConsent.filter((element)=>JSON.parse(element.attributes).consent_id===consentId)
+      else
+        result = result.uploadsWithConsent
 
       setDerivedAnalysis(result)
       setLoading(false)
@@ -220,7 +223,7 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
           <div className="derived-card">
             <Card className={'table'}>
 
-              <Title level={3}>Derived Analysis Results </Title>
+              {/* <Title level={3}>Derived Analysis Results </Title> */}
 
               <Table
                 scroll={{ x: true }}

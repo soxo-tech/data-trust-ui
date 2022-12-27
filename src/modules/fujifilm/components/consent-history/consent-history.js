@@ -22,13 +22,17 @@ import ErrorBoundary from '../error';
 
 const { Title } = Typography;
 
-export default function ConsentHistory({ ffmenu, ...props }) {
+export default function ConsentHistory({ ffmenu, id, data_id,setConsentId, ...props }) {
 
     let urlParams = Location.search();
 
+    if (urlParams.data_id)
+        data_id = urlParams.data_id
+
     const [consentHistory, setConsentHistory] = useState([])
 
-    const { id } = props.match.params;
+    if (props.match)
+        id = props.match.params;
 
     const [loading, setLoading] = useState(true)
 
@@ -127,14 +131,14 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                 function toDownloadHistory() {
 
                     Location.navigate({
-                        url: `/checkup-list/downloads-history/${id}?&consent_id=${ele.upload_details_id}`,
+                        url: `/check-up-details/${id}?&consent_id=${ele.upload_details_id}&activeKey=${1}&data_id=${data_id}`,
                     });
                 }
 
                 function toDerivedAnalysis() {
 
                     Location.navigate({
-                        url: `/checkup-list/derived-analysis/${id}?&consentId=${ele.upload_details_id}`,
+                        url: `/check-up-details/${id}?&consentId=${ele.upload_details_id}&activeKey=${2}&data_id=${data_id}`,
                     });
                 }
 
@@ -163,7 +167,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
                                 <Button onClick={toDownloadHistory}>Download History</Button>
 
                                 {/* The analysis result may be loaded with the previous checkup . So we control this feature */}
-                                {checkupId == urlParams.data_id ? <Button onClick={toDerivedAnalysis}>Analysis Result</Button> : null}
+                                {checkupId == data_id ? <Button onClick={toDerivedAnalysis}>Analysis Result</Button> : null}
                             </>}
                     </div>
                 )
@@ -210,6 +214,9 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
         UploadDetails.getConsent(id).then(result => {
 
+            if(result.consents.length>0)
+            setConsentId(result.consents[0].id)
+
             setConsentHistory(result.consents)
 
             setLoading(false)
@@ -224,13 +231,13 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                         <div className="page-header">
 
-                            <Title level={3}>Consent History</Title>
+                            {/* <Title level={3}>Consent History</Title> */}
 
                             <div className="page-actions">
 
-                                <Button onClick={getData}>
+                                {/* <Button onClick={getData}>
                                     <ReloadOutlined />
-                                </Button>
+                                </Button> */}
 
                             </div>
                         </div>
@@ -239,7 +246,7 @@ export default function ConsentHistory({ ffmenu, ...props }) {
 
                             <div className={'history'}>
                                 <div className='history-table'>
-                                    <Title level={5}>Nura ID : {id}</Title>
+                                    {/* <Title level={5}>Nura ID : {id}</Title> */}
 
                                     {/* <p> {consentHistory && consentHistory[0] ? DateUtils.formatDate(consentHistory[0].order_date) : null}</p> */}
 

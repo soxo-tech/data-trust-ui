@@ -21,7 +21,7 @@ import ErrorBoundary from '../error';
 
 const { Title } = Typography;
 
-export default function DownloadHistory({ ffmenu, ...props }) {
+export default function DownloadHistory({ ffmenu, id, ...props }) {
 
      const [downloadHistory, setDownloadHistory] = useState([])
 
@@ -31,7 +31,8 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      const [loading, setLoading] = useState(true)
 
-     const { id } = props.match.params;
+     if (props.match)
+          id = props.match.params;
 
      const { user = {} } = useContext(GlobalContext);
 
@@ -165,15 +166,11 @@ export default function DownloadHistory({ ffmenu, ...props }) {
           ]
      }
 
-     useEffect(() => {
-          getData();
-
-     }, [])
 
      useEffect(() => {
           getData();
 
-     }, [])
+     }, [consent_id])
 
      /**
      * Function to load the data for screen
@@ -194,13 +191,15 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                result = result.result
 
           //In Nura load downlaods with respect to consent id
-          else
+          else if (consent_id)
 
                result = result.result.filter((element) => {
                     const attributes = JSON.parse(element.attributes)
                     if (attributes.consent_id)
                          return attributes.consent_id === parseInt(consent_id)
                })
+          else
+          result = result.result
 
           setDownloadHistory(result)
           setLoading(false)
@@ -214,19 +213,19 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                     {loading ? <Skeleton /> : <>
 
                          <Card className={'history'}>
-                              <Title level={3}>Download History</Title>
+                              {/* <Title level={3}>Download History</Title> */}
                               <div className='history-table'>
                                    <div>
-                                        <Title level={5}>Nura ID</Title>
-                                        <p>{downloadHistory[0] && downloadHistory[0].pseudonymous_nura_id ? downloadHistory[0].pseudonymous_nura_id : id}</p>
+                                        {/* <Title level={5}>Nura ID</Title>
+                                        <p>{downloadHistory[0] && downloadHistory[0].pseudonymous_nura_id ? downloadHistory[0].pseudonymous_nura_id : id}</p> */}
                                    </div>
                                    {/* <div>
                                    <Title level={5}>Registration Date</Title>
                                    <p>{downloadHistory[0] && downloadHistory[0].order_date ? DateUtils.getFormattedTimeDate(downloadHistory[0].order_date) : null}</p>
                               </div> */}
                                    <div>
-                                        <Title level={5}>Consent ID</Title>
-                                        <p>{downloadHistory[0] && downloadHistory[0].consent ? downloadHistory[0].consent.id : null}</p>
+                                        {/* <Title level={5}>Consent ID</Title>
+                                        <p>{downloadHistory[0] && downloadHistory[0].consent ? downloadHistory[0].consent.id : null}</p> */}
                                    </div>
                                    <div>
                                         {/* <Title level={5}>Consent Status</Title>

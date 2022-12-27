@@ -116,6 +116,23 @@ class Upload extends BaseAPI {
     })
   }
 
+/**
+ *  Function to downlaod selected checkup details
+ * @param {*} records 
+ * @returns 
+ */
+  downloadBulk=(records)=>{
+
+    const baseUrl = process.env.REACT_APP_NURA
+
+    return ApiUtils.post({
+      baseUrl,
+      url: `uploads/download-bulk`,
+      formBody:records
+    })
+
+  }
+
   /**
    * Download the buffer array from backend
    * @param {*} data
