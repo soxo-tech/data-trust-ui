@@ -319,7 +319,10 @@ export default function MainComponent({
      * Function to filter downloaded data
      */
     function filterData() {
-        const filtered = uploads.upload_details.filter(element => { if (element && element.downloads && element.downloads.id) return element.downloads })
+        const filtered = uploads.upload_details.filter(element => {
+            if (element && element.downloads && element.downloads.id) { } else
+                return element.downloads
+        })
         setUploads({ upload_details: filtered })
 
     }
@@ -418,7 +421,7 @@ export default function MainComponent({
 
                             <Button onClick={(e) => getData(range)}>All</Button>
 
-                            <Button onClick={filterData}>Downloaded</Button>
+                            <Button onClick={filterData}>Undownloaded</Button>
 
                             <div className="upload-list">
                                 <Button onClick={uploadModal}>Upload</Button>

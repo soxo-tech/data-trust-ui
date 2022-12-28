@@ -22,7 +22,7 @@ import ErrorBoundary from '../error';
 
 const { Title } = Typography;
 
-export default function ConsentHistory({ ffmenu, id, data_id,setConsentId, ...props }) {
+export default function ConsentHistory({ ffmenu, id, data_id,setConsentId,setConsent, ...props }) {
 
     let urlParams = Location.search();
 
@@ -130,12 +130,16 @@ export default function ConsentHistory({ ffmenu, id, data_id,setConsentId, ...pr
 
                 function toDownloadHistory() {
 
+                    setConsent(ele.upload_details_id)
+
                     Location.navigate({
                         url: `/check-up-details/${id}?&consent_id=${ele.upload_details_id}&activeKey=${1}&data_id=${data_id}`,
                     });
                 }
 
                 function toDerivedAnalysis() {
+
+                    setConsent(ele.upload_details_id)
 
                     Location.navigate({
                         url: `/check-up-details/${id}?&consentId=${ele.upload_details_id}&activeKey=${2}&data_id=${data_id}`,

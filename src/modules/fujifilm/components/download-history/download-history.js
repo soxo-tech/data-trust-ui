@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 
-import { Table, Typography, Skeleton } from 'antd';
+import { Table, Typography, Skeleton, Tag } from 'antd';
 
 import { GlobalContext, Card, DateUtils, Location } from 'soxo-bootstrap-core';
 
@@ -21,7 +21,7 @@ import ErrorBoundary from '../error';
 
 const { Title } = Typography;
 
-export default function DownloadHistory({ ffmenu, id, ...props }) {
+export default function DownloadHistory({ ffmenu, id,consent,setConsent, ...props }) {
 
      const [downloadHistory, setDownloadHistory] = useState([])
 
@@ -168,14 +168,14 @@ export default function DownloadHistory({ ffmenu, id, ...props }) {
 
 
      useEffect(() => {
-          getData();
+          getData(consent_id);
 
      }, [consent_id])
 
      /**
      * Function to load the data for screen
      */
-     async function getData() {
+     async function getData(consent) {
 
           var result = await UserLogs.getDownloadHistory(id, analysisResult)
 
@@ -191,12 +191,12 @@ export default function DownloadHistory({ ffmenu, id, ...props }) {
                result = result.result
 
           //In Nura load downlaods with respect to consent id
-          else if (consent_id)
+          else if (consent && consent!==null)
 
                result = result.result.filter((element) => {
                     const attributes = JSON.parse(element.attributes)
                     if (attributes.consent_id)
-                         return attributes.consent_id === parseInt(consent_id)
+                         return attributes.consent_id === parseInt(consent)
                })
           else
           result = result.result
@@ -204,6 +204,14 @@ export default function DownloadHistory({ ffmenu, id, ...props }) {
           setDownloadHistory(result)
           setLoading(false)
 
+     }
+
+     /**
+      * Function triggered when consnet is removed
+      */
+     function removeConsent(){
+          setConsent(null)
+          getData(null)
      }
 
      return (
@@ -216,6 +224,7 @@ export default function DownloadHistory({ ffmenu, id, ...props }) {
                               {/* <Title level={3}>Download History</Title> */}
                               <div className='history-table'>
                                    <div>
+                                   {consent && consent!==null?<h4>Consent Id : <Tag closable onClose={removeConsent}>{consent}</Tag></h4>:null}
                                         {/* <Title level={5}>Nura ID</Title>
                                         <p>{downloadHistory[0] && downloadHistory[0].pseudonymous_nura_id ? downloadHistory[0].pseudonymous_nura_id : id}</p> */}
                                    </div>
