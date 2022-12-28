@@ -1,0 +1,15 @@
+.checkup {
+          .header-component {
+                  
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    .rangepicker-component{
+                              display: flex;
+                    }
+
+                    .padding {
+                              padding: 5px;
+                    }
+          }
+}

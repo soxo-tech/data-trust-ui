@@ -31,7 +31,9 @@ import moment from 'moment'
 
 import { UploadDetails, UserLogs, Uploads, CoreUsers } from '../../../../models'
 
-import ErrorBoundary from '../error'
+import ErrorBoundary from '../error';
+
+import './single-page-ui.scss'
 
 const { Title } = Typography
 
@@ -92,6 +94,8 @@ export default function MainComponent({
 
     //Setting Range by default
     const [range, setRange] = useState([starttime, endtime]);
+
+    const [btnLoading, setBtnLoading] = useState(false)
 
     const { id } = props.match.params
 
@@ -346,7 +350,7 @@ export default function MainComponent({
 
                 getData(range)
             } else {
-                
+
                 message.error(res.message)
             }
         })
@@ -359,6 +363,7 @@ export default function MainComponent({
      */
     async function downloadFiles(e, id) {
 
+        setBtnLoading(true)
 
         Uploads.downloadBulk(selectedRows).then((res) => {
 
@@ -366,10 +371,14 @@ export default function MainComponent({
                 // For checkup download content is downloaded a s json for now
                 Uploads.download(res.buffer.data, analysisResult)
 
+                setBtnLoading(false)
+
                 getData(range)
 
             } else {
                 message.error(res.message)
+
+                setBtnLoading(false)
 
             }
         })
@@ -377,7 +386,7 @@ export default function MainComponent({
 
     return (
         <ErrorBoundary>
-            <div className='card card-shadow'>
+            <div className='card card-shadow checkup'>
                 {loading ? (
                     <Skeleton />
                 ) : (
@@ -396,36 +405,46 @@ export default function MainComponent({
                         </div>
 
                         <div>
-                            <RangePicker
-                                allowClear={false}
-                                inputReadOnly
-                                format={'DD/MM/YYYY'}
-                                value={range}
-                                onChange={(time) => {
-                                    updateTime(time, range);
-                                }}
-                                ranges={{
-                                    Today: [moment(), moment()],
+                            <div className='header-component'  >
+                                <div className='rangepicker-component'>
+                                    <RangePicker
+                                        allowClear={false}
+                                        inputReadOnly
+                                        format={'DD/MM/YYYY'}
+                                        value={range}
+                                        onChange={(time) => {
+                                            updateTime(time, range);
+                                        }}
+                                        ranges={{
+                                            Today: [moment(), moment()],
 
-                                    Yesterday: [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                                            Yesterday: [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
 
-                                    'This Week': [moment().startOf('week'), moment().endOf('week')],
+                                            'This Week': [moment().startOf('week'), moment().endOf('week')],
 
-                                    'Last Week': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
+                                            'Last Week': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
 
-                                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                                            'This Month': [moment().startOf('month'), moment().endOf('month')],
 
-                                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                                }}
-                            />
+                                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                                        }}
+                                    />
 
-                            <Button onClick={(e) => getData(range)}>All</Button>
 
-                            <Button onClick={filterData}>Undownloaded</Button>
+                                    <div className="padding">
+                                        <Button onClick={(e) => getData(range)}>All</Button>
 
-                            <div className="upload-list">
-                                <Button onClick={uploadModal}>Upload</Button>
-                                <Button onClick={downloadFiles}>Download</Button>
+                                        <Button onClick={filterData}>Undownloaded</Button>
+
+                                    </div>
+                                </div>
+
+
+                                <div className="padding" >
+                                    <Button onClick={uploadModal}>Upload</Button>
+                                    <Button onClick={downloadFiles} loading={btnLoading}>Download</Button>
+                                </div>
+
                             </div>
 
                             <Table
