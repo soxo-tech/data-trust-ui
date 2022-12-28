@@ -178,7 +178,7 @@ export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...pr
 
     const bulk = false
 
-    const id = record.upload_details[0].id
+    const id = record.id
 
     Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
       if (res.success) {
