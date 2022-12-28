@@ -106,6 +106,11 @@ export default function MainComponent({
             render: (value, item, index) => (page - 1) * limit + index + 1,
         },
         {
+            title: 'Data ID',
+            key: 'data_id',
+            dataIndex: 'id',
+        },
+        {
             title: 'Nura ID',
             key: 'id',
             dataIndex: 'psuedonymous_nura_id',
@@ -116,6 +121,14 @@ export default function MainComponent({
             key: 'No of records',
             render: (record) => {
                 return record.consent && record.consent.id
+            },
+        },
+
+        {
+            title: 'Upload Time',
+            key: 'upload_time',
+            render: (record) => {
+                return record.created_at ? DateUtils.getFormattedTimeDate(record.created_at) : null
             },
         },
         {
@@ -129,18 +142,18 @@ export default function MainComponent({
     ]
 
     //extra columns for fujifilm
-    if (ffmenu) {
-        columns.push({
-            title: 'Last Download',
-            key: 'lastDownload',
-            render: (record) => {
-                if (record.downloads && record.downloads.created_at)
-                    return record.downloads
-                        ? DateUtils.getFormattedTimeDate(record.downloads.created_at)
-                        : null
-            },
-        })
-    }
+    // if (ffmenu) {
+    columns.push({
+        title: 'Last Download',
+        key: 'lastDownload',
+        render: (record) => {
+            if (record.downloads && record.downloads.created_at)
+                return record.downloads
+                    ? DateUtils.getFormattedTimeDate(record.downloads.created_at)
+                    : null
+        },
+    })
+    // }
 
     //
     columns.push(
@@ -218,7 +231,11 @@ export default function MainComponent({
                 return (
                     <div>
                         <div style={{ display: 'flex' }}>
+                            <Button onClick={viewDetails}>
+                                View
+                            </Button>
                             {updated ? null : (
+
                                 <Button
                                     loading={downloadLoading}
                                     onClick={(e) => download(e, record)}
@@ -227,9 +244,7 @@ export default function MainComponent({
                                 </Button>
                             )}
 
-                            <Button onClick={viewDetails}>
-                                View
-                            </Button>
+
                             <Button onClick={(e) => modalVisible(e, record)}>
                                 Update Consent
                             </Button>

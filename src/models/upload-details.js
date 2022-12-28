@@ -85,11 +85,11 @@ class UploadDetail extends BaseAPI {
      * @returns 
      */
 
-    getConsent(nuraId) {
+    getConsent(nuraId,mode) {
         //Get Consent data from Nura database
         var baseUrl = process.env.REACT_APP_NURA
 
-        return ApiUtils.get({ baseUrl,url: `upload_details/get-consent/${nuraId}` })
+        return ApiUtils.get({ baseUrl,url: `upload_details/get-detail-mode/${nuraId}?mode=${mode}` })
 
     }
 

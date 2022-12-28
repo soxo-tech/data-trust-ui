@@ -85,17 +85,22 @@ export default function CheckUpDetails({ ffmenu, ...props }) {
 
                                                   <TabPane tab="Consent History" key="0">
 
-                                                            <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent}/>
+                                                            <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CONSENT' />
 
                                                   </TabPane>
                                                   <TabPane tab="Download History" key="1">
 
-                                                            <DownloadHistory id={id}  consent={consent} setConsent={setConsent}/>
+                                                            <DownloadHistory id={id} consent={consent} setConsent={setConsent} />
 
                                                   </TabPane>
                                                   <TabPane tab="Result Analysis" key="2">
 
-                                                            <DerivedAnalysis id={id} consent={consent} setConsent={setConsent}/>
+                                                            <DerivedAnalysis id={id} consent={consent} setConsent={setConsent} />
+
+                                                  </TabPane>
+                                                  <TabPane tab="Check-up History" key="3">
+
+                                                            <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CHECKUP' isCheckup={true} />
 
                                                   </TabPane>
 

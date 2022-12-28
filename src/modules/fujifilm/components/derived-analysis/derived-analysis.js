@@ -58,13 +58,13 @@ export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...pr
         return (page - 1) * limit + index + 1
       },
     },
-    {
-      title: 'Data ID',
-      key: 'id',
-      render: (record) => {
-        return record.id
-      },
-    },
+    // {
+    //   title: 'Data ID',
+    //   key: 'id',
+    //   render: (record) => {
+    //     return record.id
+    //   },
+    // },
     {
       title: 'Consent ID',
       key: 'consent_id',
@@ -126,7 +126,7 @@ export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...pr
   }
 
   // Extra columns for fujifilm
-  if (ffmenu) {
+  // if (ffmenu) {
     columns.push({
       title: 'Last Download',
       key: 'lastDownload',
@@ -135,7 +135,7 @@ export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...pr
         return DateUtils.getFormattedTimeDate(record.downloads[0].created_at)
       },
     })
-  }
+  // }
 
   columns.push({
     title: 'Action',

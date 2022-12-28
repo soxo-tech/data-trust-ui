@@ -45,8 +45,10 @@ export default function DownloadHistory({ ffmenu, id,consent,setConsent, ...prop
 
      var columns = []
 
+     
+
      //Columns for fujifilm
-     if (ffmenu) {
+     // if (ffmenu) {
 
           columns = [
                {
@@ -125,46 +127,46 @@ export default function DownloadHistory({ ffmenu, id,consent,setConsent, ...prop
                },
 
           ]
-     } else {
+     // } else {
 
           //Columns for Nura
-          columns = [
-               {
-                    title: '#',
-                    dataIndex: 'index',
-                    render: (value, item, index) => {
-                         return (page - 1) * limit + index + 1;
-                    },
-               },
-               {
-                    title: 'Downloaded User',
-                    key: 'user',
-                    render: (record) => {
+          // columns = [
+          //      {
+          //           title: '#',
+          //           dataIndex: 'index',
+          //           render: (value, item, index) => {
+          //                return (page - 1) * limit + index + 1;
+          //           },
+          //      },
+          //      {
+          //           title: 'Downloaded User',
+          //           key: 'user',
+          //           render: (record) => {
 
-                         return record.created_by_details['name']
+          //                return record.created_by_details['name']
 
-                    }
-               },
-               {
-                    title: 'Last Download',
-                    key: 'last_download',
-                    render: (record) => {
+          //           }
+          //      },
+          //      {
+          //           title: 'Last Download',
+          //           key: 'last_download',
+          //           render: (record) => {
 
-                         return DateUtils.getFormattedTimeDate(record.created_at)
+          //                return DateUtils.getFormattedTimeDate(record.created_at)
 
-                    }
-               },
-               {
-                    title: 'Discarded Date',
-                    key: 'discarded',
-                    render: (record) => {
+          //           }
+          //      },
+          //      {
+          //           title: 'Discarded Date',
+          //           key: 'discarded',
+          //           render: (record) => {
 
-                         return record.consent.discarded_date ? DateUtils.getFormattedTimeDate(record.consent.discarded_date) : null
+          //                return record.consent.discarded_date ? DateUtils.getFormattedTimeDate(record.consent.discarded_date) : null
 
-                    }
-               },
-          ]
-     }
+          //           }
+          //      },
+          // ]
+     // }
 
 
      useEffect(() => {
