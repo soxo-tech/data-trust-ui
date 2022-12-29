@@ -245,10 +245,10 @@ export default function MainComponent({
                                 </Button>
                             )}
 
-
-                            <Button onClick={(e) => modalVisible(e, record)}>
-                                Update Consent
-                            </Button>
+                            {ffmenu ? null :
+                                <Button onClick={(e) => modalVisible(e, record)}>
+                                    Update Consent
+                                </Button>}
                         </div>
                     </div>
                 )
@@ -399,15 +399,15 @@ export default function MainComponent({
             }
         })
     }
-    
-    function onChange(e){
-        
+
+    function onChange(e) {
+
         //If all is selected
-        if(e.target.value==='all'){
+        if (e.target.value === 'all') {
             getData(range)
         }
         // If undownloaded is selected
-        else if(e.target.value==='undownloaded'){
+        else if (e.target.value === 'undownloaded') {
             filterData()
         }
     }
@@ -459,7 +459,7 @@ export default function MainComponent({
 
 
                                     <div className="padding">
-                                       
+
                                         <Radio.Group onChange={onChange} defaultValue='all'>
                                             <Radio.Button value='all'>All</Radio.Button>
                                             <Radio.Button value='undownloaded'>Undownloaded</Radio.Button>
@@ -470,7 +470,7 @@ export default function MainComponent({
 
 
                                 <div className="padding" >
-                                    <Button onClick={uploadModal}>Upload</Button>
+                                    {ffmenu ? null : <Button onClick={uploadModal}>Upload</Button>}
                                     <Button onClick={downloadFiles} loading={btnLoading}>Download</Button>
                                 </div>
 

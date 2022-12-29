@@ -314,7 +314,7 @@ export default function ConsentHistory({ ffmenu, id, data_id, setConsentId, setC
                                 </div >
 
                                 <Table
-                                    scroll={{ x: true }}
+                                    scroll={{ x: 1500 }}
                                     dataSource={consentHistory}
                                     columns={columns}
                                     pagination={{
