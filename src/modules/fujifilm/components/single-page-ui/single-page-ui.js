@@ -21,6 +21,7 @@ import {
     message,
     Tag,
     Form,
+    Radio,
 } from 'antd'
 
 import { Location, DateUtils, RangePicker } from 'soxo-bootstrap-core'
@@ -55,7 +56,7 @@ export default function MainComponent({
 
     const [uploadVisible, setUploadVisible] = useState(false)
 
-    const [idNo, setIdNo] = useState()
+    const [nuraId, setNuraId] = useState()
 
     const [summaryVisible, setSummaryVisible] = useState(false)
 
@@ -306,7 +307,7 @@ export default function MainComponent({
 
         setVisible(true)
 
-        setIdNo(ele.id)
+        setNuraId(ele.psuedonymous_nura_id)
     }
 
 
@@ -398,7 +399,18 @@ export default function MainComponent({
             }
         })
     }
-
+    
+    function onChange(e){
+        
+        //If all is selected
+        if(e.target.value==='all'){
+            getData(range)
+        }
+        // If undownloaded is selected
+        else if(e.target.value==='undownloaded'){
+            filterData()
+        }
+    }
     return (
         <ErrorBoundary>
             <div className='card card-shadow checkup'>
@@ -447,9 +459,11 @@ export default function MainComponent({
 
 
                                     <div className="padding">
-                                        <Button onClick={(e) => getData(range)}>All</Button>
-
-                                        <Button onClick={filterData}>Undownloaded</Button>
+                                       
+                                        <Radio.Group onChange={onChange} defaultValue='all'>
+                                            <Radio.Button value='all'>All</Radio.Button>
+                                            <Radio.Button value='undownloaded'>Undownloaded</Radio.Button>
+                                        </Radio.Group>
 
                                     </div>
                                 </div>
@@ -519,7 +533,7 @@ export default function MainComponent({
                         >
                             <UpdateConsent
                                 setVisible={setVisible}
-                                id={idNo}
+                                id={nuraId}
                                 setSummaryVisible={setSummaryVisible}
                                 setResult={setResult}
                             />
