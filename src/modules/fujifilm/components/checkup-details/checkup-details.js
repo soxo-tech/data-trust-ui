@@ -90,7 +90,7 @@ export default function CheckUpDetails({ ffmenu, ...props }) {
                                                   </TabPane>
                                                   <TabPane tab="Download History" key="1">
 
-                                                            <DownloadHistory id={id} consent={consent} setConsent={setConsent} />
+                                                            <DownloadHistory id={id} consent={consent} setConsent={setConsent} ffmenu={ffmenu}/>
 
                                                   </TabPane>
                                                   <TabPane tab="Result Analysis" key="2">
