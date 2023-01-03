@@ -19,6 +19,7 @@ import {
   Menu,
   Skeleton,
   message,
+  Tag
 } from 'antd'
 
 import { Location, Card, DateUtils } from 'soxo-bootstrap-core'
@@ -33,9 +34,7 @@ import ErrorBoundary from '../error'
 
 const { Title } = Typography
 
-export default function DerivedAnalysis({ ffmenu, ...props }) {
-  // Get pagination number
-  const { id } = props.match.params
+export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...props }) {
 
   const [derivedAnalysis, setDerivedAnalysis] = useState([])
 
@@ -44,6 +43,9 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
   const [page, setPage] = useState(1)
 
   const [limit, setLimit] = useState(10)
+
+  if (props.match)
+    id = props.match.params
 
   var { consentId } = Location.search()
 
@@ -56,13 +58,13 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
         return (page - 1) * limit + index + 1
       },
     },
-    {
-      title: 'Data ID',
-      key: 'id',
-      render: (record) => {
-        return record.id
-      },
-    },
+    // {
+    //   title: 'Data ID',
+    //   key: 'id',
+    //   render: (record) => {
+    //     return record.id
+    //   },
+    // },
     {
       title: 'Consent ID',
       key: 'consent_id',
@@ -99,21 +101,23 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
   ]
 
   useEffect(() => {
-    getData()
-  }, [])
+    getData(consentId)
+  }, [consentId])
 
   /**
    * Function to load the data for screen
    */
-  function getData() {
+  function getData(consent) {
     setLoading(true)
 
     UploadDetails.loadDetails(id).then((result) => {
 
       // This filtering is used to get analysis result of the consent id in url
-      
+      if ((consent && consent!==null))
+        result = result.uploadsWithConsent.filter((element) => JSON.parse(element.attributes).consent_id === consent)
 
-      result=result.uploadsWithConsent.filter((element)=>JSON.parse(element.attributes).consent_id===consentId)
+      else
+        result = result.uploadsWithConsent
 
       setDerivedAnalysis(result)
       setLoading(false)
@@ -122,7 +126,7 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
   }
 
   // Extra columns for fujifilm
-  if (ffmenu) {
+  // if (ffmenu) {
     columns.push({
       title: 'Last Download',
       key: 'lastDownload',
@@ -131,7 +135,7 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
         return DateUtils.getFormattedTimeDate(record.downloads[0].created_at)
       },
     })
-  }
+  // }
 
   columns.push({
     title: 'Action',
@@ -159,6 +163,14 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
   })
 
   /**
+   * Function when the consent is removed
+   */
+  function removeConsent() {
+    setConsent(null)
+    getData(null)
+  }
+
+  /**
    * Function for download
    */
   function download(e, record) {
@@ -166,14 +178,14 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
 
     const bulk = false
 
-    const id = record.upload_details[0].id
+    const id = record.id
 
     Uploads.downloadFiles(id, analysisResult, bulk).then((res) => {
       if (res.success) {
         Uploads.download(res.buffer[0], analysisResult)
 
         // setBtnLoading(false)
-        getData()
+        getData(consent)
       } else {
         message.error(res.message)
       }
@@ -220,7 +232,8 @@ export default function DerivedAnalysis({ ffmenu, ...props }) {
           <div className="derived-card">
             <Card className={'table'}>
 
-              <Title level={3}>Derived Analysis Results </Title>
+              {/* <Title level={3}>Derived Analysis Results </Title> */}
+              {consent && consent!==null?<h4>Consent Id : <Tag closable onClose={removeConsent}>{consent}</Tag></h4>:null}
 
               <Table
                 scroll={{ x: true }}

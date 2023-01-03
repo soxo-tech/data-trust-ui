@@ -52,6 +52,31 @@ class UploadDetail extends BaseAPI {
     }
 
 
+    /**
+     * Get data from upload_details  within a range
+     * @param {*} uploadId 
+     * @param {*} analysisResult 
+     * @returns 
+     */
+
+    getUploadDetails(range) {
+
+        const start_time = moment(range[0]).format('MM/DD/YYYY');
+
+        const end_time = moment(range[1]).format('MM/DD/YYYY');
+
+        let baseUrl = null;
+
+        // load data from Nura database 
+        baseUrl = process.env.REACT_APP_NURA
+
+        return ApiUtils.get({ baseUrl, url: `upload_details/get-upload-details?upload_start_date=${start_time}&upload_end_date=${end_time}` })
+
+
+    }
+
+
+
 
 
     /**
@@ -60,11 +85,11 @@ class UploadDetail extends BaseAPI {
      * @returns 
      */
 
-    getConsent(nuraId) {
+    getConsent(nuraId,mode) {
         //Get Consent data from Nura database
         var baseUrl = process.env.REACT_APP_NURA
 
-        return ApiUtils.get({ baseUrl,url: `upload_details/get-consent/${nuraId}` })
+        return ApiUtils.get({ baseUrl,url: `upload_details/get-detail-mode/${nuraId}?mode=${mode}` })
 
     }
 

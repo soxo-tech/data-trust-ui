@@ -8,6 +8,10 @@ import DownloadHistory from "./fujifilm/components/download-history/download-his
 
 import DerivedAnalysis from "./fujifilm/components/derived-analysis/derived-analysis";
 
+import MainComponent from "./fujifilm/components/single-page-ui/single-page-ui";
+
+import CheckUpDetails from "./fujifilm/components/checkup-details/checkup-details";
+
 export {
     UploadList,
 
@@ -17,5 +21,9 @@ export {
 
     DownloadHistory,
 
-    DerivedAnalysis
+    DerivedAnalysis,
+
+    MainComponent,
+
+    CheckUpDetails
 }

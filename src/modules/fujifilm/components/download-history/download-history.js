@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 
-import { Table, Typography, Skeleton } from 'antd';
+import { Table, Typography, Skeleton, Tag } from 'antd';
 
 import { GlobalContext, Card, DateUtils, Location } from 'soxo-bootstrap-core';
 
@@ -21,7 +21,7 @@ import ErrorBoundary from '../error';
 
 const { Title } = Typography;
 
-export default function DownloadHistory({ ffmenu, ...props }) {
+export default function DownloadHistory({ ffmenu, id,consent,setConsent, ...props }) {
 
      const [downloadHistory, setDownloadHistory] = useState([])
 
@@ -31,7 +31,8 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      const [loading, setLoading] = useState(true)
 
-     const { id } = props.match.params;
+     if (props.match)
+          id = props.match.params;
 
      const { user = {} } = useContext(GlobalContext);
 
@@ -44,8 +45,10 @@ export default function DownloadHistory({ ffmenu, ...props }) {
 
      var columns = []
 
+     
+
      //Columns for fujifilm
-     if (ffmenu) {
+     // if (ffmenu) {
 
           columns = [
                {
@@ -124,61 +127,57 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                },
 
           ]
-     } else {
+     // } else {
 
           //Columns for Nura
-          columns = [
-               {
-                    title: '#',
-                    dataIndex: 'index',
-                    render: (value, item, index) => {
-                         return (page - 1) * limit + index + 1;
-                    },
-               },
-               {
-                    title: 'Downloaded User',
-                    key: 'user',
-                    render: (record) => {
+          // columns = [
+          //      {
+          //           title: '#',
+          //           dataIndex: 'index',
+          //           render: (value, item, index) => {
+          //                return (page - 1) * limit + index + 1;
+          //           },
+          //      },
+          //      {
+          //           title: 'Downloaded User',
+          //           key: 'user',
+          //           render: (record) => {
 
-                         return record.created_by_details['name']
+          //                return record.created_by_details['name']
 
-                    }
-               },
-               {
-                    title: 'Last Download',
-                    key: 'last_download',
-                    render: (record) => {
+          //           }
+          //      },
+          //      {
+          //           title: 'Last Download',
+          //           key: 'last_download',
+          //           render: (record) => {
 
-                         return DateUtils.getFormattedTimeDate(record.created_at)
+          //                return DateUtils.getFormattedTimeDate(record.created_at)
 
-                    }
-               },
-               {
-                    title: 'Discarded Date',
-                    key: 'discarded',
-                    render: (record) => {
+          //           }
+          //      },
+          //      {
+          //           title: 'Discarded Date',
+          //           key: 'discarded',
+          //           render: (record) => {
 
-                         return record.consent.discarded_date ? DateUtils.getFormattedTimeDate(record.consent.discarded_date) : null
+          //                return record.consent.discarded_date ? DateUtils.getFormattedTimeDate(record.consent.discarded_date) : null
 
-                    }
-               },
-          ]
-     }
+          //           }
+          //      },
+          // ]
+     // }
 
-     useEffect(() => {
-          getData();
-
-     }, [])
 
      useEffect(() => {
-          getData();
+          getData(consent_id);
 
-     }, [])
+     }, [consent_id])
 
      /**
      * Function to load the data for screen
      */
-     async function getData() {
+     async function getData(consent) {
 
           var result = await UserLogs.getDownloadHistory(id, analysisResult)
 
@@ -194,17 +193,27 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                result = result.result
 
           //In Nura load downlaods with respect to consent id
-          else
+          else if (consent && consent!==null)
 
                result = result.result.filter((element) => {
                     const attributes = JSON.parse(element.attributes)
                     if (attributes.consent_id)
-                         return attributes.consent_id === parseInt(consent_id)
+                         return attributes.consent_id === parseInt(consent)
                })
+          else
+          result = result.result
 
           setDownloadHistory(result)
           setLoading(false)
 
+     }
+
+     /**
+      * Function triggered when consnet is removed
+      */
+     function removeConsent(){
+          setConsent(null)
+          getData(null)
      }
 
      return (
@@ -214,19 +223,20 @@ export default function DownloadHistory({ ffmenu, ...props }) {
                     {loading ? <Skeleton /> : <>
 
                          <Card className={'history'}>
-                              <Title level={3}>Download History</Title>
+                              {/* <Title level={3}>Download History</Title> */}
                               <div className='history-table'>
                                    <div>
-                                        <Title level={5}>Nura ID</Title>
-                                        <p>{downloadHistory[0] && downloadHistory[0].pseudonymous_nura_id ? downloadHistory[0].pseudonymous_nura_id : id}</p>
+                                   {consent && consent!==null?<h4>Consent Id : <Tag closable onClose={removeConsent}>{consent}</Tag></h4>:null}
+                                        {/* <Title level={5}>Nura ID</Title>
+                                        <p>{downloadHistory[0] && downloadHistory[0].pseudonymous_nura_id ? downloadHistory[0].pseudonymous_nura_id : id}</p> */}
                                    </div>
                                    {/* <div>
                                    <Title level={5}>Registration Date</Title>
                                    <p>{downloadHistory[0] && downloadHistory[0].order_date ? DateUtils.getFormattedTimeDate(downloadHistory[0].order_date) : null}</p>
                               </div> */}
                                    <div>
-                                        <Title level={5}>Consent ID</Title>
-                                        <p>{downloadHistory[0] && downloadHistory[0].consent ? downloadHistory[0].consent.id : null}</p>
+                                        {/* <Title level={5}>Consent ID</Title>
+                                        <p>{downloadHistory[0] && downloadHistory[0].consent ? downloadHistory[0].consent.id : null}</p> */}
                                    </div>
                                    <div>
                                         {/* <Title level={5}>Consent Status</Title>
