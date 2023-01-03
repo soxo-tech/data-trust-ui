@@ -113,7 +113,7 @@ export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...pr
     UploadDetails.loadDetails(id).then((result) => {
 
       // This filtering is used to get analysis result of the consent id in url
-      if ((consent && consent!==null))
+      if ((consent && consent !== null))
         result = result.uploadsWithConsent.filter((element) => JSON.parse(element.attributes).consent_id === consent)
 
       else
@@ -127,14 +127,14 @@ export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...pr
 
   // Extra columns for fujifilm
   // if (ffmenu) {
-    columns.push({
-      title: 'Last Download',
-      key: 'lastDownload',
-      render: (record) => {
-        console.log(record)
-        return DateUtils.getFormattedTimeDate(record.downloads[0].created_at)
-      },
-    })
+  columns.push({
+    title: 'Last Download',
+    key: 'lastDownload',
+    render: (record) => {
+      console.log(record)
+      return record.downloads && record.downloads.length>0 ? DateUtils.getFormattedTimeDate(record.downloads[0].created_at) : null
+    },
+  })
   // }
 
   columns.push({
@@ -233,7 +233,7 @@ export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...pr
             <Card className={'table'}>
 
               {/* <Title level={3}>Derived Analysis Results </Title> */}
-              {consent && consent!==null?<h4>Consent Id : <Tag closable onClose={removeConsent}>{consent}</Tag></h4>:null}
+              {consent && consent !== null ? <h4>Consent Id : <Tag closable onClose={removeConsent}>{consent}</Tag></h4> : null}
 
               <Table
                 scroll={{ x: true }}
