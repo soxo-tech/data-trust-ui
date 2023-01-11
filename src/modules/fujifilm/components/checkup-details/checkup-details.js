@@ -12,6 +12,7 @@ import React, { useState, useEffect } from 'react'
 import {
           Typography,
           Tabs,
+          Skeleton
 } from 'antd'
 
 import { Location, Card } from 'soxo-bootstrap-core'
@@ -40,6 +41,8 @@ export default function CheckUpDetails({ ffmenu, ...props }) {
 
           const [consentId, setConsentId] = useState()
 
+          const [loading,setLoading]=useState(false)
+
           const [consent, setConsent] = useState(urlParams.consent_id || urlParams.consentId)
 
           useEffect(() => {
@@ -54,12 +57,14 @@ export default function CheckUpDetails({ ffmenu, ...props }) {
           function changeTab(activeKey) {
 
                     Location.navigate({
-                              url: `/check-up-details/${id}?activeKey=${activeKey}&data_id=${urlParams.data_id}`,
+                              url: `/check-up-details/${id}?activeKey=${activeKey}&data_id=${urlParams.data_id}&consentId=${consentId}`,
                     });
           };
 
 
           return (
+                    loading ?
+                              <Skeleton /> :
                     <ErrorBoundary>
                               <div className='checkup-details'>
                                         <Card className='card-component' >
