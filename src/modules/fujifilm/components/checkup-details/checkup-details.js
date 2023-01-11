@@ -41,7 +41,7 @@ export default function CheckUpDetails({ ffmenu, ...props }) {
 
           const [consentId, setConsentId] = useState()
 
-          const [loading,setLoading]=useState(false)
+          const [loading, setLoading] = useState(false)
 
           const [consent, setConsent] = useState(urlParams.consent_id || urlParams.consentId)
 
@@ -65,53 +65,69 @@ export default function CheckUpDetails({ ffmenu, ...props }) {
           return (
                     loading ?
                               <Skeleton /> :
-                    <ErrorBoundary>
-                              <div className='checkup-details'>
-                                        <Card className='card-component' >
+                              <ErrorBoundary>
+                                        <div className='checkup-details'>
 
-                                                  <div>
-                                                            <h4>Data ID</h4>
-                                                            <p>{urlParams.data_id}</p>
+
+                                                  <div className="page-header">
+                                                            <Title level={3}>Check Up Details</Title>
+
+
+                                                            <div className="page-actions">
+                                                                      {/* <Button onClick={(e) => getData(range)}>
+                            <ReloadOutlined />
+                        </Button> */}
+                                                            </div>
+
+
                                                   </div>
-                                                  <div>
-                                                            <h4>Nura ID</h4>
-                                                            <p>{id}</p>
-                                                  </div>
-                                                  <div>
-                                                            <h4>Consent ID</h4>
-                                                            <p>{consentId}</p>
-                                                  </div>
+
+
+                                                  <Card className='card-component' >
+
+                                                            <div>
+                                                                      <h4>Data ID</h4>
+                                                                      <p>{urlParams.data_id}</p>
+                                                            </div>
+                                                            <div>
+                                                                      <h4>Nura ID</h4>
+                                                                      <p>{id}</p>
+                                                            </div>
+                                                            <div>
+                                                                      <h4>Consent ID</h4>
+                                                                      <p>{consentId}</p>
+                                                            </div>
 
 
 
-                                        </Card>
-                                        <Tabs activeKey={activeKey} onChange={changeTab}>
+                                                  </Card>
+                                                  <Tabs activeKey={activeKey} onChange={changeTab}>
 
 
-                                                  <TabPane tab="Consent History" key="0">
+                                                            <TabPane tab="Consent History" key="0">
 
-                                                            <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CONSENT' />
+                                                                      <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CONSENT' />
 
-                                                  </TabPane>
-                                                  <TabPane tab="Download History" key="1">
+                                                            </TabPane>
+                                                            <TabPane tab="Download History" key="1">
 
-                                                            <DownloadHistory id={id} consent={consent} setConsent={setConsent} ffmenu={ffmenu}/>
+                                                                      <DownloadHistory id={id} consent={consent} setConsent={setConsent} ffmenu={ffmenu} />
 
-                                                  </TabPane>
-                                                  <TabPane tab="Result Analysis" key="2">
+                                                            </TabPane>
+                                                            <TabPane tab="Result Analysis" key="2">
 
-                                                            <DerivedAnalysis id={id} consent={consent} setConsent={setConsent} />
+                                                                      <DerivedAnalysis id={id} consent={consent} setConsent={setConsent} />
 
-                                                  </TabPane>
-                                                  <TabPane tab="Check-up History" key="3">
+                                                            </TabPane>
+                                                            <TabPane tab="Check-up History" key="3">
 
-                                                            <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CHECKUP' isCheckup={true} />
+                                                                      <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CHECKUP' isCheckup={true} />
 
-                                                  </TabPane>
+                                                            </TabPane>
 
-                                        </Tabs>
-                              </div>
-                    </ErrorBoundary>
+                                                  </Tabs>
+                                        </div>
+                              </ErrorBoundary>
 
           )
 }

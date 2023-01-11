@@ -6,7 +6,7 @@ name: Build and deploy Node.js app to Azure Web App - NURA-UI-APPLICATION
 on:
   push:
     branches:
-      - main
+      - beta
   workflow_dispatch:
 
 jobs:
