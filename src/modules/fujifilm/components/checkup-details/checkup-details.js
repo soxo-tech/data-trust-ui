@@ -10,9 +10,9 @@
 import React, { useState, useEffect } from 'react'
 
 import {
-          Typography,
-          Tabs,
-          Skeleton
+    Typography,
+    Tabs,
+    Skeleton
 } from 'antd'
 
 import { Location, Card } from 'soxo-bootstrap-core'
@@ -33,101 +33,101 @@ const { TabPane } = Tabs;
 
 export default function CheckUpDetails({ ffmenu, ...props }) {
 
-          const { id } = props.match.params;
+    const { id } = props.match.params;
 
-          const urlParams = Location.search()
+    const urlParams = Location.search()
 
-          const [activeKey, setActiveKey] = useState()
+    const [activeKey, setActiveKey] = useState()
 
-          const [consentId, setConsentId] = useState()
+    const [consentId, setConsentId] = useState()
 
-          const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-          const [consent, setConsent] = useState(urlParams.consent_id || urlParams.consentId)
+    const [consent, setConsent] = useState(urlParams.consent_id || urlParams.consentId)
 
-          useEffect(() => {
-                    setActiveKey(urlParams.activeKey)
+    useEffect(() => {
+        setActiveKey(urlParams.activeKey)
 
-          }, [urlParams])
+    }, [urlParams])
 
-          /**
-           * Function to change tabs
-           * @param {*} activeKey 
-           */
-          function changeTab(activeKey) {
+    /**
+     * Function to change tabs
+     * @param {*} activeKey 
+     */
+    function changeTab(activeKey) {
 
-                    Location.navigate({
-                              url: `/check-up-details/${id}?activeKey=${activeKey}&data_id=${urlParams.data_id}&consentId=${consentId}`,
-                    });
-          };
-
-
-          return (
-                    loading ?
-                              <Skeleton /> :
-                              <ErrorBoundary>
-                                        <div className='checkup-details'>
+        Location.navigate({
+            url: `/check-up-details/${id}?activeKey=${activeKey}&data_id=${urlParams.data_id}&consentId=${consentId}`,
+        });
+    };
 
 
-                                                  <div className="page-header">
-                                                            <Title level={3}>Check Up Details</Title>
+    return (
+        loading ?
+            <Skeleton /> :
+            <ErrorBoundary>
+                <div className='checkup-details'>
 
 
-                                                            <div className="page-actions">
-                                                                      {/* <Button onClick={(e) => getData(range)}>
+                    <div className="page-header">
+                        <Title level={3}>Check Up Details</Title>
+
+
+                        <div className="page-actions">
+                            {/* <Button onClick={(e) => getData(range)}>
                             <ReloadOutlined />
                         </Button> */}
-                                                            </div>
+                        </div>
 
 
-                                                  </div>
+                    </div>
 
 
-                                                  <Card className='card-component' >
+                    <Card className='card-component' >
 
-                                                            <div>
-                                                                      <h4>Data ID</h4>
-                                                                      <p>{urlParams.data_id}</p>
-                                                            </div>
-                                                            <div>
-                                                                      <h4>Nura ID</h4>
-                                                                      <p>{id}</p>
-                                                            </div>
-                                                            <div>
-                                                                      <h4>Consent ID</h4>
-                                                                      <p>{consentId}</p>
-                                                            </div>
-
-
-
-                                                  </Card>
-                                                  <Tabs activeKey={activeKey} onChange={changeTab}>
+                        <div>
+                            <h4>Data ID</h4>
+                            <p>{urlParams.data_id}</p>
+                        </div>
+                        <div>
+                            <h4>Nura ID</h4>
+                            <p>{id}</p>
+                        </div>
+                        <div>
+                            <h4>Consent ID</h4>
+                            <p>{consentId}</p>
+                        </div>
 
 
-                                                            <TabPane tab="Consent History" key="0">
 
-                                                                      <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CONSENT' />
+                    </Card>
+                    <Tabs activeKey={activeKey} onChange={changeTab}>
 
-                                                            </TabPane>
-                                                            <TabPane tab="Download History" key="1">
 
-                                                                      <DownloadHistory id={id} consent={consent} setConsent={setConsent} ffmenu={ffmenu} />
+                        <TabPane tab="Consent History" key="0">
 
-                                                            </TabPane>
-                                                            <TabPane tab="Result Analysis" key="2">
+                            <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CONSENT' />
 
-                                                                      <DerivedAnalysis id={id} consent={consent} setConsent={setConsent} />
+                        </TabPane>
+                        <TabPane tab="Download History" key="1">
 
-                                                            </TabPane>
-                                                            <TabPane tab="Check-up History" key="3">
+                            <DownloadHistory id={id} consent={consent} setConsent={setConsent} ffmenu={ffmenu} />
 
-                                                                      <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CHECKUP' isCheckup={true} />
+                        </TabPane>
+                        <TabPane tab="Result Analysis" key="2">
 
-                                                            </TabPane>
+                            <DerivedAnalysis id={id} consent={consent} setConsent={setConsent} />
 
-                                                  </Tabs>
-                                        </div>
-                              </ErrorBoundary>
+                        </TabPane>
+                        <TabPane tab="Check-up History" key="3">
 
-          )
+                            <ConsentHistory id={id} data_id={urlParams.data_id} setConsentId={setConsentId} setConsent={setConsent} mode='CHECKUP' isCheckup={true} />
+
+                        </TabPane>
+
+                    </Tabs>
+                </div>
+            </ErrorBoundary>
+
+    )
 }
