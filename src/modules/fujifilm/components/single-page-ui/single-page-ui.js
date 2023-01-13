@@ -98,6 +98,8 @@ export default function MainComponent({
 
     const [btnLoading, setBtnLoading] = useState(false)
 
+    const [consentId,setConsentId]=useState()
+
     const { id } = props.match.params
 
     var columns = [
@@ -308,6 +310,8 @@ export default function MainComponent({
         setVisible(true)
 
         setNuraId(ele.psuedonymous_nura_id)
+
+        setConsentId(ele.consent.id)
     }
 
 
@@ -536,6 +540,7 @@ export default function MainComponent({
                                 id={nuraId}
                                 setSummaryVisible={setSummaryVisible}
                                 setResult={setResult}
+                                consentId={consentId}
                             />
                         </Modal>
 
@@ -730,7 +735,7 @@ function UploadConsent({
  * @returns
  */
 
-function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
+function UpdateConsent({ setVisible, id, setSummaryVisible, setResult,consentId }) {
     const [consentFile, setConsentFile] = useState({})
 
     const [loading, setLoading] = useState(false)
@@ -742,6 +747,7 @@ function UpdateConsent({ setVisible, id, setSummaryVisible, setResult }) {
 
         data.append('consentFile', consentFile)
         data.append('id', id)
+        data.append('consentId',consentId)
 
         Uploads.updateConsent(data).then(async (result) => {
             if (result.success) {
