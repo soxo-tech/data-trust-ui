@@ -276,7 +276,7 @@ export default function ConsentHistory({ ffmenu, id, data_id, setConsentId, setC
                 setConsentId(attributes.consent_id)
 
             else if (result.data.length > 0)
-                setConsentId(result.data[0].id)
+                setConsentId(result.data[0].upload_details_id)
 
             setConsentHistory(result.data)
 
