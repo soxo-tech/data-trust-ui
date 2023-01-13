@@ -172,7 +172,7 @@ export default function ConsentHistory({ ffmenu, id, data_id, setConsentId, setC
                             <Button onClick={toDownloadHistory}>Download History</Button>
 
                             {/* The analysis result may be loaded with the previous checkup . So we control this feature */}
-                            {checkupId == data_id ? <Button onClick={toDerivedAnalysis}>Analysis Result</Button> : null}
+                            {parseInt(checkupId) == parseInt(data_id) ? <Button onClick={toDerivedAnalysis}>Analysis Result</Button> : null}
 
                         </div>
                     )

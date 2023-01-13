@@ -114,7 +114,7 @@ export default function DerivedAnalysis({ ffmenu, id, consent, setConsent, ...pr
 
       // This filtering is used to get analysis result of the consent id in url
       if ((consent && consent !== null))
-        result = result.uploadsWithConsent.filter((element) => JSON.parse(element.attributes).consent_id === consent)
+        result = result.uploadsWithConsent.filter((element) => parseInt(JSON.parse(element.attributes).consent_id) === parseInt(consent))
 
       else
         result = result.uploadsWithConsent
