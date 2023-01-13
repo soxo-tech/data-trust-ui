@@ -198,7 +198,7 @@ export default function DownloadHistory({ ffmenu, id,consent,setConsent, ...prop
                result = result.result.filter((element) => {
                     const attributes = JSON.parse(element.attributes)
                     if (attributes.consent_id)
-                         return attributes.consent_id === parseInt(consent)
+                         return parseInt(attributes.consent_id )=== parseInt(consent)
                })
           else
           result = result.result
